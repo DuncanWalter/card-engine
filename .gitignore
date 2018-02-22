@@ -1,0 +1,7 @@
+/node_modules/*
+/dist/*
+.*
+!.gitignore
+!.npmignore
+!.travis.yml
+!.flowconfig
