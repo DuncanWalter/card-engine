@@ -11,5 +11,5 @@ import './index.styl'
 
 // enables HMR at this root
 if( module.hot ){ 
-    module.hot.accept();
+    (module:any).hot.accept();
 }

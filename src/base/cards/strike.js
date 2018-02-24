@@ -1,26 +1,33 @@
-import { Card } from './card'
+import { Card, CardPartial } from './card'
 import { DamageAction } from './../actions/damage'
 
-export const strike = Symbol('strike');
+type Meta = { dmg: string }
 
-export function Strike(){
-    return Card({
-        id: strike,
-        play({ resolver, actor, subject }){
-            const dmg = resolver.processAction(
-                DamageAction(
-                    this, 
-                    subject,
-                    this.damage,
-                    'target',
-                ),
-            );
-            return { dmg };
-        },
-        text: 'hit a dude for 6 damage',
-        title: 'pop',
-        energy: '12',
-        damage: 6,
-        color: '#993322',
-    });
+export const strike = Symbol('strike');
+export class Strike extends CardPartial<Meta> implements Card<Meta> {
+    
+    id: Symbol = strike
+    damage: number
+
+    constructor(){
+        super();
+        this.energy = '1';
+        this.color = '#993322';
+        this.title = 'Strike';
+        this.text = 'Deal 6 damage to one target';
+        this.damage = 6;
+    }
+
+    play({ resolver, actor, subject }){
+        const dmg = resolver.processAction(
+            new DamageAction(
+                this, 
+                subject,
+                this.damage,
+                'target',
+            ),
+        );
+        return { dmg };
+    }
+
 };

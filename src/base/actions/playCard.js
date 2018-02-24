@@ -1,20 +1,42 @@
 import { construct } from './../../utility/construct' 
-import { Action } from './action'
-import { global } from './../../core/app'
+import { gameState } from '../gameState'
 
-import type { CardT } from './../cards/card'
+import type { Card } from './../cards/card'
+import type { Action, ConsumerArgs } from './action'
 
-export function PlayCardAction(actor: {energy: number}, subject: CardT, target: mixed, ...tags: Array<string>){
-    let pca = Action(({ resolver, action, subject, actor }) => { 
+type HasEnergy = {
+    energy: number,
+}
+
+export const playCardAction = Symbol('playCardAction');
+export class PlayCardAction implements Action<any, Card<any>, PlayCardAction> {
+    
+    id: Symbol = playCardAction
+    subject: Card<any>
+    actor: any
+    tags: Array<string>
+    target: any
+
+    constructor(actor: any, subject: Card<any>, target: any, ...tags: Array<string>){
+        this.actor = actor;
+        this.subject = subject;
+        this.tags = ['playCard', ...tags];
+        this.target = target;
+    }
+    
+    consumer({ action, subject, actor, resolver }: ConsumerArgs<any, Card<any>, PlayCardAction>){ 
+        // TODO: perform an energy check
         actor.energy -= 1; //TODO: (subject: CardT).energy;
-        
-        (subject: CardT).play({ 
+        subject.play({ 
             resolver, 
             actor: subject, 
-            subject: target,
+            subject: action.target,
         });
 
-        global.discardPile.push(global.hand.splice(global.hand.indexOf(subject), 1));
-    }, actor, subject, 'playCard', ...tags);
-    return pca;
+        const game = gameState.view();
+
+        game.discardPile.push(game.hand.splice(game.hand.indexOf(subject), 1));
+
+        gameState.emit();
+    }
 }

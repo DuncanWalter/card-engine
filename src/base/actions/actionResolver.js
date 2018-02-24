@@ -1,46 +1,35 @@
 import { LL } from './../../utility/linkedList'
 
-type listener = {
-    header: {
-        tags?: Array<string>,
-        subject?: Object,
-        actor?: Object,
-    },
-    consume: ({
-        actor: Object,
-        subject: object,
-        resolver: ActionResolver,
-        next: () => void,
-        cancel: () => void,
-    }) => void,
-};
+import type { Action } from './../actions/action'
 
-type ActionResolver = {
-    processing: boolean,
-    simulating: boolean,
-    actionQueue: Iterable<Action>,
-    enqueueAction: (Action) => Action,
-    pushAction: (Action) => Action,
-    processAction: (Action, boolean) => Action,
-};
+type AnyAction = Action<any, any, AnyAction>
 
-type Factory = (Iterable<Listener>) => ActionResolver;
-export const ActionResolver: Factory = listeners => ({
-    processing: false,
-    simulating: false,
-    actionQueue: LL(),
-    enqueueAction(action){
+export class ActionResolver {
+
+    processing: boolean
+    simulating: boolean
+    actionQueue: LL<AnyAction>
+
+    constructor(listeners){
+        this.processing = false;
+        this.simulating = false;
+        this.actionQueue = new LL();
+    }
+
+    enqueueAction(action: AnyAction){
         if (this.simulating) return;
         this.actionQueue.append(action);
         if (!this.processing) this.processQueue();
-    },
-    pushAction(action){
+    }
+
+    pushAction(action: AnyAction){
         if (this.simulating) return;
         this.actionQueue.push(action);
         if (!this.processing) this.processQueue();
-    },
-    processAction(action, simulate){
-        if (this.simulating && !simulate) return;
+    }
+
+    processAction(action: AnyAction, simulate?: boolean){
+        if (this.simulating && !simulate) return action;
         // const listeners = orderListeners(this.listeners.filter(l => {
 
         // }));
@@ -60,27 +49,33 @@ export const ActionResolver: Factory = listeners => ({
         //     }
         // };
         // next();
-        console.log('action',  action);
+        console.log('action',  action, action.constructor, action.constructor.name);
         action.consumer({ 
             action,
             resolver: this,
             subject: action.subject,
             actor: action.actor,
+            next: () => undefined,
+            cancel: () => undefined,
         });
         return action;
-    },
-    simulateAction(action){
-        simulating = true;
-        this.processAction(action, true);
-        simulating = false;
-    },
+    }
+
+    simulateAction(action: AnyAction){
+        this.simulating = true;
+        const r = this.processAction(action, true);
+        this.simulating = false;
+        return r;
+    }
+
     processQueue(){
         if (this.processing) return;
         this.processing = true;
-        while(this.actionQueue.list[1]){
-            this.processAction(this.actionQueue.pop());
+        let next;
+        while(next = this.actionQueue.next()){
+            this.processAction(next);
         }
         this.processing = false;
-    },
-});
+    }
+};
 

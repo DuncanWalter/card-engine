@@ -1,13 +1,21 @@
 import { Card } from './card'
-import type { CardT } from './../../cards/card'
+import { Card as CardObject } from './../../cards/card'
+import { gameState } from './../../gameState'
+import { State } from './../../../core/state'
+
+import { withState, withLifecycle, compose } from 'incompose'
+
+// gameState.stream.map(s => s.hand).onValue(console.log);
+
 
 type Props = {
-    cards: Array<CardT>,
+    cards: Array<CardObject<any>>,
+    state: any, // TODO:
 }
 
 // should the card 'dtos' have a render, or should the hand map
 // dto to component? Probably the latter... TODO:
-export const Hand = ({ cards }: Props) => {
+export const Hand = useState(({ cards, state }: Props) => {
     return <div style={styles.hand}>
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0 }}>
@@ -17,7 +25,60 @@ export const Hand = ({ cards }: Props) => {
         </div>
         <div style={{ flex: 1 }}/>
     </div>;
-};
+}, gameState);
+
+function useState(component, slice){
+
+    let callback = () => update();
+    let update = () => undefined;
+    
+    let streamManaged = withLifecycle({
+        componentDidMount: el => {
+            console.log('mounting');
+            slice.stream.onValue(callback)
+        },
+        componentWillUnmount: () => {
+            console.log('unmounting');
+            slice.stream.offValue(callback);
+        }
+    });
+
+    let updateHooked = component => props => {
+        update = props.update;
+        return component(props);
+    };
+
+    let stateful = withState('state', 'update', slice.view());
+
+    return compose(streamManaged, stateful, updateHooked)(component);
+}
+
+
+// function stateful (component, initial, reducers, onMount, onUnMount){
+//     let i = Symbol('unique');
+//     let s: State<Symbol,>;
+    
+//     let c = withLifeCycle({
+//         componentDidMount: el => (s = new State(i, reducers, initial)),
+//         componentWillUnmount: () => s.destroy(),
+//     })(component),
+
+
+
+
+    
+    
+//     return withState(),
+// }
+
+
+
+
+
+
+
+
+
 
 const styles = {
     nthCardPoint: (n, m) => {

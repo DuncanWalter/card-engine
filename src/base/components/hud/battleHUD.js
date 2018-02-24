@@ -2,10 +2,12 @@ import { Hand } from './hand'
 
 import { Strike } from './../../cards/strike'
 import { Defend } from './../../cards/defend'
+import { gameState } from '../../gameState'
 
-import { global } from './../../../core/app'
+const game: * = gameState.view();
 
 export const BattleHUD = () => {
+
     return <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* relic bar! */}
         {/* combat pane! */}
@@ -15,7 +17,7 @@ export const BattleHUD = () => {
                 <div>3/3</div>
                 <div>drawpile</div>
             </div>
-            <Hand cards={global.hand} style={{ flex: 7 }}/>
+            <Hand cards={game.hand} style={{ flex: 7 }}/>
             <div style={{ flex: 2 }}>
                 <div>exhausted</div>
                 <div>discard</div>

@@ -35,6 +35,8 @@ const baseConfig = options => ({
                 loader: 'babel-loader',
                 options: {
                     plugins: [
+                        'babel-plugin-syntax-class-properties',
+                        'babel-plugin-transform-class-properties',
                         ['babel-plugin-inferno', {imports: true}],
                         'babel-plugin-syntax-jsx',
                     ],

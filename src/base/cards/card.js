@@ -1,21 +1,21 @@
 import { Card as Component } from './../components/hud/card'
-import { global } from './../../core/app'
+import { gameState } from './../gameState'
 import { PlayCardAction } from '../actions/playCard'
 import { construct } from './../../utility/construct'
 
 import type { ActionResolver } from './../actions/actionResolver'
 import type { Action } from './../actions/action'
 
-export type CardT = {
+export interface Card<Meta> {
     id: Symbol,
-    render: (any) => any,
+    render(any): any,
     // should be acquired from localization?
     title: string,
     text: string,
     energy: string,
     color: string,
     listener?: *,
-    play: (ctx: PlayCtx) => Action, 
+    play(ctx: PlayCtx): Meta, 
 };
 
 type Mixin = {
@@ -23,7 +23,7 @@ type Mixin = {
     title: string,
     text: string,
     energy: string,
-    play: (ctx: PlayCtx) => Action, 
+    play: (ctx: PlayCtx) => PlayCardAction, 
     color: string,
 };
 
@@ -33,18 +33,36 @@ type PlayCtx = {
     resolver: ActionResolver,
 }
 
-const { assign, create } = Object;
+const game: * = gameState.view();
 
-const cardProto = construct(null, {
-    render(props){
+export class CardPartial<Meta> {
+
+    title: string
+    text: string
+    energy: string
+    color: string
+
+    id: Symbol
+    +play: (ctx: PlayCtx) => Meta
+
+    constructor(){
+        // NO OP
+    }
+
+    render(props: any){
         const that = this;
         return (<div 
             onClick={e => {
-                console.log('clicked', global);
-                const ar: ActionResolver = global.actionResolver;
-                ar.enqueueAction(
-                    PlayCardAction(global.player, that, global.enemy)
+                // TODO: put the action resolver on the global object? or nah?
+                game.actionResolver.enqueueAction(
+                    (new PlayCardAction(
+                        game.player, 
+                        that, 
+                        game.enemies[0]
+                    ): Action<any, any, any>)
                 );
+
+                console.log(game.player, game.enemies[0], game.hand.length);
             }}><Component 
                 title={this.title}
                 text={this.text}
@@ -53,9 +71,4 @@ const cardProto = construct(null, {
             />
         </div>);
     }
-});
-
-export function Card(mixin: Mixin): CardT {
-    return construct(cardProto, mixin);
-};
-
+}

@@ -10,10 +10,10 @@ type Elem = any /*{
     [compare]: (Elem) => -1 | 0 | 1,
 }*/
 
-function insert(e, l){
+function insert(e, l: LL<any>){
     let v = l.view();
     while(v.list[0] && e[compare](v.list[0]) < 0){
-        v.shift();
+        v.next();
     }
     v.push(e);
 }
@@ -33,21 +33,21 @@ export function topologicalSort(elements: Array<Elem>): Array<Elem> {
         .filter(e => e[parents].size == 0)
         .sort((a, b) => a[compare](b))
         .reduce((a, m) => {
-            console.log(...a);
-            return a.append(m);
+            a.append(m);
+            return a;
         }, new LL());
 
     let retVal = [];
 
-    while(available.list[1]){
-        let m = available.pop();
-        m[children].forEach(c => {
-            c[parents].delete(m);
+    let next;
+    while(next = available.next()){
+        next[children].forEach(c => {
+            c[parents].delete(next);
             if(!c[parents].size){
                 insert(c, available);
             }
         });
-        retVal.push(m);
+        retVal.push(next);
     }
     return retVal;
 }

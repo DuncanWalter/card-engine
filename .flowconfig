@@ -2,18 +2,19 @@
 .*/node_modules/.*
 .*/scripts/.*
 .*/dist/.*
-.*/scripts/.*
 
 [libs]
-./flow-typed/external
+./flowtyped/external
+./flowtyped
 
 [options]
 experimental.const_params=true
 module.use_strict=true
 emoji=true
 all=true
-module.name_mapper='.*\.\(svg\|png\|styl\|css\)$' -> '<PROJECT_ROOT>/flow-typed/external'
-module.name_mapper='.*/node_modules/.*' -> '<PROJECT_ROOT>/flow-typed/external'
-module.name_mapper='^[^/]*$' -> '<PROJECT_ROOT>/flow-typed/external'
+module.name_mapper='.*\.\(svg\|png\|styl\|css\)$' -> 'external'
+module.name_mapper='.*/node_modules/.*' -> 'external'
+module.name_mapper='^[^/]*$' -> 'external'
 module.name_mapper='^~\(.*\)$' -> '<PROJECT_ROOT>\1'
 suppress_type=any
+module.system=haste

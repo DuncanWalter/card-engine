@@ -3,7 +3,7 @@ import { Module, loadModules } from './module'
 import { base } from './../base/base'
 
 export const global = loadModules([base]);
-export const App = props => <div style={styles.app} id='app-root'>
+export const App = () => <div style={styles.app} id='app-root'>
    { global.render() }
 </div>;
 

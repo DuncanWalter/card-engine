@@ -1,26 +1,34 @@
-import { Card } from './card'
+import { Card, CardPartial } from './card'
 import { DefendAction } from './../actions/defend'
 
-export const defend = Symbol('defend');
 
-export function Defend(){
-    return Card({
-        id: defend,
-        play({ resolver, actor, subject }){
-            const blk = resolver.processAction(
-                DefendAction(
-                    this, 
-                    subject,
-                    this.block,
-                    'target',
-                ),
-            );
-            return { blk };
-        },
-        text: 'become an immortal (to anything dealing less than 5 damage)',
-        title: 'hide',
-        energy: '1',
-        block: 5,
-        color: '#223399',
-    });
+type Meta = { blk: string }
+
+export const defend = Symbol('defend');
+export class Defend extends CardPartial<Meta> implements Card<Meta> {
+    
+    id: Symbol = defend
+    block: number
+
+    constructor(){
+        super();
+        this.energy = '1';
+        this.color = '#223399';
+        this.title = 'Defend';
+        this.text = 'Gain 5 block';
+        this.block = 5;
+    }
+
+    play({ resolver, actor, subject }){
+        const blk = resolver.processAction(
+            new DefendAction(
+                this, 
+                subject,
+                this.block,
+                'target',
+            ),
+        );
+        return { blk };
+    }
+
 };

@@ -64,6 +64,8 @@ export const loadModules: LoadModules = modules => {
 
     global.initialize();
 
+    
+
     return global;
 
 }
