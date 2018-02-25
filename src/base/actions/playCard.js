@@ -35,8 +35,6 @@ export class PlayCardAction implements Action<any, Card<any>, PlayCardAction> {
 
         const game = gameState.view();
 
-        game.discardPile.push(game.hand.splice(game.hand.indexOf(subject), 1));
-
-        gameState.emit();
+        game.discardPile.push(game.hand.splice(game.hand.indexOf(subject), 1)[0]);
     }
 }

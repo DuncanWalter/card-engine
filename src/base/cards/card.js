@@ -61,7 +61,6 @@ export class CardPartial<Meta> {
                         game.enemies[0]
                     ): Action<any, any, any>)
                 );
-
                 console.log(game.player, game.enemies[0], game.hand.length);
             }}><Component 
                 title={this.title}

@@ -28,7 +28,6 @@ export class DamageAction implements Action<any, HasHealth, DamageAction> {
             cancel();
         } else {
             subject.health -= action.damage;
-            gameState.emit();
         }
     }
 }

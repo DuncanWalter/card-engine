@@ -1,6 +1,6 @@
 import { fromEvents, never } from 'kefir'
 
-type StateSignature<O, S> = {
+export interface StateSlice<O, S> {
     stream: any, 
     destroy: () => void, 
     bind: ((S, O) => S) => void,
@@ -30,7 +30,7 @@ function Emitter(initial){
     };
 };
 
-export function State<O, S>(owner: O, reducers: {[string]: (S, any, O) => S}, initial: S): StateSignature<O, S> {
+export function State<O, S>(owner: O, reducers: {[string]: (S, any, O) => S}, initial: S): StateSlice<O, S> {
     if(store.has(owner)){
         throw new Error('State slice owner collision.');
     } else {
@@ -57,18 +57,21 @@ export function State<O, S>(owner: O, reducers: {[string]: (S, any, O) => S}, in
 };
 
 export function dispatch(type: string | (typeof dispatch) => void, data: any): void {
+
+    console.log('dispatch', type, data);
+
     if(type instanceof Function){
         type(dispatch);
     } else if(typeof type == 'string'){
-        store.forEach((slice, owner) => {
+        store.forEach((slice: *, owner: *) => {
             if(slice.hasOwnProperty(type)){
                 // there is a reducer set up
                 const prev = slice[s];
                 slice[s] = slice[type](slice[s], data, owner);
-                if(prev !== slice[s]){
+                // if(prev !== slice[s]){
                     // the reducer made changes
                     slice[w].emit(slice[s]);
-                }
+                // }
             }   
         })
     }

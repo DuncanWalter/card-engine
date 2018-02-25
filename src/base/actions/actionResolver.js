@@ -1,5 +1,6 @@
 import { LL } from './../../utility/linkedList'
 
+import { gameState } from '../gameState'
 import type { Action } from './../actions/action'
 
 type AnyAction = Action<any, any, AnyAction>
@@ -49,7 +50,6 @@ export class ActionResolver {
         //     }
         // };
         // next();
-        console.log('action',  action, action.constructor, action.constructor.name);
         action.consumer({ 
             action,
             resolver: this,
@@ -58,6 +58,7 @@ export class ActionResolver {
             next: () => undefined,
             cancel: () => undefined,
         });
+        gameState.emit();
         return action;
     }
 

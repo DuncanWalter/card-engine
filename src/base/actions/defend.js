@@ -27,13 +27,6 @@ export class DefendAction implements Action<any, HasBlock, DefendAction> {
             cancel();
         } else {
             subject.block += action.block;
-            gameState.emit();
         }
     }
 }
-
-
-
-
-
-
