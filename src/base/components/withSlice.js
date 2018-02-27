@@ -1,8 +1,8 @@
 import { compose, withLifecycle, withState } from 'incompose'
-import { StateSlice } from '../../core/state';
+import type { StateSlice } from '../../core/state';
 
 
-type WithSlice = (StateSlice<any, any>,  string) => any => any
+type WithSlice = (StateSlice<any, any, any>,  string) => any => any
 export const withSlice: WithSlice = (slice, name) => component => {
 
     let callback = () => update();
@@ -10,16 +10,14 @@ export const withSlice: WithSlice = (slice, name) => component => {
     
     let streamManaged = withLifecycle({
         componentDidMount: el => {
-            // console.log('mounting');
             slice.stream.onValue(callback)
         },
         componentWillUnmount: () => {
-            // console.log('unmounting');
             slice.stream.offValue(callback);
         },
     });
 
-    let stateful = withState(name, 'update', slice.view());
+    let stateful = withState(name, 'update', slice);
 
     let updateHooked = component => props => {
         let u = props.update;

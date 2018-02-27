@@ -6,16 +6,16 @@ import { Creature } from './creature'
 
 const unit = <div style={{flex: 1}}/>
 
-export const BattleHUD = withSlice(gameState, 'game')((props) => {
-    let game = props.game;
+export const BattleHUD = withSlice(gameState, 'game')(props => {
+    let game = gameState;
     return <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* relic bar! */}
         {/* combat pane! */}
         <div style={{ flex: 3, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div style={{flex: 1}}/>
-            <Creature { ...game.player }/>
+            <Creature { ...game.player } health={game.player.health}/>
             <div style={{flex: 1}}/>
-            <Creature { ...game.enemies[0] }/>
+            <Creature { ...game.enemies[0] } health={game.enemies[0].health}/>
             <div style={{flex: 1}}/>
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>

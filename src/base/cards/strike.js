@@ -1,5 +1,6 @@
-import { Card, CardPartial } from './card'
-import { DamageAction } from './../actions/damage'
+import { Card, CardPartial, PlayArgs } from './card'
+import { Damage, targeted } from './../actions/damage'
+import { blockable } from '../effects/block';
 
 type Meta = { dmg: string }
 
@@ -18,13 +19,16 @@ export class Strike extends CardPartial<Meta> implements Card<Meta> {
         this.damage = 6;
     }
 
-    play({ resolver, actor, subject }){
+    play({ resolver, actor, subject }: PlayArgs){
         const dmg = resolver.processAction(
-            new DamageAction(
+            new Damage(
                 this, 
                 subject,
-                this.damage,
-                'target',
+                {
+                    damage: this.damage,
+                },
+                targeted, 
+                blockable,
             ),
         );
         return { dmg };

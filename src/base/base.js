@@ -3,6 +3,7 @@ import { Main } from './components/main'
 import { ActionResolver } from './actions/actionResolver'
 import { Strike } from './cards/strike'
 import { Defend } from './cards/defend'
+import { Bash } from './cards/bash'
 import { dispatch, State } from './../core/state'
 
 import { gameState } from './gameState';
@@ -17,12 +18,14 @@ export const base = new Module('base', ({ global, next }) => {
     // global.reactionLibrary = new Library(),
     next();
 
-    const game = gameState.view();
-    game.hand.push(new Strike());
-    game.hand.push(new Strike());
-    game.hand.push(new Strike());
-    game.hand.push(new Defend());
-    game.hand.push(new Defend());
+    const game = gameState
+    game.hand.push(new Strike())
+    game.hand.push(new Strike())
+    game.hand.push(new Bash())
+    game.hand.push(new Defend())
+    game.hand.push(new Defend())
+
+    game.resolver.initialize()
 
 
     // global.cardLibrary.initialize();

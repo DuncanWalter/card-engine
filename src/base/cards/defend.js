@@ -1,5 +1,6 @@
-import { Card, CardPartial } from './card'
-import { DefendAction } from './../actions/defend'
+import { Card, CardPartial, PlayArgs } from './card'
+import { BindEffect } from '../actions/bindEffect';
+import { block } from '../effects/block';
 
 
 type Meta = { blk: string }
@@ -19,16 +20,19 @@ export class Defend extends CardPartial<Meta> implements Card<Meta> {
         this.block = 5;
     }
 
-    play({ resolver, actor, subject }){
-        const blk = resolver.processAction(
-            new DefendAction(
+    play({ resolver, actor, subject }: PlayArgs){
+        const action = resolver.processAction(
+            new BindEffect(
                 this, 
                 subject,
-                this.block,
-                'target',
+                {
+                    effect: block,
+                    stacks: this.block,
+                },
+                block,
             ),
         );
-        return { blk };
+        return { blk: action.data.stacks };
     }
 
 };

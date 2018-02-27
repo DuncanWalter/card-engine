@@ -1,8 +1,11 @@
 import { State } from "../core/state";
 import { ActionResolver } from "./actions/actionResolver";
+import { Player } from "./creatures/player";
+import { Creature } from "./creatures/creature";
+import type { StateSlice } from '../core/state'
 
 const initialState = {
-    actionResolver: new ActionResolver(),
+    resolver: new ActionResolver([]),
     hand: [
         // new Strike(),
         // new Defend(),
@@ -29,12 +32,23 @@ const initialState = {
     ],
     exhaustPile: [],
     equipment: [],
-    player: { health: 100, maxHealth: 120, energy: 3, block: 0, color: '#33aa66' },
+    player: new Player(60),
     allies: [],
-    enemies: [{ health: 50, maxHealth: 50, block: 0, color: '#aa3366' }],
-};
+    enemies: [new Creature(40)],
+}
 
-export const gameState: * = new State(Symbol('base'), {
+initialState.resolver = new ActionResolver([
+    initialState.hand,
+    initialState.drawPile,
+    initialState.exhaustPile,
+    initialState.equipment,
+    initialState.enemies,
+    initialState.player,
+    initialState.allies,
+])
+
+type GameState = StateSlice<Symbol, typeof initialState, any> 
+export const gameState: GameState = State(Symbol('base'), {
     endTurn(state: *){
         // TODO: can't do this here, must be in an action
         state.player.energy = 0;

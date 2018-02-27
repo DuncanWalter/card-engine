@@ -1,21 +1,21 @@
 import { Card as Component } from './../components/hud/card'
 import { gameState } from './../gameState'
-import { PlayCardAction } from '../actions/playCard'
+import { PlayCard } from '../actions/playCard'
 import { construct } from './../../utility/construct'
 
-import type { ActionResolver } from './../actions/actionResolver'
+import type { ActionResolver, Listener, Listeners } from './../actions/actionResolver'
 import type { Action } from './../actions/action'
 
 export interface Card<Meta> {
     id: Symbol,
     render(any): any,
-    // should be acquired from localization?
+    // should be acquired from localization TODO:
     title: string,
     text: string,
     energy: string,
     color: string,
     listener?: *,
-    play(ctx: PlayCtx): Meta, 
+    play(ctx: PlayArgs): Meta, 
 };
 
 type Mixin = {
@@ -23,17 +23,20 @@ type Mixin = {
     title: string,
     text: string,
     energy: string,
-    play: (ctx: PlayCtx) => PlayCardAction, 
+    play: (ctx: PlayArgs) => PlayCard, 
     color: string,
 };
 
-type PlayCtx = {
+export interface PlayArgs {
     actor: any,
     subject: any,
     resolver: ActionResolver,
 }
 
-const game: * = gameState.view();
+const game = gameState
+
+// TODO: If I make a meta constructor, does that make things easier?
+
 
 export class CardPartial<Meta> {
 
@@ -42,11 +45,15 @@ export class CardPartial<Meta> {
     energy: string
     color: string
 
+    listener: Listeners
+
+    header: $PropertyType<Listener<>, 'header'> = {}
+
     id: Symbol
-    +play: (ctx: PlayCtx) => Meta
+    +play: (ctx: PlayArgs) => Meta
 
     constructor(){
-        // NO OP
+        this.listener = [];
     }
 
     render(props: any){
@@ -54,13 +61,16 @@ export class CardPartial<Meta> {
         return (<div 
             onClick={e => {
                 // TODO: put the action resolver on the global object? or nah?
-                game.actionResolver.enqueueAction(
-                    (new PlayCardAction(
+                game.resolver.enqueueAction(
+                    new PlayCard(
                         game.player, 
                         that, 
-                        game.enemies[0]
-                    ): Action<any, any, any>)
-                );
+                        {
+                            target: game.enemies[0],
+                            success: false,
+                        }
+                    )
+                )
                 console.log(game.player, game.enemies[0], game.hand.length);
             }}><Component 
                 title={this.title}

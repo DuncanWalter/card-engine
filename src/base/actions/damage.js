@@ -1,38 +1,19 @@
-import { construct } from './../../utility/construct' 
-import { gameState } from '../gameState';
+import { MetaAction, Action } from './action'
 
-import type { Action, ConsumerArgs } from './action'
+import type { CA } from '../actions/action'
+import type { Creature } from '../creatures/creature'
 
-type HasHealth = {
-    health: number,
-}
+type Data = { damage: number }
 
-export const damageAction = Symbol('damageAction');
-export class DamageAction implements Action<any, HasHealth, DamageAction> {
-    
-    id: Symbol = damageAction;
-    damage: number
-    subject: { health:  number }
-    actor: any
-    tags: Array<string>
-
-    constructor(actor: any, subject: { health: number }, damage: number, ...tags: Array<string>){
-        this.damage = damage;
-        this.actor = actor;
-        this.subject = subject;
-        this.tags = ['damage', ...tags];
+export const targeted = Symbol('targeted')
+export const damage = Symbol('damage')
+export const Damage: CA<Data, Creature> = MetaAction(damage, ({ data, subject, cancel }: *) => { 
+    if(data.damage <= 0){
+        cancel()
+    } else {
+        subject.health -= data.damage
     }
-    
-    consumer({ action, subject, cancel }: ConsumerArgs<any, HasHealth, DamageAction>){ 
-        if(action.damage <= 0){
-            cancel();
-        } else {
-            subject.health -= action.damage;
-        }
-    }
-}
-
-
+})
 
 
 

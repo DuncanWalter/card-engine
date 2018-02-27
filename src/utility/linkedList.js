@@ -7,8 +7,9 @@ export class LL<E>{
     last: LLNode<E>
 
     constructor(...elements: Array<E>){
-        this.list = [null, false];
-        this.last = this.list;
+        this.list = [null, false]
+        this.last = this.list
+        elements.forEach(e => this.append(e))
     }
     
     next(): E | null {
@@ -51,6 +52,39 @@ export class LL<E>{
         return l;
     }
 
+    appendList(list: LL<E>){
+        let [val, link] = list.list;
+        list.list = this.last;
+        this.last[0] = val;
+        this.last[1] = link;
+        this.last = link ? list.last : this.last;
+    }
+
+    forEach(fn: (element: E, index: number, list: LL<E>) => void){
+        let n, i = 0, l = this.view();
+        while(n = l.next()){
+            fn(n, i++, l);
+        }
+    }
+
+    map<R>(fn: E => R): LL<R> {
+        const l = new LL();
+        this.forEach(e => l.append(fn(e)));
+        return l;
+    }
+
+    reduce<A>(fn: (acc: A, elem: E) => A, acc: A): A {
+        let a = acc;
+        this.forEach(e => { a = fn(a, e); });
+        return a;
+    }
+
+    toArray(): Array<E> {
+        return this.reduce((a, e) => {
+            a.push(e);
+            return a;
+        }, []);
+    }
     // // $FlowFixMe
     // [Symbol.iterator]: function*(){
     //     let l = this.list;
@@ -60,3 +94,4 @@ export class LL<E>{
     //     }
     // }
 };
+
