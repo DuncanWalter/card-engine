@@ -1,13 +1,19 @@
+import { block as blockSymbol } from "../../../engine/effects/block"
+import { gameState } from "../../../engine/gameState"
+import type { Component } from "../component"
+import { Effect } from "./effect"
 
 type Props = {
-    name: string,
-    color: string,
-    health: number,
-    maxHealth: number,
-    block: number,
+    creature: Creature,
+    game: typeof gameState
 }
 
-export const Creature = ({ name, color, health, maxHealth, block }: Props) => {
+export const Creature: Component<Props> = ({ game, creature }: Props) => {
+    
+    const { health, maxHealth, color } = creature
+    const maybeBlock = creature.effects.filter(e => e.id == blockSymbol)[0]
+    const block = maybeBlock ? maybeBlock.stacks : 0
+    
     return <div style={sty.creature}>
         <div style={{ backgroundColor: color, ...sty.img }}/>
         <div style={sty.healthBar}>
@@ -15,8 +21,11 @@ export const Creature = ({ name, color, health, maxHealth, block }: Props) => {
             <div style={sty.healthBarEmpty(health, block, maxHealth)}/>
             <div style={sty.healthBarBlock(health, block, maxHealth)}/>
         </div>
+        <div style={sty.effectBar}>
+            {creature.effects.map(e => <Effect effect={e}/>)}
+        </div>
     </div>
-};
+}
 
 const sty = {
     creature: {
@@ -52,4 +61,9 @@ const sty = {
             backgroundColor: '#2266aa',
         }
     },
-};
+    effectBar: {
+        display: 'flex',
+        flexDirection: 'row',
+        height: '30px',
+    },
+}

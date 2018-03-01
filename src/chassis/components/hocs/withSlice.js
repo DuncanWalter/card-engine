@@ -1,9 +1,8 @@
 import { compose, withLifecycle, withState } from 'incompose'
-import type { StateSlice } from '../../core/state';
+import type { Component } from '../component';
+import type { StateSlice } from '../../../core/state';
 
-
-type WithSlice = (StateSlice<any, any, any>,  string) => any => any
-export const withSlice: WithSlice = (slice, name) => component => {
+export const withSlice = (slice: StateSlice<>, name: string) => function<P>(component: Component<P>): Component<P> {
 
     let callback = () => update();
     let update = () => undefined;

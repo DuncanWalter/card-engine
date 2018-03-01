@@ -1,8 +1,8 @@
 import { Module, loadModules } from './module'
 
-import { base } from './../base/base'
+import { engine } from './../engine/engine'
 
-export const global = loadModules([base]);
+export const global = loadModules([engine]);
 export const App = () => <div style={styles.app} id='app-root'>
    { global.render() }
 </div>;

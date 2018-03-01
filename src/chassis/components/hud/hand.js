@@ -1,8 +1,7 @@
 import { Card } from './card'
-import { Card as CardObject } from './../../cards/card'
-import { gameState } from './../../gameState'
-import { State } from './../../../core/state'
-import { withSlice } from '../withSlice';
+import { Card as CardObject } from './../../../engine/cards/card'
+import { gameState } from './../../../engine/gameState'
+import { withSlice } from '../hocs/withSlice';
 
 
 // gameState.stream.map(s => s.hand).onValue(console.log);
@@ -15,12 +14,12 @@ type Props = {
 // dto to component? Probably the latter... TODO:
 export const Hand = withSlice(gameState, 'game')(({ cards }: Props) => {
     console.log(cards);
-    return <div style={styles.hand}>
+    return <div style={sty.hand}>
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0 }}>
             {cards.map((e, i, l) => <div style={
-                styles.nthCardPoint(i, l.length)
-            }><div style={styles.slot}>{e.render()}</div></div>)}
+                sty.nthCardPoint(i, l.length)
+            }><div style={sty.slot}><Card card={e} game={gameState}/></div></div>)}
         </div>
         <div style={{ flex: 1 }}/>
     </div>;
@@ -35,7 +34,7 @@ export const Hand = withSlice(gameState, 'game')(({ cards }: Props) => {
 //         componentWillUnmount: () => s.destroy(),
 //     })(component),
 
-const styles = {
+const sty = {
     nthCardPoint: (n, m) => {
 
         let parab = x => x**2;
@@ -49,7 +48,7 @@ const styles = {
         angle = 0.3*180/3.1415*Math.atan(offset);
 
         return { 
-            transform: `translate(${164*index}px, ${155*parab(offset)}px) rotate(${ angle }deg)`,
+            transform: `translate(${195*index}px, ${-240 + 140*parab(offset)}px) rotate(${ angle }deg)`,
             // transform: `translate(${164*(n-(m-1)/2)}px)`,
             width: 0,
             height: 0,

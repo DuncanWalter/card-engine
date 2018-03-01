@@ -1,6 +1,4 @@
-import { topologicalSort } from './../utility/topologicalSort'
-
-
+import { topologicalSort } from '../core/topologicalSort'
 
 // TODO: clean this hideous file up
 const modules: Map<string, Module> = new Map();

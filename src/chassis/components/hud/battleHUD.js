@@ -1,21 +1,24 @@
 import { Hand } from './hand'
-import { gameState } from '../../gameState'
-import { withSlice } from '../withSlice'
-import { dispatch } from '../../../core/state'
+import { gameState } from '../../../engine/gameState'
+import { withSlice } from '../hocs/withSlice'
+import { dispatch } from '../../../engine/gameState'
 import { Creature } from './creature'
+import type { Component } from '../component';
 
 const unit = <div style={{flex: 1}}/>
 
-export const BattleHUD = withSlice(gameState, 'game')(props => {
-    let game = gameState;
+type Props = { }
+
+export const BattleHUD: Component<Props> = withSlice(gameState, 'game')((props: Props) => {
+    let game = gameState
     return <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* relic bar! */}
         {/* combat pane! */}
         <div style={{ flex: 3, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div style={{flex: 1}}/>
-            <Creature { ...game.player } health={game.player.health}/>
+            <Creature creature={game.player} game={game}/>
             <div style={{flex: 1}}/>
-            <Creature { ...game.enemies[0] } health={game.enemies[0].health}/>
+            <Creature creature={game.enemies[0]} game={game}/>
             <div style={{flex: 1}}/>
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>

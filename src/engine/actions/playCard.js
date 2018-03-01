@@ -1,10 +1,9 @@
-import { construct } from '../../utility/construct' 
 import { gameState } from '../gameState'
 
 import type { Card } from '../cards/card'
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
-import { Player } from '../creatures/player';
+import { Player } from '../creatures/player'
 import type { CA } from './action'
 
 type Data = {

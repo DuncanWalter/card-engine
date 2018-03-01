@@ -1,10 +1,9 @@
-import { Module } from './../core/module'
-import { Main } from './components/main'
+import { Module } from '../core/module'
+import { Main } from '../chassis/components/main'
 import { ActionResolver } from './actions/actionResolver'
 import { Strike } from './cards/strike'
 import { Defend } from './cards/defend'
 import { Bash } from './cards/bash'
-import { dispatch, State } from './../core/state'
 
 import { gameState } from './gameState';
 
@@ -12,7 +11,7 @@ import type { Card } from './cards/card'
 
 
 
-export const base = new Module('base', ({ global, next }) => {    
+export const engine = new Module('engine', ({ global, next }) => {    
     global.render = props => <Main/>;
     // global.cardLibrary = new Library(),
     // global.reactionLibrary = new Library(),
@@ -31,3 +30,4 @@ export const base = new Module('base', ({ global, next }) => {
     // global.cardLibrary.initialize();
     // global.reactionLibrary.initialize();
 }, [], []);
+

@@ -1,4 +1,4 @@
-import { State } from "../core/state";
+import { createStore } from "../core/state";
 import { ActionResolver } from "./actions/actionResolver";
 import { Player } from "./creatures/player";
 import { Creature } from "./creatures/creature";
@@ -47,8 +47,12 @@ initialState.resolver = new ActionResolver([
     initialState.allies,
 ])
 
-type GameState = StateSlice<Symbol, typeof initialState, any> 
-export const gameState: GameState = State(Symbol('base'), {
+console.log(initialState.player instanceof Creature);
+
+export const { dispatch, createSlice, destroySlice } = createStore()
+
+type GameState = StateSlice<typeof initialState, any> // TODO: rename to game?
+export const gameState: GameState = createSlice(Symbol('base'), {
     endTurn(state: *){
         // TODO: can't do this here, must be in an action
         state.player.energy = 0;

@@ -12,6 +12,7 @@ export class Effect {
     turnDelta: number
     listener: Listeners
     owner: Creature
+    color: string
 
     constructor(owner: Creature, stacks: number){
         /*/ NO OP /*/
@@ -38,6 +39,7 @@ export function MetaEffect(
             this.listener = [ turnListener(this), listener(owner, this) ]
             this.stacks = stacks
             this.owner = owner
+            this.color = '#554433'
         } 
     }
 
