@@ -8,8 +8,10 @@ type Data = { damage: number }
 export const targeted = Symbol('targeted')
 export const damage = Symbol('damage')
 export const Damage: CA<Data, Creature> = MetaAction(damage, ({ data, subject, cancel }: *) => { 
+    data.damage = Math.floor(data.damage)
     if(data.damage <= 0){
         cancel()
+        return
     } else {
         subject.health -= data.damage
     }

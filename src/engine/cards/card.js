@@ -1,5 +1,4 @@
 import { Card as Component } from './../../chassis/components/hud/card'
-import { gameState } from './../gameState'
 import { PlayCard } from '../actions/playCard'
 
 import type { ActionResolver, Listener, Listeners } from './../actions/actionResolver'
@@ -11,7 +10,8 @@ export interface Card<Meta> {
     textTemplate: (meta: Meta) => string,
     energyTemplate: (meta: Meta) => string,
     color: string,
-    listener?: *,
+    energy: number,
+    listener: Listeners,
     play(ctx: PlayArgs<>): Meta, // TODO: strong type these?
     simulate(ctx: PlayArgs<>): {
         text: string,
@@ -29,15 +29,15 @@ export interface PlayArgs<A: Object={}, S: Object={}> {
 
 
 
-// TODO: If I make a meta constructor, does that make things easier?
+// TODO: Meta construction needed?
 
-const game = gameState
 export class CardPartial<Meta> {
 
     titleTemplate: (meta: Meta) => string
     textTemplate: (meta: Meta) => string
     energyTemplate: (meta: Meta) => string
     color: string
+    energy: number
 
     listener: Listeners
 

@@ -7,7 +7,7 @@ export class Player extends Creature {
 
     constructor(health: number, maxHealth?: number){
         super(health, maxHealth)
-        this.maxEnergy = this.maxEnergy
+        this.maxEnergy = 3 // TODO: how do energy stuffs?
         this.energy = this.maxEnergy
     }
     

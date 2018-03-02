@@ -1,7 +1,7 @@
 import { LL } from './../../core/linkedList'
 import { topologicalSort } from '../../core/topologicalSort'
-import { gameState } from '../gameState'
 import type { Action, ConsumerArgs } from './../actions/action'
+import type { GameStateSlice } from '../gameState'
 
 type AnyAction = Action<any, any, any>
 
@@ -45,8 +45,7 @@ function testListener(action: AnyAction, listener: AnyListener){
     }
     
     if(h.tags){
-        let tags = h.tags
-        if(h.tags.reduce((a, t) => tags.indexOf(t) >= 0 && a, true)){
+        if(h.tags.reduce((a, t) => action.tags.indexOf(t) >= 0 && a, true)){
             matched = true
         } else {
             return false
@@ -66,6 +65,7 @@ function testListener(action: AnyAction, listener: AnyListener){
 
 export class ActionResolver {
 
+    gameStateSlice: GameStateSlice
     initialized: boolean
     processing: boolean
     simulating: boolean
@@ -79,24 +79,25 @@ export class ActionResolver {
         id: Symbol,
     }>
 
-    constructor(listeners: Listeners){
+    constructor(listeners: Listeners, gameStateSlice: GameStateSlice){
         this.processing = false
         this.simulating = false
         this.actionQueue = new LL()
         this.listeners = listeners
         this.initialized = false
         this.listenerOrder = new Map()
+        this.gameStateSlice = gameStateSlice
     }
 
-    enqueueAction(action: AnyAction){
+    enqueueActions(...actions: AnyAction[]){
         if (this.simulating) return
-        this.actionQueue.append(action)
+        actions.forEach(action => this.actionQueue.append(action))
         if (!this.processing) this.processQueue()
     }
 
-    pushAction(action: AnyAction){
+    pushActions(...actions: AnyAction[]){
         if (this.simulating) return
-        this.actionQueue.push(action)
+        actions.reverse().forEach(action => this.actionQueue.push(action))
         if (!this.processing) this.processQueue()
     }
 
@@ -117,6 +118,8 @@ export class ActionResolver {
         })(this.listeners)
 
         activeListeners.append(any(action))
+
+        if(!this.simulating){ console.log(action.id, activeListeners.toArray().length) }
 
         const executionQueue: AnyListener[] = activeListeners.toArray().sort((a, b) => {
             const ai = (this.listenerOrder.get(a.id)||{index:-1}).index
@@ -141,12 +144,14 @@ export class ActionResolver {
                     resolver: any(this),
                     subject: action.subject,
                     actor: action.actor,
+                    game: this.gameStateSlice,
                 })
             }
         }
         next()
         if(!this.simulating){
-            gameState.emit()
+            this.gameStateSlice.emit()
+            console.log(this.gameStateSlice.enemies[0])
         }
         return action
     }

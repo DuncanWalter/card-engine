@@ -13,7 +13,6 @@ type Props = {
 // should the card 'dtos' have a render, or should the hand map
 // dto to component? Probably the latter... TODO:
 export const Hand = withSlice(gameState, 'game')(({ cards }: Props) => {
-    console.log(cards);
     return <div style={sty.hand}>
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0 }}>

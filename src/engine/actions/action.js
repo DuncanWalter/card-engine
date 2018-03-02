@@ -1,5 +1,7 @@
 import { ActionResolver } from './actionResolver'
-import { gameState } from '../gameState';
+import { gameState, GameState } from '../gameState'
+
+// TODO: Make the Consumer args take game state (importing it feels dirty)
 
 export type CA<Data=any, Subject=any, Actor=any> = Class<Action<Data, Subject, Actor>>
 
@@ -25,6 +27,7 @@ export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
     resolver: ActionResolver,
     next: () => void,
     cancel: () => void,
+    game: $ReadOnly<GameState>,
 }
 
 export function MetaAction<Data, Subject, Actor>(

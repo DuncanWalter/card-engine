@@ -4,9 +4,10 @@ import { ActionResolver } from './actions/actionResolver'
 import { Strike } from './cards/strike'
 import { Defend } from './cards/defend'
 import { Bash } from './cards/bash'
+import { StartCombat } from './actions/startCombat'
+import { gameState } from './gameState'
 
-import { gameState } from './gameState';
-
+import { Turtle } from './creatures/turtle/turtle'
 import type { Card } from './cards/card'
 
 
@@ -18,13 +19,15 @@ export const engine = new Module('engine', ({ global, next }) => {
     next();
 
     const game = gameState
-    game.hand.push(new Strike())
-    game.hand.push(new Strike())
-    game.hand.push(new Bash())
-    game.hand.push(new Defend())
-    game.hand.push(new Defend())
+
+    
+    
 
     game.resolver.initialize()
+
+    game.enemies[0] = new Turtle(15)
+
+    game.resolver.enqueueActions(new StartCombat({}, {}, {}))
 
 
     // global.cardLibrary.initialize();

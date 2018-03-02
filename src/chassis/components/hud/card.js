@@ -19,7 +19,7 @@ export const Card = ({ game, card }: Props) => {
 
     const clicked = e => {
         // use a dispatch and a display state TODO:
-        game.resolver.enqueueAction(
+        game.resolver.enqueueActions(
             new PlayCard(
                 game.player, 
                 card,
@@ -29,7 +29,6 @@ export const Card = ({ game, card }: Props) => {
                 }
             )
         )
-        console.log(game.player, game.enemies[0], game.hand.length);
     }
 
     return <div style={styles.base} onClick={clicked}>

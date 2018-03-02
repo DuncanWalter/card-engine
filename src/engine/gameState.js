@@ -1,43 +1,47 @@
-import { createStore } from "../core/state";
-import { ActionResolver } from "./actions/actionResolver";
-import { Player } from "./creatures/player";
-import { Creature } from "./creatures/creature";
-import type { StateSlice } from '../core/state'
+import { createStore } from "../core/state"
+import { ActionResolver } from "./actions/actionResolver"
+import { Player } from "./creatures/player"
+import { Creature } from "./creatures/creature"
+import type { NPC } from "./creatures/npc"
+import type { Card } from "./cards/card"
 
-const initialState = {
-    resolver: new ActionResolver([]),
-    hand: [
-        // new Strike(),
-        // new Defend(),
-        // new Strike(),
-        // new Defend(),
-        // new Strike(),
-        // new Defend(),
-    ],
-    drawPile: [
-        // new Strike(),
-        // new Defend(),
-        // new Strike(),
-        // new Defend(),
-        // new Strike(),
-        // new Defend(),
-    ],
-    discardPile: [
-        // new Strike(),
-        // new Defend(),
-        // new Strike(),
-        // new Defend(),
-        // new Strike(),
-        // new Defend(),
-    ],
+import type { Listeners } from "./actions/actionResolver"
+import type { StateSlice } from "../core/state"
+
+function any(any: any): any { return any }
+
+export interface GameState {
+    resolver: ActionResolver,
+    hand: Card<any>[],
+    drawPile: Card<any>[],
+    discardPile: Card<any>[],
+    enemies: NPC[],
+    allies: NPC[],
+    player: Player,
+    equipment: Array<any>,
+    deck: Card<any>[],
+    exhaustPile: Card<any>[],
+}
+
+export type GameStateSlice = StateSlice<GameState, any>
+
+const initialState: GameState = {
+    resolver: any(null),
+    hand: [],
+    drawPile: [],
+    discardPile: [],
+    deck: [],
     exhaustPile: [],
     equipment: [],
     player: new Player(60),
     allies: [],
-    enemies: [new Creature(40)],
+    enemies: [],
 }
 
-initialState.resolver = new ActionResolver([
+export const { dispatch, createSlice, destroySlice } = createStore()
+export const gameState = createSlice(Symbol('base'), {}, initialState)
+
+initialState.resolver = new ActionResolver(any([
     initialState.hand,
     initialState.drawPile,
     initialState.exhaustPile,
@@ -45,35 +49,9 @@ initialState.resolver = new ActionResolver([
     initialState.enemies,
     initialState.player,
     initialState.allies,
-])
+]), gameState)
 
-console.log(initialState.player instanceof Creature);
 
-export const { dispatch, createSlice, destroySlice } = createStore()
 
-type GameState = StateSlice<typeof initialState, any> // TODO: rename to game?
-export const gameState: GameState = createSlice(Symbol('base'), {
-    endTurn(state: *){
-        // TODO: can't do this here, must be in an action
-        state.player.energy = 0;
-        state.player.energy += 3;
 
-        while(state.hand.length){
-            state.discardPile.push(state.hand.pop());
-        }
 
-        while(state.discardPile.length){
-            state.drawPile.splice(
-                Math.floor(Math.random()*state.drawPile.length),
-                0,
-                state.discardPile.pop(),
-            );
-        }
-
-        while(state.hand.length < 5){
-            state.hand.push(state.drawPile.pop());
-        }
-
-        return state;
-    },
-}, initialState);

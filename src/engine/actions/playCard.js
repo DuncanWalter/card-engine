@@ -1,5 +1,3 @@
-import { gameState } from '../gameState'
-
 import type { Card } from '../cards/card'
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
@@ -12,17 +10,16 @@ type Data = {
 }
 
 export const playCard = Symbol('playCard')
-export const PlayCard: CA<Data, Card<any>, Player> = MetaAction(playCard, ({ data, subject, actor, resolver, cancel }: *) => { 
-    // TODO: perform an energy check
-    // if(!actor.energy){ cancel() }
-    // actor.energy -= 1 //TODO: (subject: CardT).energy;
+export const PlayCard: CA<Data, Card<any>, Player> = MetaAction(playCard, ({ game, data, subject, actor, resolver, cancel }: *) => { 
+    // TODO: perform an actual energy check
+    if (actor.energy < subject.energy) return cancel()
+    
+    actor.energy -= subject.energy //TODO: subject.energy;
     subject.play({ 
         resolver,
         actor: subject, 
         subject: data.target,
     })
-
-    const game = gameState
 
     game.discardPile.push(game.hand.splice(game.hand.indexOf(subject), 1)[0])
     data.success = true

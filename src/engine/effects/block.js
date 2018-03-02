@@ -11,7 +11,7 @@ export const Block: Class<Effect> = MetaEffect(block, true, 0, (owner, self) => 
     id: block,
     header: {
         subjects: [owner],
-        tags: [damage, blockable],
+        tags: [blockable],
     },
     consumer({ data, resolver, actor, cancel }: *){
         if(typeof data.damage == 'number'){
@@ -29,6 +29,8 @@ export const Block: Class<Effect> = MetaEffect(block, true, 0, (owner, self) => 
                     stacks: -self.stacks,
                 }))
             }
+        } else {
+            cancel()
         }
     },  
 }))

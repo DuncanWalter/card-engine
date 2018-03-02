@@ -16,11 +16,12 @@ export class Bash extends CardPartial<Meta> implements Card<Meta> {
 
     constructor(){
         super()
-        this.energyTemplate = (meta: Meta) => '1'
+        this.energyTemplate = (meta: Meta) => this.energy.toString()
         this.color = '#bb4433'
         this.titleTemplate = (meta: Meta) => 'Bash'
         this.textTemplate = (meta: Meta) => `Deal ${meta.dmg} damage and 1 weakness to one target`
         this.damage = 5
+        this.energy = 2
         this.listener = {
             id: bash,
             header: {

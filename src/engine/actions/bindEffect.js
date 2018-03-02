@@ -8,7 +8,7 @@ type Data = {
     stacks: number,
 }
 
-export const bindEffect = Symbol('bindEffect');
+export const bindEffect = Symbol('bindEffect')
 export const BindEffect: CA<Data, Creature> = MetaAction(bindEffect, ({ subject, data }: *) => {
     let effect, current = subject.effects.filter(e => e.id == data.effect)
     if(current.length){
