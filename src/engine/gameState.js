@@ -1,4 +1,4 @@
-import { createStore } from "../core/state"
+import { createSlice } from "../core/state"
 import { ActionResolver } from "./actions/actionResolver"
 import { Player } from "./creatures/player"
 import { Creature } from "./creatures/creature"
@@ -38,8 +38,7 @@ const initialState: GameState = {
     enemies: [],
 }
 
-export const { dispatch, createSlice, destroySlice } = createStore()
-export const gameState = createSlice(Symbol('base'), {}, initialState)
+export const gameSlice = createSlice('game', {}, initialState)
 
 initialState.resolver = new ActionResolver(any([
     initialState.hand,
@@ -49,7 +48,7 @@ initialState.resolver = new ActionResolver(any([
     initialState.enemies,
     initialState.player,
     initialState.allies,
-]), gameState)
+]), gameSlice)
 
 
 

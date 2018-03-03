@@ -1,5 +1,5 @@
 import { Creature } from "./creature"
-import { GameState, gameState } from "../gameState"
+import { GameState, gameSlice } from "../gameState"
 import { Behavior } from "./behavior"
 import { startCombat } from "../actions/startCombat"
 import { ConsumerArgs } from "../actions/action"
@@ -35,7 +35,7 @@ export function MetaCreature(
 
     const id = Symbol(name)
 
-    gameState.resolver.registerListenerType(id)
+    gameSlice.resolver.registerListenerType(id)
     return class CustomCreature extends NPC {
 
         behavior: Behavior<>

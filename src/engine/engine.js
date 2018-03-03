@@ -5,7 +5,7 @@ import { Strike } from './cards/strike'
 import { Defend } from './cards/defend'
 import { Bash } from './cards/bash'
 import { StartCombat } from './actions/startCombat'
-import { gameState } from './gameState'
+import { gameSlice } from './gameState'
 
 import { Turtle } from './creatures/turtle/turtle'
 import type { Card } from './cards/card'
@@ -18,10 +18,7 @@ export const engine = new Module('engine', ({ global, next }) => {
     // global.reactionLibrary = new Library(),
     next();
 
-    const game = gameState
-
-    
-    
+    const game = gameSlice
 
     game.resolver.initialize()
 

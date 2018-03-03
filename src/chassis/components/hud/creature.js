@@ -1,11 +1,11 @@
 import { block as blockSymbol } from "../../../engine/effects/block"
-import { gameState } from "../../../engine/gameState"
+import { GameState } from "../../../engine/gameState"
 import type { Component } from "../component"
 import { Effect } from "./effect"
 
 type Props = {
     creature: Creature,
-    game: typeof gameState
+    game: $ReadOnly<GameState>,
 }
 
 export const Creature: Component<Props> = ({ game, creature }: Props) => {
@@ -14,7 +14,11 @@ export const Creature: Component<Props> = ({ game, creature }: Props) => {
     const maybeBlock = creature.effects.filter(e => e.id == blockSymbol)[0]
     const block = maybeBlock ? maybeBlock.stacks : 0
     
+    // TODO: display enemy intent
     return <div style={sty.creature}>
+        <div style={sty.effectBar}>
+            
+        </div>
         <div style={{ backgroundColor: color, ...sty.img }}/>
         <div style={sty.healthBar}>
             <div style={sty.healthBarFill(health, block, maxHealth)}/>
@@ -36,12 +40,14 @@ const sty = {
     img: {
         width: '250px',
         height: '250px',
+        borderRadius: '125px',
+        margins: '10px',
     },
     healthBar: {
         display: 'flex',
         flexDirection: 'horizontal',
         width: '400px',
-        height: '30px',
+        height: '16px',
     },
     healthBarFill(current, block, max){
         return {

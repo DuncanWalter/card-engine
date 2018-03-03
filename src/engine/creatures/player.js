@@ -9,6 +9,7 @@ export class Player extends Creature {
         super(health, maxHealth)
         this.maxEnergy = 3 // TODO: how do energy stuffs?
         this.energy = this.maxEnergy
+        this.color = '#4488dd'
     }
     
     set energy(value: number){

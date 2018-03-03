@@ -1,5 +1,5 @@
 import { MetaEffect, Effect } from "./effect"
-import { gameState } from "../gameState"
+import { gameSlice } from "../gameState"
 import { damage } from "../actions/damage"
 import type { Listeners } from "../actions/actionResolver"
 
@@ -17,4 +17,4 @@ export const Vulnerable: Class<Effect> = MetaEffect(vulnerable, true, -1, owner 
     },  
 }))
 
-gameState.resolver.registerListenerType(vulnerable, [], [damage])
+gameSlice.resolver.registerListenerType(vulnerable, [], [damage])

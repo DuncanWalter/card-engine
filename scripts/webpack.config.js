@@ -61,7 +61,10 @@ const baseConfig = options => ({
                 loader: 'css-loader',
             },{
                 loader: 'stylus-loader',
-                options: { use: [require('nib')()] }
+                options: { 
+                    use: [require('nib')()],
+                    preferPathResolver: 'webpack',
+                }
             }],
         },{
             exclude: /\.(styl|css|js|html|mjs)$/,

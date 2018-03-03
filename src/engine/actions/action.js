@@ -1,5 +1,5 @@
 import { ActionResolver } from './actionResolver'
-import { gameState, GameState } from '../gameState'
+import { gameSlice, GameState } from '../gameState'
 
 // TODO: Make the Consumer args take game state (importing it feels dirty)
 
@@ -34,7 +34,7 @@ export function MetaAction<Data, Subject, Actor>(
     id: Symbol, 
     consumer: (args: ConsumerArgs<Data, Subject, Actor>) => void,
 ): Class<Action<Data, Subject, Actor>> {
-    gameState.resolver.registerListenerType(id)
+    gameSlice.resolver.registerListenerType(id)
     return class CustomAction extends Action<Data, Subject, Actor> {
 
         id: Symbol = id

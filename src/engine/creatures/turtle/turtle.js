@@ -19,7 +19,6 @@ hunker = new Behavior('hunker', any => chomp, (game, self) => [
 ])
 
 export const Turtle = MetaCreature('turtle', 15, chomp, self => ({ resolver, actor }) => {
-    console.log(actor)
     resolver.enqueueActions(new BindEffect(self, self, {
         effect: block,
         stacks: 25,

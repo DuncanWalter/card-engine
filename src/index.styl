@@ -1,11 +1,18 @@
 // nib handles a bunch of cross browser issues, etc
 @require 'nib'
-@require './../node_modules/jeet/styl/index.styl'
-@require './../node_modules/font-awesome/css/font-awesome.min.css'
+@require '../node_modules/jeet/styl/index.styl'
+@require '../node_modules/font-awesome/css/font-awesome.min.css'
 
-// @font-face
-//     font-family: Roboto
-//     src: url(../static/fonts/Roboto-Regular.ttf)
+// scales by material guide
+small = 1.2rem
+body  = 1.4rem
+large = 1.6rem
+head  = 2.0rem
+title = 3.6rem
+
+@font-face
+    font-family: Earth
+    src: url(../static/BeKindToTheEarth/BeKindToTheEarth.otf)
 
 // @font-face 
 //     font-family: Chosence
@@ -32,8 +39,14 @@
 //         span( 0.92, 0.04 )     
 
 html 
-    font-family: Roboto, sans-serif
-    font-size: body
+    font-family: Earth
+    font-size: large
+    color: light
+    text-shadow:
+        -1px -1px 3px #222,  
+        1px -1px 3px #222,
+        -1px 1px 3px #222,
+        1px 1px 3px #222;
 
 // neutral palette
 dark = #212121
@@ -46,16 +59,10 @@ alt = #b53d00 // dark
 val = #00704b // dark
 err = #a30437 // dark
 
-// scales by material guide
-small = 1.2rem
-body  = 1.4rem
-large = 1.6rem
-head  = 2.0rem
-title = 3.6rem
 
-* 
-    transition: inherit
-    font-size: inherit
+// * 
+    // transition: inherit
+    // font-size: inherit
 
 // // the style for the shadows used by materials
 // shadow( depth )
@@ -158,12 +165,10 @@ body
         margin: 0 (body*0.4) 0
 
 .col
-    display: flex;
-    flex-direction: column;
-
-// .button.clear
-//     pads(small)
-//     cursor: pointer
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
 
 .f1 { flex: 1  ; }
 .f2 { flex: 2  ; }
@@ -197,3 +202,10 @@ body
 //     border: none;
 //     border-radius: 3px;
 // }
+
+
+
+
+
+
+

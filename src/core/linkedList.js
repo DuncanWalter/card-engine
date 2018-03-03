@@ -85,13 +85,15 @@ export class LL<E>{
             return a;
         }, []);
     }
-    // // $FlowFixMe
-    // [Symbol.iterator]: function*(){
-    //     let l = this.list;
-    //     while(this.list[1]){
-    //         yield this.list[0];
-    //         l = this.list[1];
-    //     }
-    // }
+
+    // $FlowFixMe
+    [Symbol.iterator]: any = iterator
 };
 
+function * iterator(){
+    let l = this.list;
+    while(this.list[1]){
+        yield this.list[0];
+        l = this.list[1];
+    }
+}

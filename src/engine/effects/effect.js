@@ -26,7 +26,7 @@ export function MetaEffect(
     delta: number,
     listener: (owner: Creature, self: Effect) => Listener<>,
 ): Class<Effect> {
-    
+    // TODO: auto register these things and add deps to make it work
     const turnListener = self => [] // TODO: add the semantics. as always. Should use id to be dependent of any custom listener
     class CustomEffect extends Effect {
 

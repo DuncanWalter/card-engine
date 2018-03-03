@@ -1,15 +1,18 @@
 import { Card as CardObject } from "../../../engine/cards/card"
-import { gameState } from "../../../engine/gameState"
-import { PlayCard } from "../../../engine/actions/playCard";
+import { PlayCard } from "../../../engine/actions/playCard"
+import { gameSlice } from "../../../engine/gameState"
+import { handSlice } from "./hand";
+
 
 const a: any = Object.assign;
 
 type Props = {
     card: CardObject<any>,
-    game: typeof gameState,
+    game: typeof gameSlice,
+    hand: typeof handSlice,
 }
 
-export const Card = ({ game, card }: Props) => {
+export const Card = ({ game, card, hand }: Props) => {
 
     const { energy, color, text, title } = card.simulate({
         actor: game.player, 
@@ -31,27 +34,37 @@ export const Card = ({ game, card }: Props) => {
         )
     }
 
-    return <div style={styles.base} onClick={clicked}>
-        <div style={styles.costBack}>{energy}</div>
-        <div style={styles.title}>{title}</div>
-        <div style={a({ backgroundColor: color }, styles.image)}></div>
-        <div style={styles.text}>{text}</div>
+    return <div 
+        style={sty.base(card == hand.focus)} 
+        onClick={clicked} 
+        onMouseMove={e => {
+            hand.dispatcher.setFocus(card)
+        }}
+    >
+        <div style={sty.costBack}>{energy}</div>
+        <div style={sty.title}>{title}</div>
+        <div style={{ backgroundColor: color, ...sty.image }}></div>
+        <div style={sty.text}>{text}</div>
     </div>
 }
 
 
-const styles = {
-    base: {
-        width: '320px',
-        height: '470px',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#222222',
-        position: 'relative',
-        borderRadius: '8px',
-        padding: '4px',
-        cursor: 'pointer',
-        color: '#ffeedd',
+const sty = {
+    base(isFocus){
+        console.log(isFocus)
+        return {
+            width: '320px',
+            height: '470px',
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: isFocus? '#444444': '#222222',
+            position: 'relative',
+            borderRadius: '8px',
+            padding: '4px',
+            cursor: 'pointer',
+            color: '#ffeedd',
+            zIndex: isFocus ? 10 : 'auto',
+        }
     },
     title: {
         flex: '1',

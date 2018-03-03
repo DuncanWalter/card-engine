@@ -151,7 +151,6 @@ export class ActionResolver {
         next()
         if(!this.simulating){
             this.gameStateSlice.emit()
-            console.log(this.gameStateSlice.enemies[0])
         }
         return action
     }

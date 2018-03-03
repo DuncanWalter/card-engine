@@ -1,40 +1,46 @@
 import { Card } from './card'
 import { Card as CardObject } from './../../../engine/cards/card'
-import { gameState } from './../../../engine/gameState'
-import { withSlice } from '../hocs/withSlice';
+import { GameState } from './../../../engine/gameState'
+import { withSlice } from '../hocs/withSlice'
+import { view } from 'vitrarius'
+import { createSlice } from '../../../core/state' 
 
 
-// gameState.stream.map(s => s.hand).onValue(console.log);
+export const handSlice = createSlice('hand', {
+    setFocus: (state, data) => view('focus', () => data, state),
+    setCursor: (state, data) => console.log(data) || state,
+}, {
+    cursor: {
+        x: -1,
+        y: -1,
+    },
+    focus: null,
+})
+
 type Props = {
-    cards: Array<CardObject<any>>,
+    game: $ReadOnly<GameState>,
     state: any, // TODO:
 }
 
 // should the card 'dtos' have a render, or should the hand map
 // dto to component? Probably the latter... TODO:
-export const Hand = withSlice(gameState, 'game')(({ cards }: Props) => {
-    return <div style={sty.hand}>
+export const Hand = withSlice(handSlice, 'state')(({ game, state }: Props) => {
+    return <div 
+        style={sty.hand}
+        onMouseMove={e => state.dispatcher.setCursor(e)}
+    >
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0 }}>
-            {cards.map((e, i, l) => <div style={
-                sty.nthCardPoint(i, l.length)
-            }><div style={sty.slot}><Card card={e} game={gameState}/></div></div>)}
+            {game.hand.map((e, i, l) => <div style={
+                sty.nthCardPoint(i, l.length, e == state.focus)
+            }><div style={sty.slot}><Card card={e} game={game} hand={state}/></div></div>)}
         </div>
         <div style={{ flex: 1 }}/>
     </div>;
 });
 
-// function stateful (component, initial, reducers, onMount, onUnMount){
-//     let i = Symbol('unique');
-//     let s: State<Symbol,>;
-    
-//     let c = withLifeCycle({
-//         componentDidMount: el => (s = new State(i, reducers, initial)),
-//         componentWillUnmount: () => s.destroy(),
-//     })(component),
-
 const sty = {
-    nthCardPoint: (n, m) => {
+    nthCardPoint: (n, m, isFocus) => {
 
         let parab = x => x**2;
         let index = (n-(m-1)/2);
@@ -47,12 +53,13 @@ const sty = {
         angle = 0.3*180/3.1415*Math.atan(offset);
 
         return { 
-            transform: `translate(${195*index}px, ${-240 + 140*parab(offset)}px) rotate(${ angle }deg)`,
+            transform: `translate(${215*index}px, ${(isFocus ? -200 : -110) + 140*parab(offset)}px) rotate(${ angle }deg)`,
             // transform: `translate(${164*(n-(m-1)/2)}px)`,
             width: 0,
             height: 0,
             flex: 1,
             position: 'relative',
+            zIndex: isFocus ? 10 : 'auto'
         }
     },
     slot: {
@@ -64,6 +71,7 @@ const sty = {
         display: 'flex',
         flexDirection: 'row',
         height: '100%',
-        width: 0,
+        flex: 7,
+        // width: 0,
     },
 };
