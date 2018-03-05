@@ -1,5 +1,5 @@
 import { Action } from "../actions/action"
-import { NPC } from "./npc"
+import type { NPC } from "./npc"
 
 import type { GameState } from "../gameState"
 

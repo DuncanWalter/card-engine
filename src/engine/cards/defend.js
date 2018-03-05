@@ -1,43 +1,37 @@
-import { Card, CardPartial, PlayArgs } from './card'
+import { MetaCard, Card, PlayArgs } from './card'
 import { BindEffect } from '../actions/bindEffect'
-import { block } from '../effects/block'
+import { block, Block } from '../effects/block'
 import { Creature } from '../creatures/creature'
 
 
-type Meta = { blk: string }
+type DefendData = { block: number, energy: number }
 
 export const defend = Symbol('defend')
-export class Defend extends CardPartial<Meta> implements Card<Meta> {
-    
-    id: Symbol = defend
-    block: number
+export const Defend: Class<Card<DefendData>> = MetaCard(defend, playDefend, {
+    block: 5,
+    energy: 1,
+}, {
+    energyTemplate: (meta: DefendData) => meta.energy.toString(),
+    color: '#223399',
+    titleTemplate: (meta: DefendData) => 'Defend',
+    textTemplate: (meta: DefendData) => `Gain ${meta.block} block`,
+})
 
-    constructor(){
-        super()
-        this.energyTemplate = (meta: Meta) => this.energy.toString()
-        this.color = '#223399'
-        this.titleTemplate = (meta: Meta) => 'Defend'
-        this.textTemplate = (meta: Meta) => `Gain ${meta.blk} block`
-        this.block = 5
-        this.energy = 1
-    }
-
-    play({ resolver, actor, subject }: PlayArgs<>){
-        if(subject instanceof Creature){
-            const action: BindEffect = resolver.processAction(
-                new BindEffect(
-                    this, 
-                    subject,
-                    {
-                        effect: block,
-                        stacks: this.block,
-                    },
-                    block,
-                ),
-            )
-            return { blk: action.data.stacks.toString() }
-        } else {
-            return { blk: this.block.toString() }
-        }
+function playDefend({ actor, resolver }: PlayArgs<>): DefendData {
+    if(actor instanceof Creature){
+        const action: BindEffect = resolver.processAction(
+            new BindEffect(
+                this, 
+                actor,
+                {
+                    Effect: Block,
+                    stacks: this.data.block,
+                },
+                block,
+            ),
+        )
+        return { block: action.data.stacks, energy: this.data.energy }
+    } else {
+        return this.data
     }
 }

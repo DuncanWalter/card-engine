@@ -1,13 +1,13 @@
 import { MetaEffect, Effect } from "./effect"
 import { damage } from "../actions/damage"
-import { vulnerable } from "./vulnerable"
+import { vulnerability } from "./vulnerability"
 import { BindEffect } from "../actions/bindEffect"
 import { gameSlice } from "../gameState"
 import type { Listeners } from "../actions/actionResolver"
 
 export const blockable = Symbol('blockable')
 export const block = Symbol('block')
-export const Block: Class<Effect> = MetaEffect(block, true, 0, (owner, self) => ({
+export const Block: Class<Effect> = MetaEffect(block, true, x => 0, (owner, self) => ({
     id: block,
     header: {
         subjects: [owner],
@@ -18,7 +18,7 @@ export const Block: Class<Effect> = MetaEffect(block, true, 0, (owner, self) => 
         if(typeof data.damage == 'number'){
             if(data.damage <= self.stacks){
                 resolver.processAction(new BindEffect(actor, owner, {
-                    effect: block,
+                    Effect: Block,
                     stacks: -data.damage,
                 }))
                 data.damage = 0
@@ -26,7 +26,7 @@ export const Block: Class<Effect> = MetaEffect(block, true, 0, (owner, self) => 
             } else {
                 data.damage -= self.stacks
                 resolver.processAction(new BindEffect(actor, owner, {
-                    effect: block,
+                    Effect: Block,
                     stacks: -self.stacks,
                 }))
             }
@@ -34,6 +34,4 @@ export const Block: Class<Effect> = MetaEffect(block, true, 0, (owner, self) => 
             cancel()
         }
     },  
-}))
-
-gameSlice.resolver.registerListenerType(block, [vulnerable], [damage])
+}), [vulnerability], [damage])

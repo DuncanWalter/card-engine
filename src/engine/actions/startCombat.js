@@ -1,12 +1,14 @@
-import { MetaAction } from "./action"
+import { MetaAction, startCombat } from "./action"
 import { Creature } from "../creatures/creature"
-import { EndTurn } from "./endTurn"
+import { EndTurn } from "./turnActions"
 import { Player } from "../creatures/player"
 import { NPC } from "../creatures/npc"
 import { Defend } from "../cards/defend"
 import { Strike } from "../cards/strike"
 import { Bash } from "../cards/bash"
 
+import { Footwork } from "../cards/footwork"
+import { Acid } from "../cards/acid"
 import type { CA } from "./action"
 
 type Data = {
@@ -14,7 +16,7 @@ type Data = {
     stacks: number,
 }
 
-export const startCombat = Symbol('startCombat')
+export { startCombat }
 export const StartCombat: CA<> = MetaAction(startCombat, ({ game, subject, resolver }: *) => { 
     [
         new Strike(),
@@ -25,8 +27,8 @@ export const StartCombat: CA<> = MetaAction(startCombat, ({ game, subject, resol
         new Bash(),
         new Defend(),
         new Defend(),
-        new Defend(),
-        new Defend(),
+        new Acid(),
+        new Footwork(),
         new Defend(),
     ].forEach(card => game.drawPile.push(card))
 

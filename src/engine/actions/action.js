@@ -1,7 +1,15 @@
 import { ActionResolver } from './actionResolver'
 import { gameSlice, GameState } from '../gameState'
 
+import type { Listener } from './actionResolver'
+
 // TODO: Make the Consumer args take game state (importing it feels dirty)
+
+
+export const startTurn = Symbol('startTurn')
+export const startCombat = Symbol('startCombat')
+export const endTurn = Symbol('endTurn')
+
 
 export type CA<Data=any, Subject=any, Actor=any> = Class<Action<Data, Subject, Actor>>
 
@@ -11,12 +19,14 @@ export class Action<Data=any, Subject=any, Actor=any> {
     subject: Subject
     tags: Symbol[]
     data: Data
+    defaultListeners: Listener<>[]
     consumer: (args: ConsumerArgs<Data, Subject, Actor>) => void
     constructor(actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
         this.data = data
         this.actor = actor
         this.subject = subject
         this.tags = tags
+        this.defaultListeners = []
     }
 }
 
@@ -28,6 +38,7 @@ export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
     next: () => void,
     cancel: () => void,
     game: $ReadOnly<GameState>,
+    internal: () => void,
 }
 
 export function MetaAction<Data, Subject, Actor>(

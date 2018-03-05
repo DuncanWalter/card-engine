@@ -1,16 +1,17 @@
 import { MetaAction } from "./action"
 import { Creature } from "../creatures/creature"
-import { effects } from "../effects/effect"
+import type { Effect } from "../effects/effect"
+import type { Card } from "../cards/card";
 import type { CA } from "./action"
 
 type Data = {
-    effect: Symbol,
+    Effect: Class<Effect>,
     stacks: number,
 }
 
 export const bindEffect = Symbol('bindEffect')
-export const BindEffect: CA<Data, Creature> = MetaAction(bindEffect, ({ subject, data }: *) => {
-    let effect, current = subject.effects.filter(e => e.id == data.effect)
+export const BindEffect: CA<Data, Creature | Card<any>> = MetaAction(bindEffect, ({ subject, data }: *) => {
+    let effect, current = subject.effects.filter(e => e.constructor == data.Effect)
     if(current.length){
         effect = current[0]
         effect.stacks += data.stacks
@@ -19,12 +20,7 @@ export const BindEffect: CA<Data, Creature> = MetaAction(bindEffect, ({ subject,
             subject.effects.splice(index, 1)
         }
     } else {
-        let Constructor = effects.get(data.effect)
-        if(Constructor){
-            effect = new Constructor(subject, data.stacks)
-            subject.effects.push(effect)
-        } else {
-            throw new Error(`Attempted to bind unknown Effect type ${data.effect.toString()}`)
-        }
+        effect = new data.Effect(subject, data.stacks)
+        subject.effects.push(effect)
     }
 })

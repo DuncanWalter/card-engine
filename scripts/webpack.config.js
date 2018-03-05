@@ -92,6 +92,11 @@ const baseConfig = options => ({
         // new webpack.DefinePlugin({
         //     'process.env.__OPTIONS__': JSON.stringify(options._),
         // }),
+        (c => new c({
+            exclude: /node_modules/,
+            failOnError: true,
+            cwd: process.cwd(),
+        }))(require('circular-dependency-plugin')),
     ],
 });
 

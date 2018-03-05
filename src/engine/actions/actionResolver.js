@@ -10,12 +10,14 @@ export type Header<Data=any, Subject=any, Actor=any> = {
     subjects?: Subject[],
     tags?: Symbol[],
     filter?: (action: AnyAction) => boolean,
+    type?: Symbol,
 }
 
 export interface Listener<Data=any, Subject=any, Actor=any> {
     id: Symbol,
     header: Header<Data, Subject, Actor>,
     consumer(ConsumerArgs<Data, Subject, Actor>): void,
+    internal?: Symbol, 
 }
 
 export type AnyListener = Listener<>
@@ -24,10 +26,8 @@ export type Listeners = AnyListener | Listeners[] | { listener: Listeners }
 function any(self: any): any { return self }
 
 function testListener(action: AnyAction, listener: AnyListener){
-    
     let matched = false
     const h = listener.header
-
     if(h.actors){
         if(h.actors.indexOf(action.actor) >= 0){
             matched = true
@@ -35,7 +35,6 @@ function testListener(action: AnyAction, listener: AnyListener){
             return false
         }
     }
-
     if(h.subjects){
         if(h.subjects.indexOf(action.subject) >= 0){
             matched = true
@@ -43,7 +42,6 @@ function testListener(action: AnyAction, listener: AnyListener){
             return false
         }
     }
-    
     if(h.tags){
         if(h.tags.reduce((a, t) => action.tags.indexOf(t) >= 0 && a, true)){
             matched = true
@@ -51,7 +49,6 @@ function testListener(action: AnyAction, listener: AnyListener){
             return false
         }
     }
-
     if(h.filter){
         if(h.filter(action)){
             matched = true
@@ -59,7 +56,13 @@ function testListener(action: AnyAction, listener: AnyListener){
             return false
         }
     }
-
+    if(h.type){
+        if(h.type == action.id){
+            matched = true
+        } else {
+            return false
+        }
+    }
     return matched
 }
 
@@ -75,7 +78,7 @@ export class ActionResolver {
         parents: Symbol[],
         children: Symbol[],
         index: number,
-        compare: any => 1 | 0| -1,
+        compare: any => 1 | 0 | -1,
         id: Symbol,
     }>
 
@@ -102,7 +105,7 @@ export class ActionResolver {
     }
 
     processAction<A: Action<>>(action: A): A {
-        const activeListeners = (function aggregate(ls: Listeners): LL<AnyListener> {
+        let activeListeners = (function aggregate(ls: Listeners): LL<AnyListener> {
             if(Array.isArray(ls)){
                 return ls.reduce((a: LL<AnyListener>, ls: Listeners) => {
                     a.appendList(aggregate(ls))
@@ -118,13 +121,50 @@ export class ActionResolver {
         })(this.listeners)
 
         activeListeners.append(any(action))
+        action.defaultListeners.forEach(listener => {
+            activeListeners.append(listener)
+        })
 
         if(!this.simulating){ console.log(action.id, activeListeners.toArray().length) }
 
+        // This mess allows effects with defined internals to
+        // wrap other listeners
+        // TODO: popping will break if multiple wraps occur
+        let wrapper, alv = activeListeners.view()
+        while(wrapper = alv.list[0]){
+            if(wrapper && wrapper.internal){
+                const closedWrapper = wrapper
+                activeListeners = activeListeners.filter(listener => listener != closedWrapper).map(listener => {
+                    if(listener.id == closedWrapper.internal){
+                        return Object.create(listener, {
+                            consumer: {
+                                value: args => {
+                                    console.log(args)
+                                    args.internal = () => listener.consumer(args)
+                                    closedWrapper.consumer(args)
+                                }
+                            }
+                        })
+                    } else {
+                        return listener
+                    }
+                })
+                alv.pop()
+            } else {
+                alv.next()
+            }  
+        }
+
         const executionQueue: AnyListener[] = activeListeners.toArray().sort((a, b) => {
-            const ai = (this.listenerOrder.get(a.id)||{index:-1}).index
-            const bi = (this.listenerOrder.get(b.id)||{index:-1}).index
-            return ai - bi
+            // TODO: perform checks
+            // try{
+                const ai = any(this.listenerOrder.get(a.id)).index
+                const bi = any(this.listenerOrder.get(b.id)).index
+                return ai - bi
+            // } catch(e){
+            //     console.log(a, b)
+            //     return 0
+            // }
         })
 
         let index = -1
@@ -145,12 +185,14 @@ export class ActionResolver {
                     subject: action.subject,
                     actor: action.actor,
                     game: this.gameStateSlice,
+                    internal: () => undefined,
                 })
             }
         }
         next()
         if(!this.simulating){
             this.gameStateSlice.emit()
+            // console.log(this.gameStateSlice.enemies[0])
         }
         return action
     }

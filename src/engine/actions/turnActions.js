@@ -1,18 +1,26 @@
-import { MetaAction } from "./action"
+import { MetaAction, startTurn, endTurn } from "./action"
 import { Creature } from "../creatures/creature"
 import { Player } from "../creatures/player"
-import { StartTurn } from "./startTurn"
 import { NPC } from "../creatures/npc"
-import { LL } from "../../core/linkedList"
+import { DrawCard } from "./drawCard"
+
 import type { CA } from "./action"
 
-type Data = {
-    effect: Symbol,
-    stacks: number,
-}
+export { startTurn }
+export const StartTurn: CA<any, any> = MetaAction(startTurn, ({ game, subject, resolver }: *) => { 
+    if(subject instanceof Player){
+        game.player.energy = game.player.maxEnergy
 
+        resolver.enqueueActions(new DrawCard(game.player, {}, { count: 5 }))
+        resolver.enqueueActions(...game.allies.map(ally => new StartTurn({}, ally, {})))
+    } else if(subject instanceof NPC){
+        if(game.enemies.indexOf(subject) >= 0){
+            resolver.pushActions(...subject.createTurnActions(game), new EndTurn({}, subject, {}))
+        }
+    }
+})
 
-export const endTurn = Symbol('endTurn')
+export { endTurn }
 export const EndTurn: CA<any, Creature> = MetaAction(endTurn, ({ subject, resolver, game }: *) => {
     if(subject instanceof Player){
         // gameState.allies.reduce((acc, ally) => {

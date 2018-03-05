@@ -86,6 +86,12 @@ export class LL<E>{
         }, []);
     }
 
+    filter(pred: (elem: E) => boolean): LL<E>{
+        const l = new LL()
+        this.forEach(e => pred(e) ? l.append(e) : undefined)
+        return l
+    }
+
     // $FlowFixMe
     [Symbol.iterator]: any = iterator
 };

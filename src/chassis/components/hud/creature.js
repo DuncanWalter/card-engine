@@ -5,10 +5,10 @@ import { Effect } from "./effect"
 
 type Props = {
     creature: Creature,
-    game: $ReadOnly<GameState>,
+    isEnemy: boolean,
 }
 
-export const Creature: Component<Props> = ({ game, creature }: Props) => {
+export const Creature: Component<Props> = ({ isEnemy, creature }: Props) => {
     
     const { health, maxHealth, color } = creature
     const maybeBlock = creature.effects.filter(e => e.id == blockSymbol)[0]
@@ -28,6 +28,8 @@ export const Creature: Component<Props> = ({ game, creature }: Props) => {
         <div style={sty.effectBar}>
             {creature.effects.map(e => <Effect effect={e}/>)}
         </div>
+        <div style={sty.healthBarText}>{creature.constructor.name}</div>
+        <div style={sty.healthBarText}>{health}/{maxHealth}</div>
     </div>
 }
 
@@ -47,7 +49,7 @@ const sty = {
         display: 'flex',
         flexDirection: 'horizontal',
         width: '400px',
-        height: '16px',
+        height: '17px',
     },
     healthBarFill(current, block, max){
         return {

@@ -1,7 +1,7 @@
 import { Card as CardObject } from "../../../engine/cards/card"
 import { PlayCard } from "../../../engine/actions/playCard"
 import { gameSlice } from "../../../engine/gameState"
-import { handSlice } from "./hand";
+import { handSlice } from "./handSlice"
 
 
 const a: any = Object.assign;
@@ -15,9 +15,11 @@ type Props = {
 export const Card = ({ game, card, hand }: Props) => {
 
     const { energy, color, text, title } = card.simulate({
-        actor: game.player, 
-        subject: game.enemies[0], 
+        actor: game.player, // TODO: make this player and target
+        subject: card,
+        target: game.enemies[0], 
         resolver: game.resolver,
+        data: card.data,
     })
 
     const clicked = e => {
@@ -51,7 +53,6 @@ export const Card = ({ game, card, hand }: Props) => {
 
 const sty = {
     base(isFocus){
-        console.log(isFocus)
         return {
             width: '320px',
             height: '470px',
@@ -63,7 +64,6 @@ const sty = {
             padding: '4px',
             cursor: 'pointer',
             color: '#ffeedd',
-            zIndex: isFocus ? 10 : 'auto',
         }
     },
     title: {
@@ -104,7 +104,7 @@ const sty = {
         flexDirection: 'row',
         padding: '30px',
     },
-};
+}
 
 
 

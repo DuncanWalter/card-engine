@@ -1,58 +1,49 @@
-import { Card, CardPartial, PlayArgs } from './card'
+import { MetaCard, Card, PlayArgs } from './card'
 import { Damage, damage, targeted } from './../actions/damage'
 import { Listener } from '../actions/actionResolver'
 import { BindEffect } from '../actions/bindEffect'
-import { vulnerable } from '../effects/vulnerable'
+import { Vulnerability } from '../effects/vulnerability'
 import { blockable } from '../effects/block'
 import { Creature } from '../creatures/creature'
+import { gameSlice } from '../gameState'
 
-type Meta = { dmg: string }
+type BashData = { damage: number, energy: number }
 
 export const bash = Symbol('bash')
-export class Bash extends CardPartial<Meta> implements Card<Meta> {
-    
-    id: Symbol = bash
-    damage: number
+export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
+    damage: 8,
+    energy: 2,
+}, {
+    energyTemplate: (meta: BashData) => meta.energy.toString(),
+    color: '#bb4433',
+    titleTemplate: (meta: BashData) => 'Bash',
+    textTemplate: (meta: BashData) => `Deal ${meta.damage} damage and 1 weakness to a target.`,
+})
 
-    constructor(){
-        super()
-        this.energyTemplate = (meta: Meta) => this.energy.toString()
-        this.color = '#bb4433'
-        this.titleTemplate = (meta: Meta) => 'Bash'
-        this.textTemplate = (meta: Meta) => `Deal ${meta.dmg} damage and 1 weakness to one target`
-        this.damage = 5
-        this.energy = 2
-        this.listener = {
-            id: bash,
-            header: {
-                actors: [this],
-                tags: [damage],
-            },
-            consumer({ resolver, subject }){
-                resolver.processAction(new BindEffect(this.owner, subject, {
-                    effect: vulnerable, 
-                    stacks: 2,
-                }))
-            },
-        }
-    }
 
-    play({ actor, subject, resolver }: PlayArgs<>): Meta {
-        if(subject instanceof Creature){
-            const action: Damage = resolver.processAction(
-                new Damage(
-                    this, 
-                    subject,
-                    {
-                        damage: this.damage,
-                    },
-                    targeted,
-                    blockable,
-                ),
-            )
-            return { dmg: action.data.damage.toString() }
-        } else {
-            return { dmg: this.damage.toString() }
-        }
+
+
+
+function playBash({ target, resolver }: PlayArgs<>): BashData {
+    if(target instanceof Creature){
+        const action: Damage = resolver.processAction(
+            new Damage(
+                this, 
+                target,
+                {
+                    damage: this.data.damage,
+                },
+                targeted,
+                blockable,
+            ),
+        )
+        resolver.processAction(new BindEffect(this, target, {
+            Effect: Vulnerability,
+            stacks: 2,
+        }, blockable))
+        return { damage: action.data.damage, energy: this.data.energy }
+    } else {
+        return this.data
     }
 }
+

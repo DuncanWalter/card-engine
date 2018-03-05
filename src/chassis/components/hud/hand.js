@@ -1,25 +1,18 @@
 import { Card } from './card'
 import { Card as CardObject } from './../../../engine/cards/card'
-import { GameState } from './../../../engine/gameState'
 import { withSlice } from '../hocs/withSlice'
 import { view } from 'vitrarius'
 import { createSlice } from '../../../core/state' 
+import { handSlice } from './handSlice'
+
+import type { GameState } from './../../../engine/gameState'
 
 
-export const handSlice = createSlice('hand', {
-    setFocus: (state, data) => view('focus', () => data, state),
-    setCursor: (state, data) => console.log(data) || state,
-}, {
-    cursor: {
-        x: -1,
-        y: -1,
-    },
-    focus: null,
-})
 
 type Props = {
     game: $ReadOnly<GameState>,
-    state: any, // TODO:
+    state: any, // TODO: 
+    playCard: (card: CardObject<any>, target: mixed) => void,
 }
 
 // should the card 'dtos' have a render, or should the hand map
@@ -33,11 +26,18 @@ export const Hand = withSlice(handSlice, 'state')(({ game, state }: Props) => {
         <div style={{ width: 0 }}>
             {game.hand.map((e, i, l) => <div style={
                 sty.nthCardPoint(i, l.length, e == state.focus)
-            }><div style={sty.slot}><Card card={e} game={game} hand={state}/></div></div>)}
+            }><div><Card card={e} game={game} hand={state}/></div></div>)}
         </div>
         <div style={{ flex: 1 }}/>
-    </div>;
+    </div>
 });
+
+
+
+
+
+
+
 
 const sty = {
     nthCardPoint: (n, m, isFocus) => {
@@ -53,25 +53,22 @@ const sty = {
         angle = 0.3*180/3.1415*Math.atan(offset);
 
         return { 
-            transform: `translate(${215*index}px, ${(isFocus ? -200 : -110) + 140*parab(offset)}px) rotate(${ angle }deg)`,
-            // transform: `translate(${164*(n-(m-1)/2)}px)`,
+            transform: `translate(${215*index}px, ${(isFocus ? 10 : 100) + 140*parab(offset)}px) rotate(${ angle }deg)`,
             width: 0,
             height: 0,
             flex: 1,
             position: 'relative',
-            zIndex: isFocus ? 10 : 'auto'
+            zIndex: isFocus ? 10 : 'auto',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '-500px',
         }
     },
-    slot: {
-        position: 'absolute',
-        left: '-164px',
-        // top: '-249px',
-    }, 
     hand: {
-        display: 'flex',
+        display: 'inline',
         flexDirection: 'row',
         height: '100%',
-        flex: 7,
-        // width: 0,
+        width: 0,
     },
-};
+}

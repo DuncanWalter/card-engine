@@ -5,23 +5,38 @@ import { Player } from '../creatures/player'
 import type { CA } from './action'
 
 type Data = {
-    target: any,
+    target: void | Creature | Card<any>,
     success: boolean,
+    destination?: Card<any>[],
 }
 
 export const playCard = Symbol('playCard')
 export const PlayCard: CA<Data, Card<any>, Player> = MetaAction(playCard, ({ game, data, subject, actor, resolver, cancel }: *) => { 
     // TODO: perform an actual energy check
-    if (actor.energy < subject.energy) return cancel()
-    
-    actor.energy -= subject.energy //TODO: subject.energy;
+    if (actor.energy < subject.data.energy) return cancel()
+    actor.energy -= subject.data.energy //TODO: subject.energy;
+
+    // TODO: should I check if the card was ever in hand?
+    // I think yes, but continue even if not. Just don't splice then
+    game.hand.splice(game.hand.indexOf(subject), 1)
+    game.activeCards.push(subject) // TODO: could be safer than push pop
+
     subject.play({ 
         resolver,
-        actor: subject, 
-        subject: data.target,
+        actor,
+        subject,
+        target: data.target,
+        data: subject.data,
     })
 
-    game.discardPile.push(game.hand.splice(game.hand.indexOf(subject), 1)[0])
+    game.activeCards.pop()
+
+    if(data.destination != undefined){
+        data.destination.push(subject)
+    } else {
+        game.discardPile.push(subject)
+    }
+    
     data.success = true
 })
 

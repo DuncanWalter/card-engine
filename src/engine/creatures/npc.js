@@ -1,7 +1,7 @@
 import { Creature } from "./creature"
 import { GameState, gameSlice } from "../gameState"
 import { Behavior } from "./behavior"
-import { startCombat } from "../actions/startCombat"
+import { startCombat } from "../actions/action"
 import { ConsumerArgs } from "../actions/action"
 
 import type { Listeners } from "../actions/actionResolver"
@@ -47,7 +47,7 @@ export function MetaCreature(
                 id: id,
                 consumer: onStartCombat(this),
                 header: {
-                    tags: [startCombat],
+                    type: startCombat,
                 }
             }]
         }

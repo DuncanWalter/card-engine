@@ -2,7 +2,7 @@ import { Hand } from './hand'
 import { gameSlice, GameState } from '../../../engine/gameState'
 import { withSlice } from '../hocs/withSlice'
 import { Creature } from './creature'
-import { EndTurn } from '../../../engine/actions/endTurn'
+import { EndTurn } from '../../../engine/actions/turnActions'
 
 import type { Component } from '../component';
 
@@ -28,7 +28,9 @@ export const BattleHUD: Component<Props> = withSlice(gameSlice, 'game')(({ game 
                 <div>{game.player.energy}/{game.player.maxEnergy}</div>
                 <div>{game.drawPile.length}</div>
             </div>
+            <div style={{ flex: 3 }}/>
             <Hand game={game}/>
+            <div style={{ flex: 3 }}/>
             <div class='col' style={{ flex: 2, textAlign: 'right' }}>
                 <div>exhausted</div>
                 <div>{game.discardPile.length}</div>

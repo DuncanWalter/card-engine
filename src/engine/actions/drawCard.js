@@ -1,6 +1,5 @@
 import { MetaAction } from "./action"
 import { Creature } from "../creatures/creature"
-import { EndTurn } from "./endTurn"
 import { Player } from "../creatures/player"
 import { NPC } from "../creatures/npc"
 

@@ -21,6 +21,7 @@ export interface GameState {
     equipment: Array<any>,
     deck: Card<any>[],
     exhaustPile: Card<any>[],
+    activeCards: Card<any>[]
 }
 
 export type GameStateSlice = StateSlice<GameState, any>
@@ -36,6 +37,7 @@ const initialState: GameState = {
     player: new Player(60),
     allies: [],
     enemies: [],
+    activeCards: [],
 }
 
 export const gameSlice = createSlice('game', {}, initialState)
@@ -48,6 +50,7 @@ initialState.resolver = new ActionResolver(any([
     initialState.enemies,
     initialState.player,
     initialState.allies,
+    initialState.activeCards,
 ]), gameSlice)
 
 
