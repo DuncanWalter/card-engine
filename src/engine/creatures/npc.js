@@ -1,10 +1,9 @@
+import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import { Creature } from "./creature"
 import { GameState, gameSlice } from "../gameState"
 import { Behavior } from "./behavior"
 import { startCombat } from "../actions/action"
-import { ConsumerArgs } from "../actions/action"
-
-import type { Listeners } from "../actions/actionResolver"
+import { Listener } from "../actions/listener"
 
 function any(any: any): any { return any }
 
@@ -43,13 +42,14 @@ export function MetaCreature(
         constructor(health){
             super(health, maxHealth)
             this.behavior = behavior
-            this.listener = [any(this.effects), {
-                id: id,
-                consumer: onStartCombat(this),
-                header: {
+            this.listener.push(new Listener(
+                id,
+                {
                     type: startCombat,
-                }
-            }]
+                },
+                onStartCombat(this),
+                false,
+            ))
         }
     }
 }

@@ -6,22 +6,26 @@ type Props = {
 }
 
 export const Effect: Component<Props> = ({ effect }: Props) => {
-    return <div style={sty.container}>
+    return <div style={renderData(effect).container}>
         <p>{effect.stacked ? effect.stacks : ''}</p>
     </div>
 }
 
 
-const sty = {
-    container: { 
-        flex: 1, 
-        width:'35px', 
-        height:'35px', 
-        display:'flex',
-        backgroundColor: '#332722',
-        color:'#ffeedd', 
-        borderRadius: '17px',
-        justifyContent: 'center',
-        alignItems: 'center',
+function renderData(effect: EffectObject){
+    return {
+        container: { 
+            flex: 1, 
+            width:'38px', 
+            height:'38px', 
+            display:'flex',
+            border: `solid ${effect.appearance.outerColor} 2px`,
+            backgroundColor: effect.appearance.innerColor,
+            color:'#ffeedd', 
+            borderRadius: '19px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '3px',
+        }
     }
 }

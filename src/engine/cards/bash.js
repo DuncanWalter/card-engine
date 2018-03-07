@@ -1,6 +1,6 @@
 import { MetaCard, Card, PlayArgs } from './card'
 import { Damage, damage, targeted } from './../actions/damage'
-import { Listener } from '../actions/actionResolver'
+import { Listener } from '../actions/listener'
 import { BindEffect } from '../actions/bindEffect'
 import { Vulnerability } from '../effects/vulnerability'
 import { blockable } from '../effects/block'

@@ -1,13 +1,13 @@
-import { MetaAction, Action } from './action'
-
-import type { CA } from '../actions/action'
+import type { CustomAction } from '../actions/action'
 import type { Creature } from '../creatures/creature'
+import { MetaAction, Action } from './action'
+import { ConsumerArgs } from './listener';
 
 type Data = { damage: number }
 
-export const targeted = Symbol('targeted')
-export const damage = Symbol('damage')
-export const Damage: CA<Data, Creature> = MetaAction(damage, ({ data, subject, cancel }: *) => { 
+export const targeted: Symbol = Symbol('targeted')
+export const damage: Symbol = Symbol('damage')
+export const Damage: CustomAction<Data, Creature> = MetaAction(damage, ({ data, subject, cancel }: ConsumerArgs<Data, Creature>) => { 
     data.damage = Math.floor(data.damage)
     if(data.damage <= 0){
         cancel()

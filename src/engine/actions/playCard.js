@@ -1,8 +1,8 @@
 import type { Card } from '../cards/card'
+import type { CustomAction } from "./action"
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
 import { Player } from '../creatures/player'
-import type { CA } from './action'
 
 type Data = {
     target: void | Creature | Card<any>,
@@ -10,8 +10,8 @@ type Data = {
     destination?: Card<any>[],
 }
 
-export const playCard = Symbol('playCard')
-export const PlayCard: CA<Data, Card<any>, Player> = MetaAction(playCard, ({ game, data, subject, actor, resolver, cancel }: *) => { 
+export const playCard: Symbol = Symbol('playCard')
+export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCard, ({ game, data, subject, actor, resolver, cancel }: *) => { 
     // TODO: perform an actual energy check
     if (actor.energy < subject.data.energy) return cancel()
     actor.energy -= subject.data.energy //TODO: subject.energy;

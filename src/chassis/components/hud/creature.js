@@ -28,8 +28,8 @@ export const Creature: Component<Props> = ({ isEnemy, creature }: Props) => {
         <div style={sty.effectBar}>
             {creature.effects.map(e => <Effect effect={e}/>)}
         </div>
-        <div style={sty.healthBarText}>{creature.constructor.name}</div>
-        <div style={sty.healthBarText}>{health}/{maxHealth}</div>
+        <div>{creature.constructor.name}</div>
+        <div>{health}/{maxHealth}</div>
     </div>
 }
 
@@ -72,6 +72,6 @@ const sty = {
     effectBar: {
         display: 'flex',
         flexDirection: 'row',
-        height: '30px',
+        height: '44px',
     },
 }

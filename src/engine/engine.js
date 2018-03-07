@@ -1,3 +1,4 @@
+import type { Card } from './cards/card'
 import { Module } from '../core/module'
 import { Main } from '../chassis/components/main'
 import { ActionResolver } from './actions/actionResolver'
@@ -6,10 +7,9 @@ import { Defend } from './cards/defend'
 import { Bash } from './cards/bash'
 import { StartCombat } from './actions/startCombat'
 import { gameSlice } from './gameState'
-
 import { Turtle } from './creatures/turtle/turtle'
-import type { Card } from './cards/card'
-
+import { Player } from './creatures/player'
+import { dispatch } from '../core/state'
 
 
 export const engine = new Module('engine', ({ global, next }) => {    
@@ -17,8 +17,11 @@ export const engine = new Module('engine', ({ global, next }) => {
     // global.cardLibrary = new Library(),
     // global.reactionLibrary = new Library(),
     next();
+    dispatch('definePlayer', new Player(60))
 
     const game = gameSlice
+
+
 
     game.resolver.initialize()
 

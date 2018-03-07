@@ -56,7 +56,7 @@ export function createSlice<S: Object, D: Object>(
 // }
 
 type d = (string | d, any) => void
-function dispatch(type: string | d, data: any){
+export function dispatch(type: string | d, data: any){
     if(type instanceof Function){
         type(dispatch)
     } else if(typeof type == 'string'){

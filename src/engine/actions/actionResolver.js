@@ -1,31 +1,14 @@
+import type { Action } from './../actions/action'
+import type { GameStateSlice } from '../gameState'
+import type { ListenerGroup } from './listener'
+import { Listener, ConsumerArgs, reject } from './listener';
 import { LL } from './../../core/linkedList'
 import { topologicalSort } from '../../core/topologicalSort'
-import type { Action, ConsumerArgs } from './../actions/action'
-import type { GameStateSlice } from '../gameState'
-
-type AnyAction = Action<any, any, any>
-
-export type Header<Data=any, Subject=any, Actor=any> = {
-    actors?: Actor[],
-    subjects?: Subject[],
-    tags?: Symbol[],
-    filter?: (action: AnyAction) => boolean,
-    type?: Symbol,
-}
-
-export interface Listener<Data=any, Subject=any, Actor=any> {
-    id: Symbol,
-    header: Header<Data, Subject, Actor>,
-    consumer(ConsumerArgs<Data, Subject, Actor>): void,
-    internal?: Symbol, 
-}
-
-export type AnyListener = Listener<>
-export type Listeners = AnyListener | Listeners[] | { listener: Listeners }
+import { synchronize } from '../../core/async'
 
 function any(self: any): any { return self }
 
-function testListener(action: AnyAction, listener: AnyListener){
+function testListener(action: Action<>, listener: Listener<>){
     let matched = false
     const h = listener.header
     if(h.actors){
@@ -72,8 +55,8 @@ export class ActionResolver {
     initialized: boolean
     processing: boolean
     simulating: boolean
-    actionQueue: LL<AnyAction>
-    listeners: Listeners
+    actionQueue: LL<Action<>>
+    listeners: ListenerGroup
     listenerOrder: Map<Symbol, {
         parents: Symbol[],
         children: Symbol[],
@@ -82,7 +65,7 @@ export class ActionResolver {
         id: Symbol,
     }>
 
-    constructor(listeners: Listeners, gameStateSlice: GameStateSlice){
+    constructor(listeners: ListenerGroup, gameStateSlice: GameStateSlice){
         this.processing = false
         this.simulating = false
         this.actionQueue = new LL()
@@ -92,76 +75,41 @@ export class ActionResolver {
         this.gameStateSlice = gameStateSlice
     }
 
-    enqueueActions(...actions: AnyAction[]){
+    enqueueActions(...actions: Action<>[]){
         if (this.simulating) return
         actions.forEach(action => this.actionQueue.append(action))
         if (!this.processing) this.processQueue()
     }
 
-    pushActions(...actions: AnyAction[]){
+    pushActions(...actions: Action<>[]){
         if (this.simulating) return
         actions.reverse().forEach(action => this.actionQueue.push(action))
         if (!this.processing) this.processQueue()
     }
 
     processAction<A: Action<>>(action: A): A {
-        let activeListeners = (function aggregate(ls: Listeners): LL<AnyListener> {
-            if(Array.isArray(ls)){
-                return ls.reduce((a: LL<AnyListener>, ls: Listeners) => {
-                    a.appendList(aggregate(ls))
-                    return a
-                }, new LL())
-            } else if(ls.listener){
-                return aggregate(ls.listener)
-            } else {
-                
-                let ret = testListener(action, ls) ? new LL(ls) : new LL()
-                return ret
-            }
-        })(this.listeners)
-
-        activeListeners.append(any(action))
+        let activeListeners = aggregate(this.listeners, action)
+        
+        activeListeners.append(action)
         action.defaultListeners.forEach(listener => {
             activeListeners.append(listener)
         })
 
-        if(!this.simulating){ console.log(action.id, activeListeners.toArray().length) }
+        if(!this.simulating){ console.log(action.id, action.data, activeListeners.toArray().length) }
 
         // This mess allows effects with defined internals to
         // wrap other listeners
         // TODO: popping will break if multiple wraps occur
-        let wrapper, alv = activeListeners.view()
-        while(wrapper = alv.list[0]){
-            if(wrapper && wrapper.internal){
-                const closedWrapper = wrapper
-                activeListeners = activeListeners.filter(listener => listener != closedWrapper).map(listener => {
-                    if(listener.id == closedWrapper.internal){
-                        return Object.create(listener, {
-                            consumer: {
-                                value: args => {
-                                    console.log(args)
-                                    args.internal = () => listener.consumer(args)
-                                    closedWrapper.consumer(args)
-                                }
-                            }
-                        })
-                    } else {
-                        return listener
-                    }
-                })
-                alv.pop()
-            } else {
-                alv.next()
-            }  
-        }
+        activeListeners = applyInternals(activeListeners)
 
-        const executionQueue: AnyListener[] = activeListeners.toArray().sort((a, b) => {
+        const executionQueue: Listener<>[] = activeListeners.toArray().sort((a, b) => {
             // TODO: perform checks
             // try{
                 const ai = any(this.listenerOrder.get(a.id)).index
                 const bi = any(this.listenerOrder.get(b.id)).index
                 return ai - bi
             // } catch(e){
+                
             //     console.log(a, b)
             //     return 0
             // }
@@ -171,7 +119,9 @@ export class ActionResolver {
         let active = true
         const continuing = () => {
             let a = ++index < executionQueue.length
-            let b = !(this.simulating && action == executionQueue[index])
+            // TODO: action check can break w/ internals and sync converts...
+            console.log(index, executionQueue[index])
+            let b = a && !(this.simulating && executionQueue[index].header == reject)
             return a && b && active
         }
         const cancel = () => { active = false }
@@ -245,6 +195,47 @@ export class ActionResolver {
 
 }
 
-export function joinListeners(...ls: Listeners[]){
-    return ls
+
+// TODO: this can be made cleaner. Also, if it returns the same list...
+function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
+    let listener, alv = ls.view(), listeners = ls
+    while(listener = alv.list[0]){
+        if(listener && listener.internal){
+            const wrapper = listener
+            listeners = listeners.filter(listener => listener != wrapper).map(listener => {
+                if(listener.id == wrapper.internal){
+                    return Object.create(listener, {
+                        consumer: {
+                            value: args => {
+                                args.internal = () => listener.consumer(args)
+                                wrapper.consumer(args)
+                            }
+                        }
+                    })
+                } else {
+                    return listener
+                }
+            })
+            alv.pop()
+        } else {
+            alv.next()
+        }  
+    }
+    return listeners
+}
+
+
+function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
+    // console.log(ls)
+    if(Array.isArray(ls)){
+        return ls.reduce((a: LL<Listener<>>, ls: ListenerGroup) => {
+            a.appendList(aggregate(ls, action))
+            return a
+        }, new LL())
+    } else if(ls instanceof Listener){
+        let ret = testListener(action, ls) ? new LL(ls) : new LL()
+        return ret
+    } else {
+        return aggregate(ls.listener, action)
+    } 
 }

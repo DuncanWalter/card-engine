@@ -18,10 +18,12 @@ export const BattleHUD: Component<Props> = withSlice(gameSlice, 'game')(({ game 
         {/* combat pane! */}
         <div style={{ flex: 3, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <div style={{flex: 1}}/>
-            <Creature creature={game.player} game/>
-            <div style={{flex: 1}}/>
-            <Creature creature={game.enemies[0]} game/>
-            <div style={{flex: 1}}/>
+
+            {[game.player, ...game.allies, ...game.enemies].map(c => [
+                <Creature creature={c} game/>,
+                <div style={{flex: 1}}/>,
+            ]).reduce((a, l) => a.concat(l), [])}
+
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>
             <div class='col' style={{ flex: 2, textAlign: 'left' }}>

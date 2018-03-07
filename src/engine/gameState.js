@@ -1,12 +1,11 @@
-import { createSlice } from "../core/state"
-import { ActionResolver } from "./actions/actionResolver"
-import { Player } from "./creatures/player"
-import { Creature } from "./creatures/creature"
 import type { NPC } from "./creatures/npc"
 import type { Card } from "./cards/card"
-
-import type { Listeners } from "./actions/actionResolver"
 import type { StateSlice } from "../core/state"
+import type { Player } from "./creatures/player"
+
+import { createSlice } from "../core/state"
+import { ActionResolver } from "./actions/actionResolver"
+
 
 function any(any: any): any { return any }
 
@@ -34,24 +33,33 @@ const initialState: GameState = {
     deck: [],
     exhaustPile: [],
     equipment: [],
-    player: new Player(60),
+    player: any(null),
     allies: [],
     enemies: [],
     activeCards: [],
 }
 
-export const gameSlice = createSlice('game', {}, initialState)
+export const gameSlice = createSlice('game', {
+    definePlayer(state, player){
+        state.player = player
+        return state
+    },
+}, initialState)
 
-initialState.resolver = new ActionResolver(any([
-    initialState.hand,
-    initialState.drawPile,
-    initialState.exhaustPile,
-    initialState.equipment,
-    initialState.enemies,
-    initialState.player,
-    initialState.allies,
-    initialState.activeCards,
-]), gameSlice)
+initialState.resolver = new ActionResolver(any({
+    get listener(){
+        return [
+            gameSlice.hand,
+            gameSlice.drawPile,
+            gameSlice.exhaustPile,
+            gameSlice.equipment,
+            gameSlice.enemies,
+            gameSlice.player,
+            gameSlice.allies,
+            gameSlice.activeCards,
+        ]
+    },
+}), gameSlice)
 
 
 

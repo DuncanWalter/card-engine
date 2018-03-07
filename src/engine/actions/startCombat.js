@@ -1,3 +1,4 @@
+import type { CustomAction } from "./action"
 import { MetaAction, startCombat } from "./action"
 import { Creature } from "../creatures/creature"
 import { EndTurn } from "./turnActions"
@@ -6,10 +7,9 @@ import { NPC } from "../creatures/npc"
 import { Defend } from "../cards/defend"
 import { Strike } from "../cards/strike"
 import { Bash } from "../cards/bash"
-
 import { Footwork } from "../cards/footwork"
 import { Acid } from "../cards/acid"
-import type { CA } from "./action"
+import { ConsumerArgs } from "./listener";
 
 type Data = {
     effect: Symbol,
@@ -17,7 +17,7 @@ type Data = {
 }
 
 export { startCombat }
-export const StartCombat: CA<> = MetaAction(startCombat, ({ game, subject, resolver }: *) => { 
+export const StartCombat: CustomAction<> = MetaAction(startCombat, function({ game, resolver }: ConsumerArgs<>): void { 
     [
         new Strike(),
         new Strike(),
@@ -27,10 +27,12 @@ export const StartCombat: CA<> = MetaAction(startCombat, ({ game, subject, resol
         new Bash(),
         new Defend(),
         new Defend(),
+        new Defend(),
         new Acid(),
         new Footwork(),
-        new Defend(),
+        // new RaiseDead(),
     ].forEach(card => game.drawPile.push(card))
 
     game.resolver.enqueueActions(new EndTurn({}, game.enemies[0], {}))
+
 })

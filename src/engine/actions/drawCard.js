@@ -1,9 +1,8 @@
+import type { CustomAction } from "./action"
 import { MetaAction } from "./action"
 import { Creature } from "../creatures/creature"
 import { Player } from "../creatures/player"
 import { NPC } from "../creatures/npc"
-
-import type { CA } from "./action"
 
 type Data = {
     count: number,
@@ -11,7 +10,7 @@ type Data = {
 
 
 export const drawCard = Symbol('drawCard')
-export const DrawCard: CA<Data> = MetaAction(drawCard, ({ subject, resolver, data, game }: *) => { 
+export const DrawCard: CustomAction<Data> = MetaAction(drawCard, ({ subject, resolver, data, game }: *) => { 
     // TODO: is this how I want to do max hand size?
     while(data.count-- && game.hand.length < 10 && game.discardPile.length + game.drawPile.length){
         if(!game.drawPile.length){

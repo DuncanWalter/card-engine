@@ -2,7 +2,7 @@ import { Card as CardObject } from "../../../engine/cards/card"
 import { PlayCard } from "../../../engine/actions/playCard"
 import { gameSlice } from "../../../engine/gameState"
 import { handSlice } from "./handSlice"
-
+import { Effect } from "./effect"
 
 const a: any = Object.assign;
 
@@ -42,7 +42,10 @@ export const Card = ({ game, card, hand }: Props) => {
         onMouseMove={e => {
             hand.dispatcher.setFocus(card)
         }}
-    >
+    >   
+        <div style={sty.effectsBar}>
+            {card.effects.map(e => <Effect effect={e}/>)}
+        </div>
         <div style={sty.costBack}>{energy}</div>
         <div style={sty.title}>{title}</div>
         <div style={{ backgroundColor: color, ...sty.image }}></div>
@@ -103,6 +106,11 @@ const sty = {
         display: 'flex',
         flexDirection: 'row',
         padding: '30px',
+    },
+    effectsBar: {
+        position: 'absolute',
+        top: '57px',
+        left: '3px',
     },
 }
 

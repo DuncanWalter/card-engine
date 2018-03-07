@@ -1,27 +1,25 @@
+import type { ListenerGroup } from './listener'
+import type { Consumer } from './listener'
+import { Listener, reject } from './listener'
 import { ActionResolver } from './actionResolver'
 import { gameSlice, GameState } from '../gameState'
-
-import type { Listener } from './actionResolver'
-
-// TODO: Make the Consumer args take game state (importing it feels dirty)
 
 
 export const startTurn = Symbol('startTurn')
 export const startCombat = Symbol('startCombat')
 export const endTurn = Symbol('endTurn')
 
+function any(any: any): any { return any }
 
-export type CA<Data=any, Subject=any, Actor=any> = Class<Action<Data, Subject, Actor>>
-
-export class Action<Data=any, Subject=any, Actor=any> {
+export class Action<Data=any, Subject=any, Actor=any> extends Listener<> {
     id: Symbol
     actor: Actor
     subject: Subject
     tags: Symbol[]
     data: Data
     defaultListeners: Listener<>[]
-    consumer: (args: ConsumerArgs<Data, Subject, Actor>) => void
-    constructor(actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
+    constructor(id: Symbol, consumer: Consumer<>, actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
+        super(id, reject, consumer, false)
         this.data = data
         this.actor = actor
         this.subject = subject
@@ -30,36 +28,29 @@ export class Action<Data=any, Subject=any, Actor=any> {
     }
 }
 
-export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
-    data: Data,
-    subject: Subject,
-    actor: Actor,
-    resolver: ActionResolver,
-    next: () => void,
-    cancel: () => void,
-    game: $ReadOnly<GameState>,
-    internal: () => void,
-}
 
+
+
+
+
+export type CustomAction<Data=any, Subject=any, Actor=any> = Class<CA<Data, Subject, Actor>>
 export function MetaAction<Data, Subject, Actor>(
     id: Symbol, 
-    consumer: (args: ConsumerArgs<Data, Subject, Actor>) => void,
-): Class<Action<Data, Subject, Actor>> {
+    consumer: Consumer<>,
+): Class<CA<Data, Subject, Actor>> {
     gameSlice.resolver.registerListenerType(id)
-    return class CustomAction extends Action<Data, Subject, Actor> {
+    return any(class CustomAction extends Action<Data, Subject, Actor> {
 
-        id: Symbol = id
+        id: Symbol
         actor: Actor
         subject: Subject
         tags: Symbol[]
         data: Data
 
-        consumer: (args: ConsumerArgs<Data, Subject, Actor>) => void = consumer
-
         constructor(actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
-            super(actor, subject, data, id, ...tags)
+            super(id, consumer, actor, subject, data, id, ...tags)
         }
-    }
+    })
 } 
 
 

@@ -1,13 +1,12 @@
+import type { CustomAction } from './action'
 import { MetaAction, startTurn, endTurn } from "./action"
 import { Creature } from "../creatures/creature"
 import { Player } from "../creatures/player"
 import { NPC } from "../creatures/npc"
 import { DrawCard } from "./drawCard"
 
-import type { CA } from "./action"
-
 export { startTurn }
-export const StartTurn: CA<any, any> = MetaAction(startTurn, ({ game, subject, resolver }: *) => { 
+export const StartTurn: CustomAction<> = MetaAction(startTurn, ({ game, subject, resolver }: *) => { 
     if(subject instanceof Player){
         game.player.energy = game.player.maxEnergy
 
@@ -21,7 +20,7 @@ export const StartTurn: CA<any, any> = MetaAction(startTurn, ({ game, subject, r
 })
 
 export { endTurn }
-export const EndTurn: CA<any, Creature> = MetaAction(endTurn, ({ subject, resolver, game }: *) => {
+export const EndTurn: CustomAction<any, Creature> = MetaAction(endTurn, ({ subject, resolver, game }: *) => {
     if(subject instanceof Player){
         // gameState.allies.reduce((acc, ally) => {
         //     acc.appendList(new LL(ally.takeTurn({ resolver, game: gameState })))

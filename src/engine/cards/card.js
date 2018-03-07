@@ -1,9 +1,9 @@
-import { PlayCard } from '../actions/playCard'
-import { gameSlice } from '../gameState'
-
-import type { ActionResolver, Listener, Listeners } from './../actions/actionResolver'
+import type { ListenerGroup } from '../actions/listener';
+import type { ActionResolver } from './../actions/actionResolver'
 import type { Effect } from '../effects/effect'
 import type { Action } from './../actions/action'
+import { PlayCard } from '../actions/playCard'
+import { gameSlice } from '../gameState'
 
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
     actor: A,
@@ -13,7 +13,7 @@ export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
 }
 
 // TODO: play args should have data and use another type argument
-export class Card<Data> {
+export class Card<Data=any> {
     id: Symbol
     appearance: {
         color: string, // TODO: this is a stand in for images
@@ -22,7 +22,7 @@ export class Card<Data> {
         energyTemplate: (meta: Data) => string,
     }
     data: Data
-    listener: Listeners = []
+    listener: ListenerGroup = []
     effects: Effect[]
 
     play: (ctx: PlayArgs<>) => Data // TODO: strong type these?

@@ -1,6 +1,6 @@
 import { MetaCard, Card, PlayArgs } from './card'
 import { Damage, damage, targeted } from './../actions/damage'
-import { Listener } from '../actions/actionResolver'
+import { Listener } from '../actions/listener'
 import { BindEffect } from '../actions/bindEffect'
 import { Vulnerability } from '../effects/vulnerability'
 import { blockable, block } from '../effects/block'
@@ -35,13 +35,10 @@ function playAcid({ target, resolver }: PlayArgs<>): AcidData {
             targeted,
             blockable,
         )
-        action.defaultListeners.push({
-            id: acid,
-            header: {},
-            consumer({ internal, data, actor, subject, resolver, next }){
-                if(!resolver.simulating){
-                    console.log(action, internal)
-                }
+        action.defaultListeners.push(new Listener(
+            block,
+            {},
+            function({ internal, data, actor, subject, resolver, next }): void {
                 const damage = data.damage
                 internal()
                 const poison = (damage - data.damage)
@@ -52,8 +49,8 @@ function playAcid({ target, resolver }: PlayArgs<>): AcidData {
                     stacks: poison,
                 }, acid))
             },
-            internal: block,
-        })
+            true,
+        ))
         resolver.processAction(action)
         return { damage: action.data.damage, energy: this.data.energy }
     } else {
