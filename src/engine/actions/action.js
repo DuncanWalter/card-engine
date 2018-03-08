@@ -18,6 +18,7 @@ export class Action<Data=any, Subject=any, Actor=any> extends Listener<> {
     tags: Symbol[]
     data: Data
     defaultListeners: Listener<>[]
+    
     constructor(id: Symbol, consumer: Consumer<>, actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
         super(id, reject, consumer, false)
         this.data = data

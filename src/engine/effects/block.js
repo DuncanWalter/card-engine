@@ -1,12 +1,11 @@
 import type { ListenerGroup } from "../actions/listener"
 import { MetaEffect, Effect } from "./effect"
-import { damage } from "../actions/damage"
+import { damage, blockable } from "../actions/damage"
 import { vulnerability } from "./vulnerability"
 import { BindEffect } from "../actions/bindEffect"
 import { gameSlice } from "../gameState"
 import { Listener, ConsumerArgs } from "../actions/listener"
 
-export const blockable = Symbol('blockable')
 export const block = Symbol('block')
 export const Block: Class<Effect> = MetaEffect(block, {
     name: 'Block',

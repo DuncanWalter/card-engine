@@ -1,7 +1,20 @@
-import { Action } from "../actions/action"
 import type { NPC } from "./npc"
-
 import type { GameState } from "../gameState"
+import { Action } from "../actions/action"
+
+
+// type BehaviorType = 'blade' | 'shield' | '' | 'diabolical' | 
+
+// interface Data {
+//     damage: number,
+
+// }
+
+// interface Appearance {
+//     title: string,
+//     color: string,
+
+// }
 
 export class Behavior<Meta: Object={}> {
 
@@ -21,8 +34,8 @@ export class Behavior<Meta: Object={}> {
     production: (state: $ReadOnly<GameState>, seed: number) => Behavior<>
 
     constructor(
-        name: string, 
-        production: (state: $ReadOnly<GameState>, seed: number) => Behavior<>, 
+        name: string,
+        production: (state: $ReadOnly<GameState>, seed: number) => Behavior<>,
         actions: (game: $ReadOnly<GameState>, self: NPC) => Action<>[],
     ){
         this.production = production 

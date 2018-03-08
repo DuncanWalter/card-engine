@@ -5,6 +5,7 @@ import { ConsumerArgs } from './listener';
 
 type Data = { damage: number }
 
+export const blockable = Symbol('blockable')
 export const targeted: Symbol = Symbol('targeted')
 export const damage: Symbol = Symbol('damage')
 export const Damage: CustomAction<Data, Creature> = MetaAction(damage, ({ data, subject, cancel }: ConsumerArgs<Data, Creature>) => { 

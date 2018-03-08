@@ -17,9 +17,9 @@ export const Defend: Class<Card<DefendData>> = MetaCard(defend, playDefend, {
     textTemplate: (meta: DefendData) => `Gain ${meta.block} block`,
 })
 
-function playDefend({ actor, resolver }: PlayArgs<>): DefendData {
+function* playDefend({ actor, resolver }: PlayArgs<>): Generator<any, DefendData, any> {
     if(actor instanceof Creature){
-        const action: BindEffect = resolver.processAction(
+        const action: BindEffect = yield resolver.processAction(
             new BindEffect(
                 this, 
                 actor,

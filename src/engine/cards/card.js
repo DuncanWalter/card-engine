@@ -4,6 +4,7 @@ import type { Effect } from '../effects/effect'
 import type { Action } from './../actions/action'
 import { PlayCard } from '../actions/playCard'
 import { gameSlice } from '../gameState'
+import { synchronize } from '../../core/async';
 
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
     actor: A,
@@ -25,7 +26,7 @@ export class Card<Data=any> {
     listener: ListenerGroup = []
     effects: Effect[]
 
-    play: (ctx: PlayArgs<>) => Data // TODO: strong type these?
+    play: (ctx: PlayArgs<>) => Promise<Data> // TODO: strong type these?
 
     simulate({ actor, subject, target, resolver }: PlayArgs<>):{
         text: string,
@@ -33,9 +34,9 @@ export class Card<Data=any> {
         title: string,
         energy: string,
     }{
-        let meta: Data = any()
+        let meta: Data = this.data
         resolver.simulate(resolver => {
-            meta = this.play({ actor, subject, target, resolver })
+            this.play({ actor, subject, target, resolver }).then(v => meta = v)
         })
         return {
             energy: this.appearance.energyTemplate(meta),
@@ -50,7 +51,7 @@ function any(any: any): any { return any }
 
 export function MetaCard<Meta>(
     id: Symbol,
-    play: (ctx: PlayArgs<>) => Meta,
+    play: ((ctx: PlayArgs<>) => Meta) | ((ctx: PlayArgs<>) => Generator<any, Meta, any>),
     data: Meta,
     appearance: {
         color: string,
@@ -65,7 +66,7 @@ export function MetaCard<Meta>(
         constructor(){
             super()
             this.data = Object.assign({ }, data)
-            this.play = play
+            this.play = synchronize(play, this)
             this.id = id
             this.appearance = appearance
             this.effects = effects.map(([E, s]) => new E(this, s))

@@ -19,9 +19,9 @@ export const Footwork: Class<Card<FootworkData>> = MetaCard(footwork, playFootwo
     textTemplate: (meta: FootworkData) => `Gain ${meta.dexterity} dexterity`,
 }, [Exhaust, 1])
 
-function playFootwork({ actor, resolver }: PlayArgs<>): FootworkData {
+function* playFootwork({ actor, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {
     if(actor instanceof Creature){
-        const action: BindEffect = resolver.processAction(
+        const action: BindEffect = yield resolver.processAction(
             new BindEffect(
                 this, 
                 actor,

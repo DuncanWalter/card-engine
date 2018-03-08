@@ -1,7 +1,7 @@
 import type { Action } from './../actions/action'
 import type { GameStateSlice } from '../gameState'
 import type { ListenerGroup } from './listener'
-import { Listener, ConsumerArgs, reject } from './listener';
+import { Listener, ConsumerArgs, reject } from './listener'
 import { LL } from './../../core/linkedList'
 import { topologicalSort } from '../../core/topologicalSort'
 import { synchronize } from '../../core/async'
@@ -57,6 +57,8 @@ export class ActionResolver {
     simulating: boolean
     actionQueue: LL<Action<>>
     listeners: ListenerGroup
+    processAction: (action: Action<>) => Promise<Action<>>
+    processQueue: () => Promise<void>
     listenerOrder: Map<Symbol, {
         parents: Symbol[],
         children: Symbol[],
@@ -73,95 +75,27 @@ export class ActionResolver {
         this.initialized = false
         this.listenerOrder = new Map()
         this.gameStateSlice = gameStateSlice
+        this.processAction = synchronize(processAction, this)
+        this.processQueue = synchronize(processQueue, this)  
     }
 
-    enqueueActions(...actions: Action<>[]){
+    enqueueActions(...actions: Action<>[]): void {
         if (this.simulating) return
         actions.forEach(action => this.actionQueue.append(action))
         if (!this.processing) this.processQueue()
     }
 
-    pushActions(...actions: Action<>[]){
+    pushActions(...actions: Action<>[]): void {
         if (this.simulating) return
         actions.reverse().forEach(action => this.actionQueue.push(action))
         if (!this.processing) this.processQueue()
     }
 
-    processAction<A: Action<>>(action: A): A {
-        let activeListeners = aggregate(this.listeners, action)
-        
-        activeListeners.append(action)
-        action.defaultListeners.forEach(listener => {
-            activeListeners.append(listener)
-        })
-
-        if(!this.simulating){ console.log(action.id, action.data, activeListeners.toArray().length) }
-
-        // This mess allows effects with defined internals to
-        // wrap other listeners
-        // TODO: popping will break if multiple wraps occur
-        activeListeners = applyInternals(activeListeners)
-
-        const executionQueue: Listener<>[] = activeListeners.toArray().sort((a, b) => {
-            // TODO: perform checks
-            // try{
-                const ai = any(this.listenerOrder.get(a.id)).index
-                const bi = any(this.listenerOrder.get(b.id)).index
-                return ai - bi
-            // } catch(e){
-                
-            //     console.log(a, b)
-            //     return 0
-            // }
-        })
-
-        let index = -1
-        let active = true
-        const continuing = () => {
-            let a = ++index < executionQueue.length
-            // TODO: action check can break w/ internals and sync converts...
-            console.log(index, executionQueue[index])
-            let b = a && !(this.simulating && executionQueue[index].header == reject)
-            return a && b && active
-        }
-        const cancel = () => { active = false }
-        const next = () => {
-            while(continuing()){
-                executionQueue[index].consumer({ 
-                    data: action.data,
-                    next,
-                    cancel,
-                    resolver: any(this),
-                    subject: action.subject,
-                    actor: action.actor,
-                    game: this.gameStateSlice,
-                    internal: () => undefined,
-                })
-            }
-        }
-        next()
-        if(!this.simulating){
-            this.gameStateSlice.emit()
-            // console.log(this.gameStateSlice.enemies[0])
-        }
-        return action
-    }
-
-    simulate(use: (trap: ActionResolver) => void){
+    simulate<R>(use: (trap: ActionResolver) => R): R {
         this.simulating = true
-        const r = use(this)
+        const r: R = use(this)
         this.simulating = false
         return r
-    }
-
-    processQueue(){
-        if (this.processing) return
-        this.processing = true
-        let next
-        while(next = this.actionQueue.next()){
-            this.processAction(next)
-        }
-        this.processing = false
     }
 
     registerListenerType(id: Symbol, parents?: Symbol[], children?: Symbol[]){
@@ -201,14 +135,14 @@ function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
     let listener, alv = ls.view(), listeners = ls
     while(listener = alv.list[0]){
         if(listener && listener.internal){
-            const wrapper = listener
-            listeners = listeners.filter(listener => listener != wrapper).map(listener => {
+            const wrapper: Listener<> = listener
+            listeners = listeners.filter(listener => listener != wrapper).map((listener: Listener<>) => {
                 if(listener.id == wrapper.internal){
                     return Object.create(listener, {
                         consumer: {
                             value: args => {
                                 args.internal = () => listener.consumer(args)
-                                wrapper.consumer(args)
+                                return wrapper.consumer(args)
                             }
                         }
                     })
@@ -238,4 +172,74 @@ function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
     } else {
         return aggregate(ls.listener, action)
     } 
+}
+
+
+
+function* processAction(action: Action<>): Generator<any, Action<>, any> {
+    let activeListeners: LL<Listener<>> = aggregate(this.listeners, action)
+    
+    activeListeners.append(action)
+    action.defaultListeners.forEach((listener: *) => {
+        activeListeners.append(listener)
+    })
+
+    if(!this.simulating){ console.log(action.id, action.data, activeListeners.toArray().length) }
+
+    activeListeners = applyInternals(activeListeners)
+
+    const executionQueue: Listener<>[] = activeListeners.toArray().sort((a, b) => {
+        // TODO: perform checks
+        const ai = any(this.listenerOrder.get(a.id)).index
+        const bi = any(this.listenerOrder.get(b.id)).index
+        return ai - bi
+    })
+
+    let index: number = -1
+    let active: boolean = true
+    const that: ActionResolver = this
+    const continuing = (): boolean => {
+        let a = ++index < executionQueue.length
+        // TODO: action check can break w/ internals and sync converts...
+        // console.log(index, executionQueue[index])
+        let b = a && !(this.simulating && executionQueue[index].header == reject)
+        
+        return active = a && b && active
+    }
+    const cancel: () => void = () => { active = false }
+    const next: () => Promise<void> = synchronize(function*(): Generator<any, any, any> {
+        while(continuing()){
+            yield executionQueue[index].consumer({ 
+                data: action.data,
+                next,
+                cancel,
+                resolver: any(that),
+                subject: action.subject,
+                actor: action.actor,
+                game: that.gameStateSlice,
+                internal: () => { 
+                    throw new Error('Internal listener envoked by non-wrapper listener') 
+                },
+            })
+        }
+    })
+    yield next()
+    if(!this.simulating){
+        this.gameStateSlice.emit()
+        // console.log(this.gameStateSlice.enemies[0])
+    }
+    return action
+}
+
+function* processQueue(): Generator<any, void, any> {
+    if (this.processing) return
+    this.processing = true
+    let next: Action<>
+    while(next = this.actionQueue.next()){
+        yield this.processAction(next)
+        if(!this.simulating){
+            yield new Promise(resolve => setTimeout(resolve, 300))
+        }
+    }
+    this.processing = false
 }

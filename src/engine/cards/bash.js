@@ -1,11 +1,11 @@
 import { MetaCard, Card, PlayArgs } from './card'
-import { Damage, damage, targeted } from './../actions/damage'
+import { Damage, damage, targeted, blockable } from './../actions/damage'
 import { Listener } from '../actions/listener'
 import { BindEffect } from '../actions/bindEffect'
 import { Vulnerability } from '../effects/vulnerability'
-import { blockable } from '../effects/block'
 import { Creature } from '../creatures/creature'
 import { gameSlice } from '../gameState'
+import { synchronize } from '../../core/async';
 
 type BashData = { damage: number, energy: number }
 
@@ -24,9 +24,9 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
 
 
 
-function playBash({ target, resolver }: PlayArgs<>): BashData {
+function* playBash({ target, resolver }: PlayArgs<>): Generator<any, BashData, any> {
     if(target instanceof Creature){
-        const action: Damage = resolver.processAction(
+        const action: Damage = yield resolver.processAction(
             new Damage(
                 this, 
                 target,
@@ -37,7 +37,7 @@ function playBash({ target, resolver }: PlayArgs<>): BashData {
                 blockable,
             ),
         )
-        resolver.processAction(new BindEffect(this, target, {
+        yield resolver.processAction(new BindEffect(this, target, {
             Effect: Vulnerability,
             stacks: 2,
         }, blockable))

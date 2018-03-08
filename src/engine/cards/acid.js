@@ -1,9 +1,9 @@
 import { MetaCard, Card, PlayArgs } from './card'
-import { Damage, damage, targeted } from './../actions/damage'
-import { Listener } from '../actions/listener'
+import { Damage, damage, targeted, blockable } from './../actions/damage'
+import { Listener, ConsumerArgs } from '../actions/listener'
 import { BindEffect } from '../actions/bindEffect'
 import { Vulnerability } from '../effects/vulnerability'
-import { blockable, block } from '../effects/block'
+import { block } from '../effects/block'
 import { Creature } from '../creatures/creature'
 import { gameSlice } from '../gameState'
 import { Poison } from '../effects/poison';
@@ -38,13 +38,12 @@ function playAcid({ target, resolver }: PlayArgs<>): AcidData {
         action.defaultListeners.push(new Listener(
             block,
             {},
-            function({ internal, data, actor, subject, resolver, next }): void {
+            function*({ internal, data, actor, subject, resolver, next }: ConsumerArgs<>): Generator<any, any, any> {
                 const damage = data.damage
-                internal()
+                yield internal()
                 const poison = (damage - data.damage)
-                // console.log('ORIGINAL DAMAGE', damage, 'POISON STACKS', poison, data)
-                next()
-                resolver.processAction(new BindEffect(actor, subject, {
+                yield next()
+                yield resolver.processAction(new BindEffect(actor, subject, {
                     Effect: Poison,
                     stacks: poison,
                 }, acid))

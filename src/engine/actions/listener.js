@@ -20,10 +20,10 @@ export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
     subject: Subject,
     actor: Actor,
     resolver: ActionResolver,
-    next: () => void,
+    next: () => Promise<void>,
     cancel: () => void,
     game: $ReadOnly<GameState>,
-    internal: () => void,
+    internal: () => Promise<void>,
 }
 
 export type Consumer<Data=any, Subject=any, Actor=any> = (

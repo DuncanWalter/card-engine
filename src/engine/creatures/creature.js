@@ -2,12 +2,11 @@ import type { Effect } from "../effects/effect"
 import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import { damage } from "../actions/damage"
 import { gameSlice } from "../gameState"
-import { RemoveCreature } from "../actions/removeCreature";
-import { Listener } from "../actions/listener";
+import { RemoveCreature } from "../actions/removeCreature"
+import { Listener } from "../actions/listener"
 
 const death = Symbol('death')
 gameSlice.resolver.registerListenerType(death, [damage])
-
 
 export class Creature {
     maxHealth: number
@@ -21,7 +20,7 @@ export class Creature {
         this.maxHealth = maxHealth ? maxHealth : health
         this.health = Math.min(health, this.maxHealth)
         this.effects = []
-        this.listener = [this.effects, new Listener(
+        this.listener = [(this.effects: any), new Listener(
             death,
             {
                 type: damage,
@@ -31,7 +30,7 @@ export class Creature {
                 console.log('did it die?', subject.health)
                 if(!subject.health){
                     console.log('it did!')
-                    resolver.pushActions(new RemoveCreature(subject, subject, {}))
+                    resolver.pushActions(new RemoveCreature(subject, (subject: any), {}))
                 }
             },
             false,
