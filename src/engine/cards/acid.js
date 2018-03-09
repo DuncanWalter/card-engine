@@ -21,7 +21,7 @@ export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
     energyTemplate: (meta: AcidData) => meta.energy.toString(),
     color: '#eeff33',
     titleTemplate: (meta: AcidData) => 'Acid',
-    textTemplate: (meta: AcidData) => `Deal ${meta.damage} damage to a target. All blocked damage is converted to poison.`,
+    textTemplate: (meta: AcidData) => <p>Deal {meta.damage} damage to a target. Convert blocked damage to poison.</p>,
 })
 
 function playAcid({ target, resolver }: PlayArgs<>): AcidData {

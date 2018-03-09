@@ -11,7 +11,7 @@ type Data = {
 }
 
 export const playCard: Symbol = Symbol('playCard')
-export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCard, ({ game, data, subject, actor, resolver, cancel }: *) => { 
+export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCard, function*({ game, data, subject, actor, resolver, cancel }): * { 
     // TODO: perform an actual energy check
     if (actor.energy < subject.data.energy) return cancel()
     actor.energy -= subject.data.energy //TODO: subject.energy;
@@ -21,7 +21,9 @@ export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCa
     game.hand.splice(game.hand.indexOf(subject), 1)
     game.activeCards.push(subject) // TODO: could be safer than push pop
 
-    subject.play({ 
+    game.emit()
+
+    yield subject.play({ 
         resolver,
         actor,
         subject,
@@ -31,6 +33,7 @@ export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCa
 
     game.activeCards.pop()
 
+    // TODO: rework destinations to allow for exhausts etc
     if(data.destination != undefined){
         data.destination.push(subject)
     } else {

@@ -1,23 +1,37 @@
 import { block as blockSymbol } from "../../../engine/effects/block"
-import { GameState } from "../../../engine/gameState"
+import { GameState, gameSlice } from "../../../engine/gameState"
 import type { Component } from "../component"
 import { Effect } from "./effect"
+import { NPC } from "../../../engine/creatures/npc";
+import { Behavior } from "./behavior"
+import { view } from "../../view";
 
 type Props = {
     creature: Creature,
     isEnemy: boolean,
 }
 
+const game = gameSlice
+
 export const Creature: Component<Props> = ({ isEnemy, creature }: Props) => {
     
     const { health, maxHealth, color } = creature
+
     const maybeBlock = creature.effects.filter(e => e.id == blockSymbol)[0]
-    const block = maybeBlock ? maybeBlock.stacks : 0
+    const block: number = maybeBlock ? maybeBlock.stacks : 0
+
+    let behaviors = []
+    if(creature instanceof NPC){
+        behaviors.push(creature.behavior)
+    }
     
     // TODO: display enemy intent
-    return <div style={sty.creature}>
+    return <div 
+        style={sty.creature}
+        onClick={e => view.dispatcher.clickFocus(creature)}
+    >
         <div style={sty.effectBar}>
-            
+            {behaviors.map(b => <Behavior data={b.simulate(creature, game.resolver, game)}/>)}
         </div>
         <div style={{ backgroundColor: color, ...sty.img }}/>
         <div style={sty.healthBar}>

@@ -10,6 +10,7 @@ import { gameSlice } from './gameState'
 import { Turtle } from './creatures/turtle/turtle'
 import { Player } from './creatures/player'
 import { dispatch } from '../core/state'
+import { Cobra } from './creatures/cobra/cobra';
 
 
 export const engine = new Module('engine', ({ global, next }) => {    
@@ -25,7 +26,8 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     game.resolver.initialize()
 
-    game.enemies[0] = new Turtle(15)
+    game.enemies.push(new Turtle(15))
+    game.enemies.push(new Cobra(30))
 
     game.resolver.enqueueActions(new StartCombat({}, {}, {}))
 

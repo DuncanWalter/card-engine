@@ -1,48 +1,54 @@
 import type { NPC } from "./npc"
 import type { GameState } from "../gameState"
 import { Action } from "../actions/action"
+import { ActionResolver } from "../actions/actionResolver";
+import { synchronize } from "../../core/async";
 
+export interface BehaviorData {
+    damage?: number,
+    isDefending?: boolean,
+    isDebuffing?: boolean,
+    isMajorDebuffing?: boolean,
+    isBuffing?: boolean,
+    isMiscBehavior?: boolean,
+}
 
-// type BehaviorType = 'blade' | 'shield' | '' | 'diabolical' | 
+export interface BehaviorContext { 
+    owner: NPC, 
+    resolver: ActionResolver, 
+    game: $ReadOnly<GameState> 
+}
 
-// interface Data {
-//     damage: number,
+export class Behavior {
 
-// }
+    name: string
 
-// interface Appearance {
-//     title: string,
-//     color: string,
+    selectNext: (seed: number) => Behavior
 
-// }
+    perform: (ctx: BehaviorContext) => Promise<BehaviorData>
 
-export class Behavior<Meta: Object={}> {
+    simulate(owner: NPC, resolver: ActionResolver, game: $ReadOnly<GameState>): BehaviorData {
+        let data: BehaviorData = { isMiscBehavior: true }
+        resolver.simulate(resolver => {
+            this.perform({ owner, resolver, game }).then(val => data = val)
+        })
+        return data
+    }
 
-    next(game: $ReadOnly<GameState>): Behavior<> {
-        const next = this.production(game, this.seed)
-        next.seed = this.seed
+    next(owner: NPC): Behavior {
+        const next = this.selectNext(owner.seed.value)
+        owner.seed.value = owner.seed.generator.random()
         return next
     }
 
-    seed: number
-    color: string = '#dd4444'
-    textTemplate: (meta: Meta) => string
-    name: string
-
-    actions: (game: $ReadOnly<GameState>, self: NPC) => Action<>[]
-
-    production: (state: $ReadOnly<GameState>, seed: number) => Behavior<>
-
     constructor(
         name: string,
-        production: (state: $ReadOnly<GameState>, seed: number) => Behavior<>,
-        actions: (game: $ReadOnly<GameState>, self: NPC) => Action<>[],
+        selectNext: (seed: number) => Behavior,
+        perform: ({ owner: NPC, resolver: ActionResolver, game: $ReadOnly<GameState> }) => BehaviorData | Generator<any, BehaviorData, any>,
     ){
-        this.production = production 
         this.name = name
-        this.textTemplate = meta => name
-        this.seed = 1 // TODO: prolly will be a twister
-        this.actions = actions
+        this.selectNext = selectNext 
+        this.perform = synchronize(perform, this)
     }
 
 }

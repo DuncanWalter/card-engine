@@ -53,6 +53,7 @@
   "dependencies": {
     "incompose": "^2.0.0-beta.0",
     "inferno": "^4.0.4",
+    "mersenne-twister": "^1.1.0",
     "silhouette-core": "^2.3.2",
     "silhouette-plugin-rxjs": "^1.3.1",
     "vitrarius": "^1.4.1",

@@ -2,7 +2,7 @@ function any(any: any): any { return any }
 
 // TODO: make the api as true to form as possible
 // So... we need to be able to run tasks that MAY be async synchronously if possible
-class SyncPromise<V> extends Promise<V> {
+export class SyncPromise<V> extends Promise<V> {
 
     result: Symbol | V
     awaiting: V => void

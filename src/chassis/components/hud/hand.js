@@ -1,32 +1,30 @@
+import type { GameState } from './../../../engine/gameState'
+
 import { Card } from './card'
 import { Card as CardObject } from './../../../engine/cards/card'
 import { withSlice } from '../hocs/withSlice'
-import { view } from 'vitrarius'
 import { createSlice } from '../../../core/state' 
 import { handSlice } from './handSlice'
-
-import type { GameState } from './../../../engine/gameState'
-
-
+import { view } from '../../view';
+import { gameSlice } from '../../../engine/gameState';
 
 type Props = {
     game: $ReadOnly<GameState>,
-    state: any, // TODO: 
+    view: any, // TODO: 
     playCard: (card: CardObject<any>, target: mixed) => void,
 }
 
 // should the card 'dtos' have a render, or should the hand map
 // dto to component? Probably the latter... TODO:
-export const Hand = withSlice(handSlice, 'state')(({ game, state }: Props) => {
+export const Hand = withSlice(view, 'view')(({ game, view }: Props) => {
     return <div 
         style={sty.hand}
-        onMouseMove={e => state.dispatcher.setCursor(e)}
     >
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0 }}>
-            {game.hand.map((e, i, l) => <div style={
-                sty.nthCardPoint(i, l.length, e == state.focus)
-            }><div><Card card={e} game={game} hand={state}/></div></div>)}
+            {game.hand.concat(game.activeCards).map((e, i, l) => <div style={
+                sty.nthCardPoint(i, l.length, e)
+            }><div><Card card={e} game={game} hand={view}/></div></div>)}
         </div>
         <div style={{ flex: 1 }}/>
     </div>
@@ -40,7 +38,8 @@ export const Hand = withSlice(handSlice, 'state')(({ game, state }: Props) => {
 
 
 const sty = {
-    nthCardPoint: (n, m, isFocus) => {
+    nthCardPoint: (n, m, e) => {
+        let isFocus = e == view.cursorFocus || gameSlice.activeCards.indexOf(e) >= 0
 
         let parab = x => x**2;
         let index = (n-(m-1)/2);
@@ -53,7 +52,7 @@ const sty = {
         angle = 0.3*180/3.1415*Math.atan(offset);
 
         return { 
-            transform: `translate(${215*index}px, ${(isFocus ? 10 : 100) + 140*parab(offset)}px) rotate(${ angle }deg)`,
+            transform: `translate(${215*index}px, ${(isFocus ? 10 : 190) + 140*parab(offset)}px) rotate(${ angle }deg)`,
             width: 0,
             height: 0,
             flex: 1,

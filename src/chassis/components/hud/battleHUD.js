@@ -3,6 +3,7 @@ import { gameSlice, GameState } from '../../../engine/gameState'
 import { withSlice } from '../hocs/withSlice'
 import { Creature } from './creature'
 import { EndTurn } from '../../../engine/actions/turnActions'
+import { Card } from './card'
 
 import type { Component } from '../component';
 
@@ -13,7 +14,7 @@ export const BattleHUD: Component<Props> = withSlice(gameSlice, 'game')(({ game 
     
     let endTurn = () => game.resolver.enqueueActions(new EndTurn({}, game.player, {}))
 
-    return <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    return <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* relic bar! */}
         {/* combat pane! */}
         <div style={{ flex: 3, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

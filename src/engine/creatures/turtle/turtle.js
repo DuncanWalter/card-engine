@@ -6,20 +6,22 @@ import { BindEffect } from "../../actions/bindEffect"
 import { startCombat } from "../../actions/startCombat"
 import { Blockade } from "../../effects/blockade";
 
-let chomp, hunker
+let chomp: Behavior, hunker: Behavior
 
-chomp = new Behavior('chomp', any => hunker, (game, self) => [
-    new Damage(self, game.player, { 
+chomp = new Behavior('chomp', seed => hunker, function*({ owner, resolver, game }){
+    const action: Damage = yield resolver.processAction(new Damage(self, game.player, { 
         damage: 7 
-    }, targeted, blockable),
-])
+    }, targeted, blockable))
+    return { damage: action.data.damage }
+})
 
-hunker = new Behavior('hunker', any => chomp, (game, self) => [
-    new BindEffect(self, self, {
+hunker = new Behavior('hunker', seed => chomp, function*({ owner, resolver, game }){
+    yield resolver.processAction(new BindEffect(owner, owner, {
         Effect: Block,
-        stacks: 6,
-    }),
-])
+        stacks: 8,
+    }))
+    return { isDefending: true }
+})
 
 export const Turtle = MetaCreature('turtle', 15, chomp, self => ({ resolver, actor }) => {
     resolver.enqueueActions(new BindEffect(self, self, {

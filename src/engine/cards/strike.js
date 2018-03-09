@@ -2,6 +2,8 @@ import { MetaCard, Card, PlayArgs } from './card'
 import { Damage, targeted } from './../actions/damage'
 import { blockable } from '../actions/damage'
 import { Creature } from '../creatures/creature'
+import { queryTarget } from './utils';
+import { gameSlice } from '../gameState';
 
 type StrikeData = { damage: number, energy: number }
 
@@ -13,17 +15,15 @@ export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
     energyTemplate: (meta: StrikeData) => meta.energy.toString(),
     color: '#dd2244',
     titleTemplate: (meta: StrikeData) => 'Strike',
-    textTemplate: (meta: StrikeData) => `Deal ${meta.damage} damage to a target.`,
-}) 
+    textTemplate: (meta: StrikeData) => <p>Deal {meta.damage} damage to a target.</p>,
+})
 
-
-
-
-function* playStrike({ target, resolver }: PlayArgs<>): Generator<any, StrikeData, any>{
-    if(target instanceof Creature){
+function* playStrike({ resolver }: PlayArgs<>): Generator<any, StrikeData, any>{
+    let target = yield queryTarget(gameSlice.enemies, any => true)
+    if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
-                this, 
+                this,
                 target,
                 {
                     damage: this.data.damage,

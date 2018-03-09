@@ -3,6 +3,8 @@ import { PlayCard } from "../../../engine/actions/playCard"
 import { gameSlice } from "../../../engine/gameState"
 import { handSlice } from "./handSlice"
 import { Effect } from "./effect"
+import { dispatch } from "../../../core/state";
+import { view } from "../../view";
 
 const a: any = Object.assign;
 
@@ -12,9 +14,12 @@ type Props = {
     hand: typeof handSlice,
 }
 
-export const Card = ({ game, card, hand }: Props) => {
+const game = gameSlice
 
-    const { energy, color, text, title } = card.simulate({
+export const Card = ({ card }: Props) => {
+
+    // TODO: need to rework the energy part to check for price and playability 
+    let { energy, color, text, title } = card.simulate({
         actor: game.player, // TODO: make this player and target
         subject: card,
         target: game.enemies[0], 
@@ -37,11 +42,10 @@ export const Card = ({ game, card, hand }: Props) => {
     }
 
     return <div 
-        style={sty.base(card == hand.focus)} 
-        onClick={clicked} 
-        onMouseMove={e => {
-            hand.dispatcher.setFocus(card)
-        }}
+        style={sty.base(card == view.cursorFocus)} 
+        onClick={clicked}
+        onMouseEnter={e => view.dispatcher.setCursorFocus(card)}
+        onMouseLeave={e => view.dispatcher.unsetCursorFocus(card)}
     >   
         <div style={sty.effectsBar}>
             {card.effects.map(e => <Effect effect={e}/>)}

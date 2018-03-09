@@ -14,7 +14,7 @@ export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
 }
 
 // TODO: play args should have data and use another type argument
-export class Card<Data=any> {
+export class Card<Data: Object> {
     id: Symbol
     appearance: {
         color: string, // TODO: this is a stand in for images
@@ -38,6 +38,17 @@ export class Card<Data=any> {
         resolver.simulate(resolver => {
             this.play({ actor, subject, target, resolver }).then(v => meta = v)
         })
+
+        Object.keys(meta).forEach(k => {
+            if(typeof meta[k] == 'number'){
+                if(meta[k] < this.data[k]){
+                    meta[k] = <span style={{color: 'red'}}>{meta[k]}</span>
+                } else if(meta[k] > this.data[k]){
+                    meta[k] = <span style={{color: 'green'}}>{meta[k]}</span>
+                }
+            } 
+        })
+
         return {
             energy: this.appearance.energyTemplate(meta),
             title: this.appearance.titleTemplate(meta),
@@ -49,7 +60,7 @@ export class Card<Data=any> {
 
 function any(any: any): any { return any }
 
-export function MetaCard<Meta>(
+export function MetaCard<Meta: Object>(
     id: Symbol,
     play: ((ctx: PlayArgs<>) => Meta) | ((ctx: PlayArgs<>) => Generator<any, Meta, any>),
     data: Meta,

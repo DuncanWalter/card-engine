@@ -23,8 +23,8 @@ export const Poison: Class<Effect> = MetaEffect(poison, {
         tags: [tick, poison],
         type: bindEffect,
     },
-    function({ resolver, subject, cancel }: ConsumerArgs<>): void {
-        resolver.pushActions(new Damage({}, subject, {
+    function*({ resolver, subject, cancel }: ConsumerArgs<>): * {
+        yield resolver.processAction(new Damage({}, subject, {
             damage: self.stacks,
         }, poison))
     }, 

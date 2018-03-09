@@ -17,13 +17,13 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
     energyTemplate: (meta: BashData) => meta.energy.toString(),
     color: '#bb4433',
     titleTemplate: (meta: BashData) => 'Bash',
-    textTemplate: (meta: BashData) => `Deal ${meta.damage} damage and 1 weakness to a target.`,
+    textTemplate: (meta: BashData) => <p>Deal {meta.damage} damage and 1 weakness to a target.</p>,
 })
 
 
 
 
-
+// TODO: the bash vulnerability should be a default listener on the damage action
 function* playBash({ target, resolver }: PlayArgs<>): Generator<any, BashData, any> {
     if(target instanceof Creature){
         const action: Damage = yield resolver.processAction(
