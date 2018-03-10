@@ -7,6 +7,9 @@ TODO
 
 * add query target functionality... somewhere...
 
+* unify state management
+* create a combine reducers utility 
+
 * make a card set class
 * make a card group class
 * create the base card set
