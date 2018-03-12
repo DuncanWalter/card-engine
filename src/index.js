@@ -1,5 +1,5 @@
 import { render } from 'inferno'
-import { App } from './core/app.js'
+import { App } from './app.js'
 import './index.styl'
 
 // HMR friendly bootstrapping
