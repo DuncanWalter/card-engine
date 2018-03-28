@@ -2,8 +2,7 @@ import type { ListenerGroup } from './listener'
 import type { Consumer } from './listener'
 import { Listener, reject } from './listener'
 import { ActionResolver } from './actionResolver'
-import { gameSlice, GameState } from '../gameState'
-
+import { state as game, GameState } from '../components/battle/battleState'
 
 export const startTurn = Symbol('startTurn')
 export const startCombat = Symbol('startCombat')
@@ -39,7 +38,7 @@ export function MetaAction<Data, Subject, Actor>(
     id: Symbol, 
     consumer: Consumer<>,
 ): Class<CA<Data, Subject, Actor>> {
-    gameSlice.state.resolver.registerListenerType(id)
+    game.resolver.registerListenerType(id)
     return any(class CustomAction extends Action<Data, Subject, Actor> {
 
         id: Symbol

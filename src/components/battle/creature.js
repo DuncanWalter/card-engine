@@ -1,17 +1,16 @@
 import { block as blockSymbol } from "../../effects/block"
-import { GameState, gameSlice } from "../../gameState"
+import { GameState, state as game } from "./battleState"
 import type { Component } from "../component"
 import { Effect } from "./effect"
 import { NPC } from "../../creatures/npc"
 import { Behavior } from "./behavior"
-import { view } from "../../view";
+import { state as view, dispatcher } from "../../viewState"
+
 
 type Props = {
     creature: Creature,
     isEnemy: boolean,
 }
-
-const game = gameSlice.state
 
 export const Creature: Component<Props> = ({ isEnemy, creature }: Props) => {
     
@@ -28,7 +27,7 @@ export const Creature: Component<Props> = ({ isEnemy, creature }: Props) => {
     // TODO: display enemy intent
     return <div 
         style={sty.creature}
-        onClick={e => view.dispatcher.clickFocus(creature)}
+        onClick={e => dispatcher.clickFocus(creature)}
     >
         <div style={sty.effectBar}>
             {behaviors.map(b => <Behavior data={b.simulate(creature, game.resolver, game)}/>)}

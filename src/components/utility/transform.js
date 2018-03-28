@@ -1,5 +1,7 @@
 
 import type { Component } from '../component'
+import { h } from 'preact'
+
 
 export const Transform: Component<{ content: any, position: any, rotation?: number }> = ({ position, content }) => {
     return <div style={ process(position) }>{ content }</div>

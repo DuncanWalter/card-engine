@@ -1,5 +1,5 @@
 import type { NPC } from "./npc"
-import type { GameState } from "../gameState"
+import type { GameState } from "../components/battle/battleState"
 import { Action } from "../actions/action"
 import { ActionResolver } from "../actions/actionResolver"
 import { synchronize } from "../utils/async"

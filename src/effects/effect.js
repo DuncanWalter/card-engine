@@ -1,10 +1,10 @@
 import type { ListenerGroup } from "../actions/listener"
 import type { Creature } from "../creatures/creature"
 import { Listener, ConsumerArgs } from "../actions/listener"
-import { gameSlice } from "../gameState"
 import { startTurn } from "../actions/turnActions"
 import { BindEffect } from "../actions/bindEffect"
 import { Card } from "../cards/card"
+import { state as game } from "../components/battle/battleState";
 
 // TODO: put setters on stacks
 
@@ -20,6 +20,8 @@ interface Appearance {
     outerColor: string,
     name: string,
     description: string,
+    sides: number,
+    rotation?: number,
 }
 
 
@@ -39,7 +41,7 @@ export class Effect {
 }
 
 export const tick = Symbol('tick')
-gameSlice.state.resolver.registerListenerType(tick, [startTurn], [])
+game.resolver.registerListenerType(tick, [startTurn], [])
 
 // MetaClass for creating effect types
 export const MetaEffect = function MetaEffect(
@@ -52,7 +54,7 @@ export const MetaEffect = function MetaEffect(
 
 ): Class<Effect> {
     // TODO: auto register these things and add deps to make it work
-    gameSlice.state.resolver.registerListenerType(id, parents, children)
+    game.resolver.registerListenerType(id, parents, children)
 
     function turnListener(cons: Class<Effect>, owner: { effects: Effect[] }, self: Effect): Listener<> {
         return new Listener(

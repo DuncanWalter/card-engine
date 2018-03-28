@@ -1,23 +1,16 @@
-import type { GameState } from './../../gameState'
-
 import { Card } from '../card/card'
 import { Card as CardObject } from './../../cards/card'
 import { Slice } from '../../utils/state' 
-import { handSlice } from './handState'
-import { view } from '../../view'
-import { gameSlice } from '../../gameState'
+import { state as hand, update } from './handState'
+import { state as game } from '../battle/battleState'
 
 import { withAnimation } from '../utility/withAnimation'
 import { CenterPoint } from '../utility/centerPoint'
 import { Transform } from '../utility/transform'
 
-const game = gameSlice.state
-const hand = handSlice.state
 
 export const Hand = withAnimation('frameData')(props => {
-
-    handSlice.dispatcher.update()
-
+    update()
     return <div style={sty.hand}>
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0, height: 0 }}>{[

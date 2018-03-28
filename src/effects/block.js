@@ -3,7 +3,6 @@ import { MetaEffect, Effect } from "./effect"
 import { damage, blockable } from "../actions/damage"
 import { vulnerability } from "./vulnerability"
 import { BindEffect } from "../actions/bindEffect"
-import { gameSlice } from "../gameState"
 import { Listener, ConsumerArgs } from "../actions/listener"
 
 export const block = Symbol('block')
@@ -12,8 +11,10 @@ export const Block: Class<Effect> = MetaEffect(block, {
     innerColor: '#6688ee',
     outerColor: '#2233bb',
     description: '',
+    sides: 5,
+    rotation: 0.5,
 }, {
-    stacked: true, 
+    stacked: true,  
     delta: x => 0,
     min: 1,
     max: 999,

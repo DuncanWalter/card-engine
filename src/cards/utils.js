@@ -1,18 +1,18 @@
-import { gameSlice } from "../gameState";
-import { queryTarget as queryUserTarget } from "../view";
-import { SyncPromise } from "../utils/async";
+import { state as game } from "../components/battle/battleState"
+import { queryTarget as queryUserTarget } from "../viewState"
+import { SyncPromise } from "../utils/async"
 
 
-
-
-export function queryTarget<T>(source: T[], filter: (target: Object) => boolean): * {
+// Allows cards to request targets from players while being played
+export function queryTarget<T>(source: Iterable<T>, filter: (target: Object) => boolean): * {
+    let __src__ = [...source]
     return new SyncPromise(resolve => {
-        if(source.length <= 1){
-            resolve(source[0])
-        } else if(gameSlice.state.resolver.simulating){
-            resolve(undefined)
+        if(__src__.length <= 1){
+            resolve(__src__[0]) // TODO: is undefined good here?
+        } else if(game.resolver.simulating){
+            resolve(undefined) // TODO: is undefined good here?
         } else {
-            queryUserTarget(t => source.indexOf(t) >= 0 && filter(t), resolve)
+            queryUserTarget(t => __src__.includes(t) && filter(t), resolve)
         }
     })
 }

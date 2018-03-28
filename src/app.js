@@ -1,11 +1,13 @@
 import { Module, loadModules } from './utils/module'
-
 import { engine } from './engine'
+import { Main } from './components/main'
+import { h } from 'preact'
+
 
 export const global = loadModules([engine]);
 export const App = () => <div style={styles.app} id='app-root'>
-   { global.render() }
-</div>;
+   <Main/>
+</div>
 
 const styles = {
     app: {

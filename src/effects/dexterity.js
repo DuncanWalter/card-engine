@@ -1,5 +1,5 @@
 import { MetaEffect, Effect } from "./effect"
-import { damage } from "../actions/damage"
+import { damage, targeted } from "../actions/damage"
 import { block, Block } from "./block"
 import { bindEffect } from "../actions/bindEffect"
 import { Card } from "../cards/card"
@@ -11,6 +11,8 @@ export const Dexterity: Class<Effect> = MetaEffect(dexterity, {
     outerColor: '#22aa88',
     innerColor: '#115544',
     description: '',
+    sides: 30,
+    rotation: 0,
 }, {
     stacked: true, 
     delta: x => x,
@@ -22,6 +24,7 @@ export const Dexterity: Class<Effect> = MetaEffect(dexterity, {
         subjects: [owner],
         filter: action => action.data.Effect == Block,
         type: bindEffect,
+        tags: [targeted],
     },
     function({ data, actor }: ConsumerArgs<>): void {
         if(actor instanceof Card){

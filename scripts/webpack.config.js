@@ -38,8 +38,8 @@ const baseConfig = options => ({
                         'babel-plugin-syntax-class-properties',
                         'babel-plugin-transform-class-properties',
                         'babel-plugin-transform-object-rest-spread',
-                        ['babel-plugin-inferno', {imports: true}],
-                        'babel-plugin-syntax-jsx',
+                        // ['babel-plugin-inferno', {imports: true}],
+                        ['transform-react-jsx', {pragma: 'h'}],
                     ],
                     presets: ['flow', [
                         require('babel-preset-env'), {
@@ -80,9 +80,14 @@ const baseConfig = options => ({
     resolve: {
         alias: {
             '~': path.join(__dirname, './../'),
+            'react': 'preact-compat',
+            'react-dom': 'preact-compat',
         },
     },
     plugins: [
+        new webpack.ProvidePlugin({
+            h: ['preact', 'h'],
+        }),
         (c => new c({
             filename: 'index.bundle.html',
             template: './src/index.html',

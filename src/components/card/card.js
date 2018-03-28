@@ -1,17 +1,14 @@
 import { Card as CardObject } from "../../cards/card"
 import { PlayCard } from "../../actions/playCard"
-import { gameSlice } from "../../gameState"
-import { Effect } from "../hud/effect"
-import { view as viewSlice } from "../../view"
+import { state as game } from "../battle/battleState"
+import { Effect } from "../battle/effect"
+import { state as view, dispatcher } from "../../viewState"
 
 const a: any = Object.assign
 
 type Props = {
     card: CardObject<any>,
 }
-
-const game = gameSlice.state
-const view = viewSlice.state
 
 export const Card = ({ card }: Props) => {
 
@@ -41,8 +38,8 @@ export const Card = ({ card }: Props) => {
     return <div 
         style={sty.base(card == view.cursorFocus)} 
         onClick={clicked}
-        onMouseEnter={e => viewSlice.dispatcher.setCursorFocus(card)}
-        onMouseLeave={e => viewSlice.dispatcher.unsetCursorFocus(card)}
+        onMouseEnter={e => dispatcher.setCursorFocus(card)}
+        onMouseLeave={e => dispatcher.unsetCursorFocus(card)}
     >   
         <div style={sty.effectsBar}>
             {card.effects.map(e => <Effect effect={e}/>)}

@@ -1,9 +1,9 @@
-import { MetaCard, Card, PlayArgs } from './card'
-import { BindEffect } from '../actions/bindEffect'
-import { block, Block } from '../effects/block'
-import { Creature } from '../creatures/creature'
-import { dexterity, Dexterity } from '../effects/dexterity'
-import { Exhaust } from '../effects/exhaust'
+import { MetaCard, Card, PlayArgs } from './../card'
+import { BindEffect } from '../../actions/bindEffect'
+import { block, Block } from '../../effects/block'
+import { Creature } from '../../creatures/creature'
+import { dexterity, Dexterity } from '../../effects/dexterity'
+import { Exhaust } from '../../effects/exhaust'
 
 
 type FootworkData = { dexterity: number, energy: number }

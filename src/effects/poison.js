@@ -1,8 +1,7 @@
 import { MetaEffect, Effect, tick } from "./effect"
 import { damage, Damage } from "../actions/damage"
 import { vulnerability } from "./vulnerability"
-import { BindEffect, bindEffect } from "../actions/bindEffect"
-import { gameSlice } from "../gameState"
+import { bindEffect } from "../actions/bindEffect"
 import { Listener, ConsumerArgs } from "../actions/listener";
 
 export const poison = Symbol('poison')
@@ -11,6 +10,7 @@ export const Poison: Class<Effect> = MetaEffect(poison, {
     outerColor: '#22bb33',
     innerColor: '#66ee88',
     description: '',
+    sides: 3,
 }, {
     stacked: true, 
     delta: x => x - 1,

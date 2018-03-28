@@ -1,12 +1,12 @@
 import type { Effect } from "../effects/effect"
 import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import { damage } from "../actions/damage"
-import { gameSlice } from "../gameState"
+import { state as game } from "../components/battle/battleState"
 import { RemoveCreature } from "../actions/removeCreature"
 import { Listener } from "../actions/listener"
 
 const death = Symbol('death')
-gameSlice.state.resolver.registerListenerType(death, [damage])
+game.resolver.registerListenerType(death, [damage])
 
 export class Creature {
     maxHealth: number

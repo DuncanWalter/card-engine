@@ -1,6 +1,6 @@
 import type { Action } from "./action"
 import type { ActionResolver } from "./actionResolver"
-import type { GameState } from "../gameState"
+import type { GameState } from "../components/battle/battleState"
 import { synchronize } from "../utils/async"
 
 export type Header<ActionType=Action<>> = {
@@ -12,7 +12,7 @@ export type Header<ActionType=Action<>> = {
 }
 
 export type ListenerGroup = Listener<> 
-                          | ListenerGroup[] 
+                          | Iterable<ListenerGroup> 
                           | { listener: ListenerGroup }
 
 export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {

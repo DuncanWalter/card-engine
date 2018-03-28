@@ -1,6 +1,8 @@
 import type { Component } from '../component'
 import { Slice } from "../../utils/state";
 import { overStream } from "./overStream";
+import { h } from 'preact'
+
 
 export const animationTimer = new Slice({
     tick: state => {
@@ -8,11 +10,13 @@ export const animationTimer = new Slice({
         return {
             time,
             delta: (time - state.time) / 1000,
+            hash: state.hash++ % 1024
         }
     }
 }, {
     time: Date.now(),
     delta: 17,
+    hash: 0,
 })
 
 requestAnimationFrame(function loop(){ 

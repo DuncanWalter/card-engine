@@ -2,25 +2,25 @@ import { MetaEffect, Effect } from "./effect"
 import { damage } from "../actions/damage"
 import { Listener, ConsumerArgs } from "../actions/listener";
 import { blockable } from "../actions/damage";
-import { vulnerability } from "./vulnerability";
+import { weakness } from "./weakness";
 import { Card } from "../cards/card";
 import { Player } from "../creatures/player";
 
-export const weakness = Symbol('weakness');
-export const Weakness: Class<Effect> = MetaEffect(weakness, {
-    name: 'Weakness',
-    innerColor: '#22ee33',
-    outerColor: '#119922',
+export const strength = Symbol('strength');
+export const Strength: Class<Effect> = MetaEffect(strength, {
+    name: 'Strength',
+    innerColor: '#ee4444',
+    outerColor: '#aa3333',
     description: '',
     sides: 3,
-    rotation: 0.5,
+    rotation: 0,
 }, {
     stacked: true, 
-    delta: x => x - 1,
+    delta: x => x,
     min: 1,
     max: 99,
-}, owner => new Listener(
-    weakness,
+}, (owner, self) => new Listener(
+    strength,
     {
         filter: action => action.actor instanceof Card && owner instanceof Player || action.actor == owner,
         tags: [blockable],
@@ -28,8 +28,8 @@ export const Weakness: Class<Effect> = MetaEffect(weakness, {
     },
     function({ data }: ConsumerArgs<>): void {
         if(typeof data.damage == 'number'){
-            data.damage *= 0.75
+            data.damage += self.stacks
         }
     },  
     false,
-), [], [vulnerability])
+), [], [weakness])

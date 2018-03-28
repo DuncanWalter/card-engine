@@ -3,7 +3,6 @@ import { MetaEffect, Effect, tick } from "./effect"
 import { damage, Damage } from "../actions/damage"
 import { vulnerability } from "./vulnerability"
 import { BindEffect, bindEffect } from "../actions/bindEffect"
-import { gameSlice } from "../gameState"
 import { playCard, PlayCard } from "../actions/playCard"
 import { Listener } from "../actions/listener"
 
@@ -13,6 +12,7 @@ export const Exhaust: Class<Effect> = MetaEffect(exhaust, {
     innerColor: '#343434',
     outerColor: '#565656',
     description: '',
+    sides: 30,
 }, {
     stacked: false, 
     delta: x => x,

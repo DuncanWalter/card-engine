@@ -1,11 +1,12 @@
 import type { Action } from './../actions/action'
 import type { ListenerGroup } from './listener'
 import type { Slice } from '../utils/state'
-import type { GameState } from '../gameState'
+import type { GameState } from '../components/battle/battleState'
 import { Listener, ConsumerArgs, reject } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
 import { synchronize } from '../utils/async'
+import { Animation } from '../animations/animation';
 
 function any(self: any): any { return self }
 
@@ -52,14 +53,16 @@ function testListener(action: Action<>, listener: Listener<>){
 
 export class ActionResolver {
 
-    gameStateSlice: Slice<GameState>
+    gameState: $ReadOnly<GameState>
     initialized: boolean
+    emit: () => void
     processing: boolean
     simulating: boolean
     actionQueue: LL<Action<>>
     listeners: ListenerGroup
     processAction: (action: Action<>) => Promise<Action<>>
     processQueue: () => Promise<void>
+    animations: Map<any, Set<Animation>>
     listenerOrder: Map<Symbol, {
         parents: Symbol[],
         children: Symbol[],
@@ -68,16 +71,18 @@ export class ActionResolver {
         id: Symbol,
     }>
 
-    constructor(listeners: ListenerGroup, gameStateSlice: Slice<GameState>){
+    constructor(listeners: ListenerGroup, { state, emit }: *){
         this.processing = false
         this.simulating = false
         this.actionQueue = new LL()
         this.listeners = listeners
         this.initialized = false
         this.listenerOrder = new Map()
-        this.gameStateSlice = gameStateSlice
+        this.gameState = state
         this.processAction = synchronize(processAction, this)
         this.processQueue = synchronize(processQueue, this)  
+        this.animations = new Map()
+        this.emit = emit
     }
 
     enqueueActions(...actions: Action<>[]): void {
@@ -161,9 +166,10 @@ function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
 
 
 function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
-    // console.log(ls)
-    if(Array.isArray(ls)){
-        return ls.reduce((a: LL<Listener<>>, ls: ListenerGroup) => {
+    // $FlowFixMe
+    if(ls[Symbol.iterator]){
+        // $FlowFixMe
+        return [...ls].reduce((a: LL<Listener<>>, ls: ListenerGroup) => {
             a.appendList(aggregate(ls, action))
             return a
         }, new LL())
@@ -171,6 +177,7 @@ function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
         let ret = testListener(action, ls) ? new LL(ls) : new LL()
         return ret
     } else {
+        // $FlowFixMe
         return aggregate(ls.listener, action)
     } 
 }
@@ -185,7 +192,7 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
         activeListeners.append(listener)
     })
 
-    if(!this.simulating){ console.log(action.id, action.data, activeListeners.toArray().length) }
+    if(!this.simulating){ console.log(action.id, action.data, activeListeners.toArray().length, this.actionQueue.toArray()) }
 
     activeListeners = applyInternals(activeListeners)
 
@@ -217,7 +224,7 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
                 resolver: any(that),
                 subject: action.subject,
                 actor: action.actor,
-                game: that.gameStateSlice.state,
+                game: that.gameState,
                 internal: () => { 
                     throw new Error('Internal listener envoked by non-wrapper listener') 
                 },
@@ -226,7 +233,8 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
     })
     yield next()
     if(!this.simulating){
-        this.gameStateSlice.stream.emit()
+        // TODO: figure out what to do here
+        this.emit()
         // console.log(this.gameStateSlice.enemies[0])
     }
     return action
@@ -239,8 +247,14 @@ function* processQueue(): Generator<any, void, any> {
     while(next = this.actionQueue.next()){
         yield this.processAction(next)
         if(!this.simulating){
-            yield new Promise(resolve => setTimeout(resolve, 300))
+            // yield new Promise(resolve => setTimeout(resolve, 300))
+            for(let aniSet of this.animations){
+                for(let ani of aniSet){
+                    yield ani.unblocked
+                }
+            }
         }
     }
     this.processing = false
 }
+

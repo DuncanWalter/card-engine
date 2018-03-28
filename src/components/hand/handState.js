@@ -1,12 +1,10 @@
 import { Slice } from "../../utils/state"
-import { view as viewSlice } from '../../view'
-import { gameSlice } from "../../gameState"
+import { state as viewState } from '../../viewState'
+import { state as game } from "../battle/battleState"
 import { Card } from "../../cards/card"
 import { view } from "vitrarius"
-import { animationTimer } from "../utility/withAnimation";
+import { animationTimer } from "../utility/withAnimation"
 
-const game = gameSlice.state
-const viewState = viewSlice.state
 
 interface CardSlot {
     card: Card<>,
@@ -66,13 +64,13 @@ function easeTo(from, to, delta, speed){
         return {
             x: from.x + (to.x - from.x) * speed * delta / dm,
             y: from.y + (to.y - from.y) * speed * delta / dm,
-            a: from.a,
+            a: 0,
         }
     }
 }
 
 
-export const handSlice = new Slice({
+export const { state, dispatcher, stream } = new Slice({
     setFocus: (state, data) => {
         if (state.dragging) return state
         return view('focus', () => data, state)
@@ -85,23 +83,25 @@ export const handSlice = new Slice({
     },
     update: (state, data) => {
         // TODO: tick it over a frame
-
-        let visableCards = game.hand.concat(game.activeCards)
+        let visibleCards = [...game.hand, ...game.activeCards]
 
         let preservedSlots = state.cardSlots.filter(slot => {
-            return visableCards.indexOf(slot.card) >= 0
+            return visibleCards.indexOf(slot.card) >= 0
         }).map((slot, index) => {
 
-            let subIndex = visableCards.indexOf(slot.card)
-            let card = visableCards.splice(subIndex, 1, null)[0]
+            let subIndex = visibleCards.indexOf(slot.card)
+            let card = visibleCards.splice(subIndex, 1, null)[0]
 
-            let isActive = game.activeCards.indexOf(card) >= 0
+            // $FlowFixMe
+            let isActive = game.activeCards.has(card)
             let isDragging = false
             let isFocussed = viewState.cursorFocus == card
 
-            let target = targetLocation(isActive, isFocussed, index, visableCards.length)
+            let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
 
+            let angle = target.a
             target = easeTo(slot.pos, target, animationTimer.state.delta, 900)
+            target.a = angle
 
             return {
                 card,
@@ -112,15 +112,16 @@ export const handSlice = new Slice({
             }
         })
 
-        let newSlots = visableCards.filter(card => card).map((card, subIndex) => {
+        let newSlots = visibleCards.filter(card => card).map((card, subIndex) => {
 
             let index = preservedSlots.length + subIndex
 
-            let isActive = game.activeCards.indexOf(card) >= 0
+            // $FlowFixMe
+            let isActive = game.activeCards.has(card)
             let isDragging = false
             let isFocussed = viewState.cursorFocus == card
 
-            let target = targetLocation(isActive, isFocussed, index, visableCards.length)
+            let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
             
             return {
                 card,
@@ -131,9 +132,9 @@ export const handSlice = new Slice({
             }
         })
 
-        visableCards = game.hand.concat(game.activeCards)
+        visibleCards = [...game.hand, ...game.activeCards]
         state.cardSprites.push(...state.cardSlots.filter(slot => {
-            return visableCards.indexOf(slot.card) < 0
+            return visibleCards.indexOf(slot.card) < 0
         }).map(slot => {
             return {
                 pos: {
@@ -142,7 +143,7 @@ export const handSlice = new Slice({
                     // TODO: save the divide by zero case
                     a: 180/3.1415*Math.atan((-100 - slot.pos.y)/(1000 - slot.pos.x)),
                 },
-                trg: { x: 1000, y: -100 },
+                trg: { x: 1000, y: -100, a: 0 },
             }
         }))
 
@@ -150,10 +151,11 @@ export const handSlice = new Slice({
             return {
                 pos: easeTo(sprite.pos, sprite.trg, animationTimer.state.delta, 1100),
                 trg: sprite.trg,
+                a: 0,
             }
         }).filter(sprite => sprite.pos != sprite.trg)
 
-        if(cardSprites.length)console.log(cardSprites.length, cardSprites[0].pos)
+        // if(cardSprites.length)console.log(cardSprites.length, cardSprites[0].pos)
 
         return {
             cursor: state.cursor,
@@ -176,3 +178,9 @@ export const handSlice = new Slice({
     cardSlots: [],
     cardSprites: [],
 })
+
+
+
+export function update(){
+    dispatcher.update()
+}

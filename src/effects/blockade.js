@@ -12,6 +12,8 @@ export const Blockade: Class<Effect> = MetaEffect(blockade, {
     innerColor: '#2233bb',
     outerColor: '#6688ee',
     description: '',
+    sides: 30,
+    rotation: 0,
 }, {
     stacked: false, 
     delta: x => x,

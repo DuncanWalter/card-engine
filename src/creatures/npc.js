@@ -1,6 +1,6 @@
 import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import { Creature } from "./creature"
-import { GameState, gameSlice } from "../gameState"
+import { GameState, state as game } from "../components/battle/battleState"
 import { Behavior } from "./behavior"
 import { startCombat } from "../actions/action"
 import { Listener } from "../actions/listener"
@@ -35,7 +35,7 @@ export function MetaCreature(
 
     const id = Symbol(name)
 
-    gameSlice.state.resolver.registerListenerType(id, [], [startCombat])
+    game.resolver.registerListenerType(id, [startCombat])
     return class CustomCreature extends NPC {
 
         behavior: Behavior

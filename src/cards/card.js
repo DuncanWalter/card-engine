@@ -3,7 +3,6 @@ import type { ActionResolver } from './../actions/actionResolver'
 import type { Effect } from '../effects/effect'
 import type { Action } from './../actions/action'
 import { PlayCard } from '../actions/playCard'
-import { gameSlice } from '../gameState'
 import { synchronize } from '../utils/async'
 
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {

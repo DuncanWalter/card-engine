@@ -1,7 +1,8 @@
-import { MetaCard, Card, PlayArgs } from './card'
-import { BindEffect } from '../actions/bindEffect'
-import { block, Block } from '../effects/block'
-import { Creature } from '../creatures/creature'
+import { MetaCard, Card, PlayArgs } from './../card'
+import { BindEffect } from '../../actions/bindEffect'
+import { block, Block } from '../../effects/block'
+import { Creature } from '../../creatures/creature'
+import { targeted } from '../../actions/damage';
 
 
 type DefendData = { block: number, energy: number }
@@ -28,6 +29,7 @@ function* playDefend({ actor, resolver }: PlayArgs<>): Generator<any, DefendData
                     stacks: this.data.block,
                 },
                 block,
+                targeted,
             ),
         )
         return { block: action.data.stacks, energy: this.data.energy }

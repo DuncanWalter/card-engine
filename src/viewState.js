@@ -1,17 +1,17 @@
 import { Slice } from "./utils/state"
-import { view as vitView } from 'vitrarius'
+import { view } from 'vitrarius'
 
-export const view = new Slice({
+export const { state, dispatcher, stream } = new Slice({
     setCursorFocus(state, data){
         // console.log('Yay')
-        return vitView('cursorFocus', val => data, state)
+        return view('cursorFocus', val => data, state)
     },
     unsetCursorFocus(state, data){
         // console.log('YIPPIE')
-        return vitView('cursorFocus', val => val == data ? null : val, state)
+        return view('cursorFocus', val => val == data ? null : val, state)
     },
     queryTarget(state, data){  
-        return vitView('targeting', ({ isTargeting }) => {
+        return view('targeting', ({ isTargeting }) => {
             if (isTargeting) throw new Error('multiple target requests up at once')
             return { 
                 isTargeting: true,
@@ -21,7 +21,7 @@ export const view = new Slice({
         }, state)
     },
     clickFocus(state, data){
-        return vitView('targeting', t => {
+        return view('targeting', t => {
             if(t.isTargeting && t.filter(data)){
                 t.resolve(data)
                 return { isTargeting: false }
@@ -42,7 +42,7 @@ export const view = new Slice({
 })
 
 export function queryTarget<T>(filter: (target: Object) => boolean, resolve: (target: T) => void){
-    view.dispatcher.queryTarget({
+    dispatcher.queryTarget({
         filter,
         resolve,
     })
