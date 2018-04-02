@@ -1,20 +1,22 @@
-import type { Component } from '../component'
+import type { Component } from '../../component'
 import { Hand } from '../hand/hand'
 import { stream, state as game } from './battleState'
-import { overStream } from '../utility/overStream'
-import { Creature } from './creature'
+import { overStream } from '../../components/overStream'
+import { renderCreature as Creature } from '../../creatures/renderCreature'
 import { EndTurn } from '../../actions/turnActions'
-import { Card } from '../card/card'
+import { Card } from '../../cards/card'
 import { Slice } from '../../utils/state'
-import { state as view } from '../../viewState'
+import { state as view } from '../viewState'
+import { resolver } from '../../actions/actionResolver'
+import { Button } from '../../utility'
 
 const unit = <div style={{ flex: 1 }}/>
 
 export const Battle: Component<{}> = overStream(stream, 'game')(props => {
     
-    let endTurn = () => game.resolver.enqueueActions(new EndTurn({}, game.player, {}))
+    let endTurn = () => resolver.enqueueActions(new EndTurn({}, game.player, {}))
 
-    return <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch' }}>
+    return <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch' }}>        
         {/* relic bar! */}
         {/* combat pane! */}
         <div style={{ flex: 3, display: 'flex', flexDirection: 'row' }}>
@@ -35,7 +37,7 @@ export const Battle: Component<{}> = overStream(stream, 'game')(props => {
             <div class='col' style={{ flex: 2, textAlign: 'right' }}>
                 <div>exhausted</div>
                 <div>{game.discardPile.size}</div>
-                <button onClick={() => endTurn()} style={sty.button}>End Turn</button>
+                <Button onClick={() => endTurn()} style={sty.button}>End Turn</Button>
             </div>
         </div>
         <div style={{ height: 0, display: 'flex', flexDirection: 'row' }}>

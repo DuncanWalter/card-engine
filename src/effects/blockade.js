@@ -19,7 +19,7 @@ export const Blockade: Class<Effect> = MetaEffect(blockade, {
     delta: x => x,
     min: 1,
     max: 1,
-}, (owner: { effects: Effect[] }, self: Effect) => new Listener(
+}, (owner: { +effects: Effect[] }, self: Effect) => new Listener(
     blockade,
     {
         subjects: [owner],

@@ -3,7 +3,7 @@ import type { CustomAction } from './action'
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
 import { Player } from '../creatures/player'
-import { stream } from '../components/battle/battleState'
+import { stream } from '../game/battle/battleState'
 import { ConsumerArgs } from './listener';
 import { CardStack } from '../cards/cardStack';
 import { BindEnergy } from './bindEnergy';

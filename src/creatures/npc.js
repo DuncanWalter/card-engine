@@ -1,12 +1,16 @@
 import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import { Creature } from "./creature"
-import { GameState, state as game } from "../components/battle/battleState"
+import { GameState } from "../game/battle/battleState"
 import { Behavior } from "./behavior"
 import { startCombat } from "../actions/action"
 import { Listener } from "../actions/listener"
 import MersenneTwister from "mersenne-twister"
-import { synchronize } from "../utils/async";
-import { ActionResolver } from "../actions/actionResolver";
+import { synchronize } from "../utils/async"
+import { ActionResolver, resolver } from "../actions/actionResolver"
+
+
+// TODO: figure out how to scale foe health better so they don't spawn with partial health
+
 
 function any(any: any): any { return any }
 
@@ -32,14 +36,10 @@ export function MetaCreature(
     behavior: Behavior, 
     onStartCombat: (self: NPC) => (ctx: ConsumerArgs<any, NPC, NPC>) => void,
 ): Class<NPC> {
-
     const id = Symbol(name)
-
-    game.resolver.registerListenerType(id, [startCombat])
+    resolver.registerListenerType(id, [startCombat])
     return class CustomCreature extends NPC {
-
         behavior: Behavior
-
         constructor(health){
             super(health, maxHealth)
             this.behavior = behavior

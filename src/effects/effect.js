@@ -1,10 +1,11 @@
 import type { ListenerGroup } from "../actions/listener"
 import type { Creature } from "../creatures/creature"
+import type { Component } from "../component"
+import type { Card } from "../cards/card"
 import { Listener, ConsumerArgs } from "../actions/listener"
 import { startTurn } from "../actions/turnActions"
 import { BindEffect } from "../actions/bindEffect"
-import { Card } from "../cards/card"
-import { state as game } from "../components/battle/battleState";
+import { resolver } from "../actions/actionResolver"
 
 // TODO: put setters on stacks
 
@@ -41,7 +42,7 @@ export class Effect {
 }
 
 export const tick = Symbol('tick')
-game.resolver.registerListenerType(tick, [startTurn], [])
+resolver.registerListenerType(tick, [startTurn], [])
 
 // MetaClass for creating effect types
 export const MetaEffect = function MetaEffect(
@@ -54,16 +55,16 @@ export const MetaEffect = function MetaEffect(
 
 ): Class<Effect> {
     // TODO: auto register these things and add deps to make it work
-    game.resolver.registerListenerType(id, parents, children)
+    resolver.registerListenerType(id, parents, children)
 
-    function turnListener(cons: Class<Effect>, owner: { effects: Effect[] }, self: Effect): Listener<> {
+    function turnListener(cons: Class<Effect>, owner: { +effects: Effect[] }, self: Effect): Listener<> {
         return new Listener(
             tick,
             {
                 subjects: [owner],
                 tags: [startTurn],
             },
-            ({ subject, resolver }: ConsumerArgs<>) => {
+            ({ subject, resolver }: ConsumerArgs<>): * => {
                 const change = stackBehavior.delta(self.stacks) - self.stacks
                 if(change){
                     resolver.pushActions(new BindEffect(owner, owner, {
@@ -94,3 +95,4 @@ export const MetaEffect = function MetaEffect(
         } 
     }
 }
+

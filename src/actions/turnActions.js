@@ -2,7 +2,7 @@ import type { CustomAction } from './action'
 import { MetaAction, startTurn, endTurn } from "./action"
 import { Creature } from "../creatures/creature"
 import { Player } from "../creatures/player"
-import { NPC } from "../creatures/npc"
+// import { NPC } from "../creatures/npc"
 import { DrawCard } from "./drawCard"
 import { TakeTurn } from "./takeTurn"
 import { ConsumerArgs } from "./listener"
@@ -44,14 +44,15 @@ export const EndTurn: CustomAction<any, Creature> = MetaAction(endTurn, ({ subje
         resolver.enqueueActions(new StartTurn({}, game.player, {}))
         resolver.enqueueActions(...game.allies.map(ally => new StartTurn({}, ally, {})))
 
-    } else if(subject instanceof NPC){
-        // const isEnemy = game.enemies.indexOf(subject) >= 0
-        // const noActiveEnemies = !game.enemies.filter(enemy => !enemy.hasTakenTurn).length
+    } 
+    // else if(subject instanceof NPC){
+    //     // const isEnemy = game.enemies.indexOf(subject) >= 0
+    //     // const noActiveEnemies = !game.enemies.filter(enemy => !enemy.hasTakenTurn).length
 
-        // // check to see if all enemies have gone and the subject is an enemy
-        // // if so, start a player turn
-        // if(isEnemy && noActiveEnemies){
-        //     resolver.enqueueActions(new StartTurn({}, game.player, {}))
-        // }        
-    }
+    //     // // check to see if all enemies have gone and the subject is an enemy
+    //     // // if so, start a player turn
+    //     // if(isEnemy && noActiveEnemies){
+    //     //     resolver.enqueueActions(new StartTurn({}, game.player, {}))
+    //     // }        
+    // }
 })

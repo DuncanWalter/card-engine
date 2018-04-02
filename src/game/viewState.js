@@ -1,4 +1,4 @@
-import { Slice } from "./utils/state"
+import { Slice } from "../utils/state"
 import { view } from 'vitrarius'
 
 export const { state, dispatcher, stream } = new Slice({

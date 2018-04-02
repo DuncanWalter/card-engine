@@ -4,7 +4,7 @@ import { Damage, targeted, blockable } from "../../actions/damage"
 import { Block } from "../../effects/block"
 import { BindEffect } from "../../actions/bindEffect"
 import { startCombat } from "../../actions/startCombat"
-import { Blockade } from "../../effects/blockade";
+import { Blockade } from "../../effects/blockade"
 
 let chomp: Behavior, hunker: Behavior
 

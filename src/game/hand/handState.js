@@ -1,9 +1,9 @@
 import { Slice } from "../../utils/state"
-import { state as viewState } from '../../viewState'
+import { state as viewState } from '../../game/viewState'
 import { state as game } from "../battle/battleState"
 import { Card } from "../../cards/card"
 import { view } from "vitrarius"
-import { animationTimer } from "../utility/withAnimation"
+import { animationTimer } from "../../components/withAnimation"
 
 
 interface CardSlot {

@@ -1,5 +1,5 @@
 import type { Component } from '../component'
-import type { Slice } from '../../utils/state'
+import type { Slice } from '../utils/state'
 import { h, Component as PreactComponent } from 'preact';
 
 // TODO: redo this cleaner, potentially actually passing update through

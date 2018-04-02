@@ -1,12 +1,9 @@
-import type { Effect as EffectObject } from "../../effects/effect"
-import type { Component } from "../component"
+import type { Component } from '../component'
+import type { Effect } from './effect'
 
-
-type Props = {
-    effect: EffectObject
-}
-
-export const Effect: Component<Props> = ({ effect }: Props) => {
+type Props = { effect: Effect }
+export const renderEffect: Component<Props> = ({ effect }: Props) => {
+    console.log('okay, bu seriously')
     let styles = renderData(effect)
     return <div style={styles.border}>
         <div style={styles.base}>
@@ -15,7 +12,7 @@ export const Effect: Component<Props> = ({ effect }: Props) => {
     </div>
 }
 
-function renderData(effect: EffectObject){
+function renderData(effect: Effect){
 
     let a = effect.appearance
     let seg = 2 * 3.1415 / a.sides
@@ -23,7 +20,7 @@ function renderData(effect: EffectObject){
     let points = []
     
     while(points.length < a.sides){
-        points.push(`${Math.round(50 - 50 * Math.sin(theta))}% ${Math.round(50 + 50 * Math.cos(theta))}%`)
+        points.push(`${Math.round(50 + 50 * Math.sin(theta))}% ${Math.round(50 - 50 * Math.cos(theta))}%`)
         theta += seg
     }
 

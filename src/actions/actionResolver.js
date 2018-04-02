@@ -1,7 +1,7 @@
 import type { Action } from './../actions/action'
 import type { ListenerGroup } from './listener'
 import type { Slice } from '../utils/state'
-import type { GameState } from '../components/battle/battleState'
+import type { GameState } from '../game/battle/battleState'
 import { Listener, ConsumerArgs, reject } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
@@ -59,10 +59,10 @@ export class ActionResolver {
     processing: boolean
     simulating: boolean
     actionQueue: LL<Action<>>
-    listeners: ListenerGroup
     processAction: (action: Action<>) => Promise<Action<>>
     processQueue: () => Promise<void>
     animations: Map<any, Set<Animation>>
+    getListeners: () => ListenerGroup
     listenerOrder: Map<Symbol, {
         parents: Symbol[],
         children: Symbol[],
@@ -71,18 +71,15 @@ export class ActionResolver {
         id: Symbol,
     }>
 
-    constructor(listeners: ListenerGroup, { state, emit }: *){
+    constructor(){
         this.processing = false
         this.simulating = false
         this.actionQueue = new LL()
-        this.listeners = listeners
         this.initialized = false
         this.listenerOrder = new Map()
-        this.gameState = state
         this.processAction = synchronize(processAction, this)
         this.processQueue = synchronize(processQueue, this)  
         this.animations = new Map()
-        this.emit = emit
     }
 
     enqueueActions(...actions: Action<>[]): void {
@@ -120,7 +117,7 @@ export class ActionResolver {
         }
     }
 
-    initialize(){
+    initialize(getListeners: () => ListenerGroup, { state, emit }: *){
         if(this.initialized){
             throw new Error('Action Resolver initialized twice. Action Resolvers may only be initialized once.')
         }
@@ -130,11 +127,13 @@ export class ActionResolver {
         order.forEach((e, i) => {
             e.index = i
         })
+        this.gameState = state
+        this.emit = emit
+        this.getListeners = getListeners
         this.initialized = true
     }
 
 }
-
 
 // TODO: this can be made cleaner. Also, if it returns the same list...
 function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
@@ -185,7 +184,7 @@ function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
 
 
 function* processAction(action: Action<>): Generator<any, Action<>, any> {
-    let activeListeners: LL<Listener<>> = aggregate(this.listeners, action)
+    let activeListeners: LL<Listener<>> = aggregate(this.getListeners(), action)
     
     activeListeners.append(action)
     action.defaultListeners.forEach((listener: *) => {
@@ -258,3 +257,4 @@ function* processQueue(): Generator<any, void, any> {
     this.processing = false
 }
 
+export const resolver = new ActionResolver()

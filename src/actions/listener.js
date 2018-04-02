@@ -1,6 +1,6 @@
 import type { Action } from "./action"
 import type { ActionResolver } from "./actionResolver"
-import type { GameState } from "../components/battle/battleState"
+import type { GameState } from "../game/battle/battleState"
 import { synchronize } from "../utils/async"
 
 export type Header<ActionType=Action<>> = {

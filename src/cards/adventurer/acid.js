@@ -7,7 +7,7 @@ import { block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { Poison } from '../../effects/poison'
 import { queryTarget } from '../utils';
-import { state as game } from '../../components/battle/battleState';
+import { state as game } from '../../game/battle/battleState';
 
 type AcidData = { 
     damage: number, 

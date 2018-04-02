@@ -20,7 +20,6 @@ bite = new Behavior('Bite', seed => seed > 0.5 ? bite : hiss, function*({ owner,
         damage, 
         {},
         function*({ data, resolver, actor, subject, internal }): * {
-            console.log('WAZZUP SNAKEY?')
             yield internal()
             if(data.damage > 0){
                 yield resolver.processAction(new BindEffect(actor, subject, {

@@ -1,5 +1,4 @@
 import type { Component } from '../component'
-import { h } from 'preact'
 
 const sty = { 
     display: 'flex', 

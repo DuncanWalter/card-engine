@@ -11,7 +11,7 @@ type Data = {
 }
 
 interface Effected {
-    effects: Effect[]
+    +effects: Effect[]
 }
 
 export const bindEffect: Symbol = Symbol('bindEffect')

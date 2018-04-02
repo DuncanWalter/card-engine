@@ -1,8 +1,7 @@
 import { SyncPromise } from "../utils/async"
 
 export class Animation {
-    // finished
-    // unblock
+
     update: (delta: number, children: any) => any
 
     finish: () => void
@@ -13,7 +12,6 @@ export class Animation {
     
     start: () => void
     started: Promise<void>
-
 
     constructor(focus: any, composer: (delta: number, children: any, unblock: () => void, finish: () => void) => any){
         this.started = new SyncPromise(resolve => {

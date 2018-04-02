@@ -1,12 +1,12 @@
-import { Card } from '../card/card'
+import { renderCard as Card } from '../../cards/card'
 import { Card as CardObject } from './../../cards/card'
 import { Slice } from '../../utils/state' 
 import { state as hand, update } from './handState'
 import { state as game } from '../battle/battleState'
 
-import { withAnimation } from '../utility/withAnimation'
-import { CenterPoint } from '../utility/centerPoint'
-import { Transform } from '../utility/transform'
+import { withAnimation } from '../../components/withAnimation'
+import { CenterPoint } from '../../components/centerPoint'
+import { Transform } from '../../components/transform'
 
 
 export const Hand = withAnimation('frameData')(props => {

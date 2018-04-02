@@ -4,7 +4,7 @@ import { Listener } from '../../actions/listener'
 import { BindEffect } from '../../actions/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
 import { Creature } from '../../creatures/creature'
-import { state as game } from '../../components/battle/battleState'
+import { state as game } from '../../game/battle/battleState'
 import { queryTarget } from '../utils'
 
 type BashData = { damage: number, energy: number }

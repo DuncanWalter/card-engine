@@ -1,6 +1,6 @@
 import { Component } from "preact"
 import { animationTimer } from "./withAnimation";
-import { state as game } from "../battle/battleState";
+import { resolver } from "../actions/actionResolver";
 
 export class Entity extends Component {
     
@@ -8,10 +8,6 @@ export class Entity extends Component {
         cache: any,
         lastTick: number,
         callback: (value: any) => any
-    } = {
-        lastTick: -1,
-        cache: null,
-        callback: value => setImmediate(() => this.setState({ value })),
     }
 
     onComponentDidMount(el: any): void {
@@ -22,6 +18,11 @@ export class Entity extends Component {
             }
         })
         animationTimer.stream.onValue(this.state.callback)
+        this.state = {
+            lastTick: -1,
+            cache: null,
+            callback: value => setImmediate(() => this.setState({ value })),
+        }
     }
 
     componentWillUnmount(){
@@ -30,17 +31,18 @@ export class Entity extends Component {
 
     render({ entity, children }: *){
         if(animationTimer.state.hash == this.state.lastTick){
-            console.log('so gloriously efficient!!!')
-            return this.state.cache
+            // console.log('so gloriously efficient!!!')
+            return <div>{this.state.cache}</div>
         } else {
-            let animations = game.resolver.animations.get(entity)
+            let animations = resolver.animations.get(entity)
             if(animations){
                 this.state.cache = [... animations].reduce((acc, ani) => 
                     ani.update(animationTimer.state.delta, children)
                 )
+                return <div>{this.state.cache}</div>
             } else {
-                console.log('so gloriously efficient!!!')
-                return children
+                // console.log('CLEVERNESS IS NEVER BAD, RIGHT?')
+                return <div>{children}</div>
             }
         }
     }

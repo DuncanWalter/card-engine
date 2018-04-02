@@ -1,5 +1,5 @@
 import type { Component } from '../component'
-import { Slice } from "../../utils/state";
+import { Slice } from "../utils/state";
 import { overStream } from "./overStream";
 import { h } from 'preact'
 

@@ -1,17 +1,19 @@
 import type { Effect } from "../effects/effect"
 import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import { damage } from "../actions/damage"
-import { state as game } from "../components/battle/battleState"
 import { RemoveCreature } from "../actions/removeCreature"
 import { Listener } from "../actions/listener"
+import { resolver } from "../actions/actionResolver";
+// import { block as blockSymbol } from "../effects/block"
+// import { NPC } from "./npc"
 
 const death = Symbol('death')
-game.resolver.registerListenerType(death, [damage])
+resolver.registerListenerType(death, [damage])
 
 export class Creature {
     maxHealth: number
     __health__: number
-    effects: Effect[] // TODO: if this works, then should do everywhere
+    +effects: Effect[] // TODO: if this works, then should do everywhere
     listener: ListenerGroup[]
 
     color: string = '#992299'
@@ -46,3 +48,4 @@ export class Creature {
     }
 
 }   
+
