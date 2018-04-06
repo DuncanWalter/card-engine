@@ -29,9 +29,7 @@ export class Creature {
                 subjects: [this],
             },
             function({ resolver, subject }: ConsumerArgs<any, Creature>): void {
-                console.log('did it die?', subject.health)
                 if(!subject.health){
-                    console.log('it did!')
                     resolver.pushActions(new RemoveCreature(subject, (subject: any), {}))
                 }
             },

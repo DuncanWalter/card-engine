@@ -2,12 +2,13 @@ import type { Component } from '../component'
 import type { Creature } from './creature'
 import { renderEffect as Effect } from '../effects/renderEffect'
 import { renderBehavior as Behavior, Behavior as BehaviorT } from './behavior'
-import { dispatcher } from '../game/viewState'
 import { Entity } from '../components/entity'
 import { resolver } from '../actions/actionResolver'
-import { state as battle } from '../game/battle/battleState'
+import { battleSlice } from '../game/battle/battleState'
 
-type Props = {
+let battle = battleSlice.state
+
+type Props = { 
     creature: Creature,
     isEnemy: boolean,
 }
@@ -25,15 +26,10 @@ export const renderCreature: Component<Props> = ({ isEnemy, creature }: Props) =
     if(creature.behavior){
         behaviors.push(creature.behavior)
     }
-
-    console.log(creature)
     
     // TODO: display enemy intent
     return <Entity entity={creature}>
-        <div 
-            style={sty.creature}
-            onClick={e => dispatcher.clickFocus(creature)}
-        >
+        <div style={sty.creature}>
             <div style={sty.effectBar}>{
                 behaviors.map(b => 
                     <Behavior data={ b.simulate(creature, resolver, battle) }/>

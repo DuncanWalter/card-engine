@@ -4,8 +4,7 @@ import { Listener } from '../../actions/listener'
 import { BindEffect } from '../../actions/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
 import { Creature } from '../../creatures/creature'
-import { state as game } from '../../game/battle/battleState'
-import { queryTarget } from '../utils'
+import { queryEnemy } from '../utils'
 
 type BashData = { damage: number, energy: number }
 
@@ -25,7 +24,7 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
 
 // TODO: the bash vulnerability should be a default listener on the damage action
 function* playBash({ resolver }: PlayArgs<>): Generator<any, BashData, any> {
-    let target = yield queryTarget(game.enemies, any => true)
+    let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(

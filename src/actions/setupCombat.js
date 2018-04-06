@@ -16,7 +16,6 @@ export const SetupCombat: CustomAction<NPC[]> = MetaAction(setupCombat, function
     game.activeCards.clear()
     game.player.effects.splice(0,  game.player.effects.length)
     
-
     bind(game => {
         game.enemies = data
         return game

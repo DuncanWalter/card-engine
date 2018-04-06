@@ -1,24 +1,23 @@
 import type { Component } from '../../component'
 import { Hand } from '../hand/hand'
-import { stream, state as game } from './battleState'
 import { overStream } from '../../components/overStream'
 import { renderCreature as Creature } from '../../creatures/renderCreature'
 import { EndTurn } from '../../actions/turnActions'
 import { Card } from '../../cards/card'
-import { Slice } from '../../utils/state'
-import { state as view } from '../viewState'
 import { resolver } from '../../actions/actionResolver'
-import { Button } from '../../utility'
+import { Button, Row, Col, Block, Frame } from '../../utility'
+import { battleSlice } from './battleState'
 
 const unit = <div style={{ flex: 1 }}/>
 
+
+let stream = battleSlice.stream
+let game = battleSlice.state
+
 export const Battle: Component<{}> = overStream(stream, 'game')(props => {
-    
-    let endTurn = () => resolver.enqueueActions(new EndTurn({}, game.player, {}))
 
     return <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch' }}>        
-        {/* relic bar! */}
-        {/* combat pane! */}
+
         <div style={{ flex: 3, display: 'flex', flexDirection: 'row' }}>
             <div style={{flex: 1}}/>
 
@@ -28,21 +27,23 @@ export const Battle: Component<{}> = overStream(stream, 'game')(props => {
             ]).reduce((a, l) => a.concat(l), [])}
 
         </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>
-            <div class='col' style={{ flex: 2, textAlign: 'left' }}>
-                <div>{game.player.energy}/{game.player.maxEnergy}</div>
-                <div>{game.drawPile.size}</div>
+
+        <Row>
+            <div class='col' style={{ flex: 2, textAlign: 'center' }}>
+                <div>Energy: {game.player.energy}/{game.player.maxEnergy}</div>
+                <div>Draw Pile: {game.drawPile.size}</div>
             </div>
             <div style={{ flex: 6 }}/>
-            <div class='col' style={{ flex: 2, textAlign: 'right' }}>
-                <div>exhausted</div>
-                <div>{game.discardPile.size}</div>
-                <Button onClick={() => endTurn()} style={sty.button}>End Turn</Button>
+            <div class='col' style={{ flex: 2, textAlign: 'center' }}>
+                <div>Exhausted: {game.exhaustPile.size}</div>
+                <div>Discard Pile: {game.discardPile.size}</div>
+                <Button onClick={() => tryEndTurn()} style={sty.button}>End Turn</Button>
             </div>
-        </div>
+        </Row>
+
         <div style={{ height: 0, display: 'flex', flexDirection: 'row' }}>
             <div style={{ flex: 1 }}/>
-            <Hand game={game}/>
+            <Hand/>
             <div style={{ flex: 1 }}/>
         </div>
     </div>
@@ -56,3 +57,20 @@ const sty = {
         backgroundColor: '#444444',
     }
 }
+
+function tryEndTurn(){
+    if(game.player.isActive){
+        game.player.isActive = false
+        resolver.enqueueActions(new EndTurn({}, game.player, {}))
+    }
+}
+
+
+
+
+
+
+
+
+
+

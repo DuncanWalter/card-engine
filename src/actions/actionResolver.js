@@ -165,6 +165,9 @@ function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
 
 
 function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
+    if(!ls){
+        return new LL() // TODO: maybe not a silent fail?
+    } else
     // $FlowFixMe
     if(ls[Symbol.iterator]){
         // $FlowFixMe
@@ -191,7 +194,9 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
         activeListeners.append(listener)
     })
 
-    if(!this.simulating){ console.log(action.id, action.data, activeListeners.toArray().length, this.actionQueue.toArray()) }
+    if(!this.simulating){ 
+        console.log(action.id, action.data, activeListeners.toArray().length, this.actionQueue.toArray()) 
+    }
 
     activeListeners = applyInternals(activeListeners)
 

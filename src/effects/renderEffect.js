@@ -3,7 +3,6 @@ import type { Effect } from './effect'
 
 type Props = { effect: Effect }
 export const renderEffect: Component<Props> = ({ effect }: Props) => {
-    console.log('okay, bu seriously')
     let styles = renderData(effect)
     return <div style={styles.border}>
         <div style={styles.base}>

@@ -1,9 +1,11 @@
 import { Module } from './utils/module'
 import { resolver } from './actions/actionResolver'
-import { state, emit } from './game/battle/battleState'
+import { battleSlice } from './game/battle/battleState'
 import { StartGame } from './actions/startGame'
 
 import './cards/adventurer/adventurer'
+
+let battle = battleSlice.state
 
 export const engine = new Module('engine', ({ global, next }) => {    
     // global.cardLibrary = new Library(),
@@ -12,14 +14,14 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     // $FlowFixMe
     resolver.initialize(() => [
-        state.allies,
-        state.player || [], // TODO: badness of the highest order
-        state.enemies,
-        state.drawPile,
-        state.discardPile,
-        state.hand,
-        state.activeCards,
-    ], { state, emit })
+        battle.allies,
+        battle.player,
+        battle.enemies,
+        battle.drawPile,
+        battle.discardPile,
+        battle.hand,
+        battle.activeCards,
+    ], { state: battle, emit: battleSlice.stream.emit })
     
     // global.cardLibrary.initialize();
     // global.reactionLibrary.initialize();

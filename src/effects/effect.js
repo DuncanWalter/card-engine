@@ -34,7 +34,7 @@ export class Effect {
     turnDelta: number
     listener: ListenerGroup
     owner: Creature | Card<any>
-    appearance: Appearance
+    appearance: Appearance | void | null
 
     constructor(owner: Creature | Card<any>, stacks: number){
         /*/ NO OP /*/
@@ -47,7 +47,7 @@ resolver.registerListenerType(tick, [startTurn], [])
 // MetaClass for creating effect types
 export const MetaEffect = function MetaEffect(
     id: Symbol,
-    appearance: Appearance,
+    appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
     listener: (owner: Creature | Card<any>, self: Effect) => Listener<>,
     parents: Symbol[],

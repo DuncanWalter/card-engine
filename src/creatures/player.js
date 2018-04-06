@@ -4,12 +4,14 @@ export class Player extends Creature {
 
     __energy__: number
     maxEnergy: number
+    isActive: boolean
 
     constructor(health: number, maxHealth?: number){
         super(health, maxHealth)
         this.maxEnergy = 3 // TODO: how do energy stuffs?
         this.energy = this.maxEnergy
         this.color = '#4488dd'
+        this.isActive = false
     }
     
     set energy(value: number){

@@ -1,10 +1,10 @@
 import type { Component } from '../component'
-import { Slice } from "../utils/state";
+import { Slice, createSlice } from "../utils/state";
 import { overStream } from "./overStream";
 import { h } from 'preact'
 
 
-export const animationTimer = new Slice({
+export const animationTimer = createSlice({
     tick: state => {
         let time = Date.now()
         return {

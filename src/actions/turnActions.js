@@ -19,8 +19,11 @@ export const StartTurn: CustomAction<> = MetaAction(startTurn, function*({ game,
         yield resolver.processAction(new BindEnergy({}, {}, { 
             quantity: game.player.maxEnergy 
         }), startTurn, fill)
-        resolver.enqueueActions(new DrawCard(game.player, {}, { count: 5 }, startTurn))
-        resolver.enqueueActions(...game.allies.map(ally => new StartTurn({}, ally, {})))
+        yield resolver.processAction(new DrawCard(game.player, {}, { count: 5 }, startTurn))
+        for(ally of [...game.allies]){
+            yield resolver.processAction(new StartTurn({}, ally, {}))
+        }
+        game.player.isActive = true
     }
 })
 
@@ -31,6 +34,8 @@ export const EndTurn: CustomAction<any, Creature> = MetaAction(endTurn, ({ subje
         //     acc.appendList(new LL(ally.takeTurn({ resolver, game: gameState })))
         //     return acc
         // }, new LL())
+
+        game.player.isActive = false
 
         while(game.hand.size){
             game.discardPile.addToTop(game.hand.take()[0])

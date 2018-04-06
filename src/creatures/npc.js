@@ -42,7 +42,13 @@ export function MetaCreature(
         behavior: Behavior
         constructor(health){
             super(health, maxHealth)
-            this.behavior = behavior
+            // TODO: get the randomness unified
+            let gen = new MersenneTwister()            
+            this.seed = {
+                generator: gen,
+                value: gen.random(),
+            }
+            this.behavior = behavior.next(this)
             this.listener.push(new Listener(
                 id,
                 {
@@ -51,11 +57,6 @@ export function MetaCreature(
                 onStartCombat(this),
                 false,
             ))
-            let gen = new MersenneTwister()
-            this.seed = {
-                generator: gen,
-                value: gen.random(),
-            }
         }
     }
 }

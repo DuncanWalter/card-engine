@@ -19,18 +19,17 @@ function xorshift64(seed){
 // }
 
 
+export interface Sequence {
+    fork: () => Sequence,
+    next: () => number,
+}
 
-export class Random {
-
-    fork: () => Random
-    next: () => number
-
-    constructor(seed: number){
-        let state = seed
-        this.fork = () => new Random(state)
-        this.next = () => (state = xorshift64(ring * state)) / ring 
-    }
-
+export function randomSequence(seed: number): Sequence {
+    let state = seed
+    let sequence = {}
+    sequence.fork = () => randomSequence(state)
+    sequence.next = () => (state = xorshift64(ring * state)) / ring 
+    return sequence
 }
 
 

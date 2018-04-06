@@ -1,16 +1,16 @@
 import { renderCard as Card } from '../../cards/card'
 import { Card as CardObject } from './../../cards/card'
-import { Slice } from '../../utils/state' 
-import { state as hand, update } from './handState'
-import { state as game } from '../battle/battleState'
+import { update, handSlice } from './handState'
 
 import { withAnimation } from '../../components/withAnimation'
 import { CenterPoint } from '../../components/centerPoint'
 import { Transform } from '../../components/transform'
 
+let hand = handSlice.state
 
 export const Hand = withAnimation('frameData')(props => {
     update()
+    
     return <div style={sty.hand}>
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0, height: 0 }}>{[

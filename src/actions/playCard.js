@@ -3,7 +3,7 @@ import type { CustomAction } from './action'
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
 import { Player } from '../creatures/player'
-import { stream } from '../game/battle/battleState'
+import { battleSlice } from '../game/battle/battleState'
 import { ConsumerArgs } from './listener';
 import { CardStack } from '../cards/cardStack';
 import { BindEnergy } from './bindEnergy';
@@ -26,7 +26,7 @@ export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCa
     game.activeCards.addToTop(subject) // TODO: could be safer than push pop
 
     // game.emit()
-    stream.emit()
+    battleSlice.stream.emit()
 
     yield subject.play({ 
         resolver,
@@ -34,6 +34,7 @@ export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCa
         subject,
         target: data.target,
         data: subject.data,
+        game: battleSlice.state,
     })
 
     game.activeCards.take()

@@ -4,18 +4,20 @@ import type { Action } from './../actions/action'
 import type { Component } from '../component'
 import { PlayCard } from '../actions/playCard'
 import { synchronize } from '../utils/async'
-import { state as game } from "../game/battle/battleState"
-import { state as view, dispatcher } from "../game/viewState"
+import { battleSlice, GameState } from "../game/battle/battleState"
 import { resolver } from "../actions/actionResolver"
-import { Entity } from '../components/entity'
+import { Entity, entitySlice } from '../components/entity'
 import { Effect } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
+
+const battle = battleSlice.state
 
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
     actor: A,
     subject: Card<any>,
     target: T,
     resolver: ActionResolver,
+    game: $ReadOnly<GameState>,
 }
 
 // TODO: play args should have data and use another type argument
@@ -41,7 +43,7 @@ export class Card<Data: Object = {}> {
     }{
         let meta: Data = this.data
         resolver.simulate(resolver => {
-            this.play({ actor, subject, target, resolver }).then(v => meta = v)
+            this.play({ actor, subject, target, resolver, game: battle }).then(v => meta = v)
         })
 
         Object.keys(meta).forEach(k => {
@@ -104,9 +106,9 @@ export const renderCard: Component<Props> = ({ card }: Props) => {
 
     // TODO: need to rework the energy part to check for price and playability 
     let { energy, color, text, title } = card.simulate({
-        actor: game.player, // TODO: make this player and target
+        actor: battle.player,
         subject: card,
-        target: game.enemies[0], 
+        target: battle.dummy, 
         resolver: resolver,
         data: card.data,
     })
@@ -115,10 +117,10 @@ export const renderCard: Component<Props> = ({ card }: Props) => {
         // use a dispatch and a display state TODO:
         resolver.enqueueActions(
             new PlayCard(
-                game.player, 
+                battle.player, 
                 card,
                 {
-                    target: game.enemies[0],
+                    target: battle.dummy,
                     success: false,
                 }
             )
@@ -127,10 +129,8 @@ export const renderCard: Component<Props> = ({ card }: Props) => {
 
     return <Entity entity={card}>
         <div 
-            style={sty.base(card == view.cursorFocus)} 
-            onClick={clicked}
-            onMouseEnter={e => dispatcher.setCursorFocus(card)}
-            onMouseLeave={e => dispatcher.unsetCursorFocus(card)}
+            style={sty.base(card == entitySlice.state.cursorFocus)} 
+            onClick={clicked} 
         >   
             <div style={sty.effectsBar}>
                 {card.effects.map(e => <EffectC effect={e}/>)}

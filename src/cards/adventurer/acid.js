@@ -6,7 +6,7 @@ import { Vulnerability } from '../../effects/vulnerability'
 import { block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { Poison } from '../../effects/poison'
-import { queryTarget } from '../utils';
+import { queryEnemy } from '../utils';
 import { state as game } from '../../game/battle/battleState';
 
 type AcidData = { 
@@ -26,7 +26,7 @@ export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
 })
 
 function* playAcid({ resolver }: PlayArgs<>): * {
-    let target = yield queryTarget(game.enemies, any => true)
+    let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = new Damage(
             this, 

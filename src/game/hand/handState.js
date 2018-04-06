@@ -1,10 +1,12 @@
-import { Slice } from "../../utils/state"
-import { state as viewState } from '../../game/viewState'
-import { state as game } from "../battle/battleState"
+import { Slice, createSlice } from "../../utils/state"
+import { battleSlice } from "../battle/battleState"
 import { Card } from "../../cards/card"
 import { view } from "vitrarius"
 import { animationTimer } from "../../components/withAnimation"
+import { entitySlice } from "../../components/entity";
 
+const game = battleSlice.state
+const entity = entitySlice.state
 
 interface CardSlot {
     card: Card<>,
@@ -57,7 +59,6 @@ function easeTo(from, to, delta, speed){
     let dx = from.x - to.x
     let dy = from.y - to.y
     let dm = (dx**2 + dy**2)**0.5
-    // console.log(delta, dx, dy)
     if(dm <= speed * delta){
         return to
     } else {
@@ -70,7 +71,7 @@ function easeTo(from, to, delta, speed){
 }
 
 
-export const { state, dispatcher, stream } = new Slice({
+export const handSlice = createSlice({
     setFocus: (state, data) => {
         if (state.dragging) return state
         return view('focus', () => data, state)
@@ -95,7 +96,7 @@ export const { state, dispatcher, stream } = new Slice({
             // $FlowFixMe
             let isActive = game.activeCards.has(card)
             let isDragging = false
-            let isFocussed = viewState.cursorFocus == card
+            let isFocussed = entity.cursorFocus == card
 
             let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
 
@@ -119,7 +120,7 @@ export const { state, dispatcher, stream } = new Slice({
             // $FlowFixMe
             let isActive = game.activeCards.has(card)
             let isDragging = false
-            let isFocussed = viewState.cursorFocus == card
+            let isFocussed = entity.cursorFocus == card
 
             let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
             
@@ -182,5 +183,5 @@ export const { state, dispatcher, stream } = new Slice({
 
 
 export function update(){
-    dispatcher.update()
+    handSlice.dispatcher.update()
 }

@@ -2,9 +2,8 @@ import { MetaCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
-import { queryTarget } from './../utils';
-import { state as game } from '../../game/battle/battleState'
-import { DrawCard } from '../../actions/drawCard';
+import { queryEnemy } from './../utils'
+import { DrawCard } from '../../actions/drawCard'
 
 type FlashOfSteelData = { damage: number, energy: number }
 
@@ -20,7 +19,7 @@ export const FlashOfSteel: Class<Card<FlashOfSteelData>> = MetaCard(flashOfSteel
 })
 
 function* playFlashOfSteel({ resolver }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{
-    let target = yield queryTarget(game.enemies, any => true)
+    let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(

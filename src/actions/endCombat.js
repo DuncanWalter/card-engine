@@ -9,9 +9,11 @@ export const endCombat = Symbol('endCombat')
 export const EndCombat: CustomAction<> = MetaAction(endCombat, ({ game, subject, resolver }: *) => { 
     if(game.player.health > 0){
 
+        game.player.isActive = false
+
         game.player.effects.splice(0,  game.player.effects.length)
 
-        navigateTo('/game/pathSelection')
+        navigateTo('/game/cardDraft')
     } else {
         navigateTo('/menu/main')
     }
