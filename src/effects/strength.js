@@ -22,7 +22,7 @@ export const Strength: Class<Effect> = MetaEffect(strength, {
 }, (owner, self) => new Listener(
     strength,
     {
-        filter: action => action.actor instanceof Card && owner instanceof Player || action.actor == owner,
+        filter: action => ((action.actor instanceof Card && owner instanceof Player) || (action.actor == owner)),
         tags: [blockable],
         type: damage,
     },

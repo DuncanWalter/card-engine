@@ -1,4 +1,4 @@
-import { renderCard as Card } from '../../cards/card'
+import { Card } from '../../cards/component'
 import { Card as CardObject } from './../../cards/card'
 import { update, handSlice } from './handState'
 

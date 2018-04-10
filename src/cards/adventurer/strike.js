@@ -11,10 +11,10 @@ export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
     energy: 1,
     damage: 6,
 }, {
-    energyTemplate: (meta: StrikeData) => meta.energy.toString(),
+    energyTemplate: `#{energy}`,
     color: '#dd2244',
-    titleTemplate: (meta: StrikeData) => 'Strike',
-    textTemplate: (meta: StrikeData) => <p>Deal {meta.damage} damage to a target.</p>,
+    titleTemplate: 'Strike',
+    textTemplate: `Deal #{damage} damage to an enemy.`,
 })
 
 function* playStrike({ resolver }: PlayArgs<>): Generator<any, StrikeData, any>{

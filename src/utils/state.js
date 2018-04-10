@@ -6,6 +6,40 @@ export interface Slice<S={}> {
     dispatcher: $ReadOnly<any>,
 }
 
+
+
+type Reducer = <Slice, Data, Global>(string, Slice, Data, Global) => Slice
+
+
+// TODO: get union type of string-data pairs up
+type  CreateReducer = <S, G>({ [string]: (S, *, G) => S }) => (S, any, G) => S
+const createReducer: CreateReducer = reducers =>
+    (action, slice, data, state) => 
+        reducers[action] ?
+            reducers[action](slice, data, state):
+            slice;
+
+
+// TODO: get union of strings and datas once again
+type  CombineReducers = <R: { string: Reducer<any, any, any, any> }, G>(reducers: R) => Reducer<$ObjMap<R, <T>((any, any, any) => T) => T>, any, G>
+const combineReducers: CombineReducers = reducers =>
+    (action, slice, data, state) =>
+        Object.keys(reducers).reduce((acc, key) => {
+            acc[key] = reducers[key](action, slice[key], data, state)
+            return acc
+        })
+
+
+
+
+
+
+
+
+
+
+
+
 export function createSlice<S>(reducers: { [name: string]: (S, any) => S }, initial: S): Slice<S> {
 
     let state: S = initial

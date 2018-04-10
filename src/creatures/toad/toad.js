@@ -15,7 +15,7 @@ function next(seed){
         case seed < 0.3333: {
             return ribbit
         }
-        case seed < 0.6666: {
+        case seed < 0.5555: {
             return lick
         }
         case seed < 1.0000: {
@@ -45,7 +45,7 @@ lick = new Behavior('lick', next, function*({ owner, resolver, game }){
 })
 
 bite = new Behavior('bite', next, function*({ owner, resolver, game }){
-    const action: Damage = yield resolver.processAction(new Damage(self, game.player, { 
+    const action: Damage = yield resolver.processAction(new Damage(owner, game.player, { 
         damage: 6 
     }, targeted, blockable))
     return { damage: action.data.damage }

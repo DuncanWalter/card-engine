@@ -1,9 +1,10 @@
 import type { Component } from "../component"
+import type { Card } from '../cards/card';
 import { Modal, Row, Col, Block } from '../utility'
 import { Route } from 'react-router-dom'
 import { state as battle } from '../game/battle/battleState'
 import { resolver } from '../actions/actionResolver'
-import { Card, renderCard as CardComponent } from '../cards/card';
+import { Card as CardComponent } from '../cards/component';
 import { queryEntity } from '../components/entity';
 import { DraftCard } from '../actions/draftCard';
 import { navigateTo } from '../utils/navigation';

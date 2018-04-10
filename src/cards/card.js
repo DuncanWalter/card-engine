@@ -9,6 +9,7 @@ import { resolver } from "../actions/actionResolver"
 import { Entity, entitySlice } from '../components/entity'
 import { Effect } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
+import { createInterpolationContext, interpolate } from '../utils/textTemplate'
 
 const battle = battleSlice.state
 
@@ -25,9 +26,9 @@ export class Card<Data: Object = {}> {
     id: Symbol
     appearance: {
         color: string, // TODO: this is a stand in for images
-        textTemplate: (meta: Data) => string,
-        titleTemplate: (meta: Data) => string,
-        energyTemplate: (meta: Data) => string,
+        textTemplate: (meta: Data) => string | string,
+        titleTemplate: (meta: Data) => string | string,
+        energyTemplate: (meta: Data) => string | string,
     }
     data: Data
     listener: ListenerGroup = []
@@ -46,20 +47,12 @@ export class Card<Data: Object = {}> {
             this.play({ actor, subject, target, resolver, game: battle }).then(v => meta = v)
         })
 
-        Object.keys(meta).forEach(k => {
-            if(typeof meta[k] == 'number'){
-                if(meta[k] < this.data[k]){
-                    meta[k] = <span style={{color: 'red'}}>{meta[k]}</span>
-                } else if(meta[k] > this.data[k]){
-                    meta[k] = <span style={{color: 'green'}}>{meta[k]}</span>
-                }
-            } 
-        })
+        let ctx = createInterpolationContext(this.data, meta, {})
 
         return {
-            energy: this.appearance.energyTemplate(meta),
-            title: this.appearance.titleTemplate(meta),
-            text: this.appearance.textTemplate(meta),
+            energy: typeof this.appearance.energyTemplate == 'string' ? interpolate(this.appearance.energyTemplate, ctx) : this.appearance.energyTemplate(meta),
+            title: typeof this.appearance.titleTemplate == 'string' ? interpolate(this.appearance.titleTemplate, ctx) : this.appearance.titleTemplate(meta),
+            text: typeof this.appearance.textTemplate == 'string' ? interpolate(this.appearance.textTemplate, ctx) : this.appearance.textTemplate(meta),
             color: this.appearance.color,
         }
     }
@@ -73,9 +66,9 @@ export function MetaCard<Meta: Object>(
     data: Meta,
     appearance: {
         color: string,
-        textTemplate: (meta: Meta) => string,
-        titleTemplate: (meta: Meta) => string,
-        energyTemplate: (meta: Meta) => string,
+        textTemplate: (meta: Meta) => string | string,
+        titleTemplate: (meta: Meta) => string | string,
+        energyTemplate: (meta: Meta) => string | string,
     },
     ...effects: [Class<Effect>, number][]
 ){
@@ -96,113 +89,6 @@ export function MetaCard<Meta: Object>(
 
 
 
-const a: any = Object.assign
-
-type Props = {
-    card: Card<any>,
-}
-
-export const renderCard: Component<Props> = ({ card }: Props) => {
-
-    // TODO: need to rework the energy part to check for price and playability 
-    let { energy, color, text, title } = card.simulate({
-        actor: battle.player,
-        subject: card,
-        target: battle.dummy, 
-        resolver: resolver,
-        data: card.data,
-    })
-
-    const clicked = e => {
-        // use a dispatch and a display state TODO:
-        resolver.enqueueActions(
-            new PlayCard(
-                battle.player, 
-                card,
-                {
-                    target: battle.dummy,
-                    success: false,
-                }
-            )
-        )
-    }
-
-    return <Entity entity={card}>
-        <div 
-            style={sty.base(card == entitySlice.state.cursorFocus)} 
-            onClick={clicked} 
-        >   
-            <div style={sty.effectsBar}>
-                {card.effects.map(e => <EffectC effect={e}/>)}
-            </div>
-            <div style={sty.costBack}>{energy}</div>
-            <div style={sty.title}>{title}</div>
-            <div style={{ backgroundColor: color, ...sty.image }}></div>
-            <div style={sty.text}>{text}</div>
-        </div>
-    </Entity>
-}
-
-
-const sty = {
-    base(isFocus){
-        return {
-            minWidth: '280px',
-            minHeight: '440px',
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: isFocus? '#444444': '#222222',
-            position: 'relative',
-            borderRadius: '8px',
-            padding: '4px',
-            cursor: 'pointer',
-            color: '#ffeedd',
-        }
-    },
-    title: {
-        flex: '1',
-        backgroundColor: '#555555',
-        borderRadius: '8px',
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    image: {
-        flex: '5',
-        borderRadius: '8px',
-        borderBottom: '4px solid #222222',
-        borderTop: '4px solid #222222',
-    },
-    costBack: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: '50px',
-        height: '50px',
-        backgroundColor: '#777777',
-        borderRadius: '8px',
-        border: '4px solid #222222',
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-    },
-    text: {
-        flex: '4',
-        backgroundColor: '#333333',
-        borderRadius: '8px',
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-        padding: '30px',
-    },
-    effectsBar: {
-        position: 'absolute',
-        top: '57px',
-        left: '3px',
-    },
-}
 
 
 
