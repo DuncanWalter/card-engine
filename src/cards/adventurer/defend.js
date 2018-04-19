@@ -12,10 +12,10 @@ export const Defend: Class<Card<DefendData>> = MetaCard(defend, playDefend, {
     block: 5,
     energy: 1,
 }, {
-    energyTemplate: (meta: DefendData) => meta.energy.toString(),
+    energyTemplate: '#{energy}',
     color: '#223399',
-    titleTemplate: (meta: DefendData) => 'Defend',
-    textTemplate: (meta: DefendData) => <p>Gain {meta.block} block.</p>,
+    titleTemplate: 'Defend',
+    textTemplate: 'Gain #{block} block.',
 })
 
 function* playDefend({ actor, resolver }: PlayArgs<>): Generator<any, DefendData, any> {

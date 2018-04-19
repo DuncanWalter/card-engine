@@ -2,6 +2,7 @@ import type { Action } from './../actions/action'
 import type { ListenerGroup } from './listener'
 import type { Slice } from '../utils/state'
 import type { GameState } from '../game/battle/battleState'
+import type { State } from '../state';
 import { Listener, ConsumerArgs, reject } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
@@ -53,7 +54,7 @@ function testListener(action: Action<>, listener: Listener<>){
 
 export class ActionResolver {
 
-    gameState: $ReadOnly<GameState>
+    state: $ReadOnly<State>
     initialized: boolean
     emit: () => void
     processing: boolean
@@ -127,7 +128,7 @@ export class ActionResolver {
         order.forEach((e, i) => {
             e.index = i
         })
-        this.gameState = state
+        this.state = state
         this.emit = emit
         this.getListeners = getListeners
         this.initialized = true
@@ -228,7 +229,7 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
                 resolver: any(that),
                 subject: action.subject,
                 actor: action.actor,
-                game: that.gameState,
+                game: that.state.battle,
                 internal: () => { 
                     throw new Error('Internal listener envoked by non-wrapper listener') 
                 },

@@ -1,19 +1,20 @@
 import type { Component } from '../component'
 import type { Creature } from './creature'
+import type { State } from '../state'
 import { renderEffect as Effect } from '../effects/renderEffect'
 import { renderBehavior as Behavior, Behavior as BehaviorT } from './behavior'
 import { Entity } from '../components/entity'
 import { resolver } from '../actions/actionResolver'
-import { battleSlice } from '../game/battle/battleState'
-
-let battle = battleSlice.state
+import { NPC } from './npc';
+import { withState } from '../state';
 
 type Props = { 
     creature: Creature,
     isEnemy: boolean,
+    state: State,
 }
 
-export const renderCreature: Component<Props> = ({ isEnemy, creature }: Props) => {
+export const renderCreature: Component<Props> = withState(({ isEnemy, creature, state }: Props) => {
     
     const { health, maxHealth, color } = creature
 
@@ -23,7 +24,7 @@ export const renderCreature: Component<Props> = ({ isEnemy, creature }: Props) =
 
     let behaviors: BehaviorT[] = []
     // TODO: previously used instanceof NPC
-    if(creature.behavior){
+    if(creature instanceof NPC){
         behaviors.push(creature.behavior)
     }
     
@@ -32,7 +33,8 @@ export const renderCreature: Component<Props> = ({ isEnemy, creature }: Props) =
         <div style={sty.creature}>
             <div style={sty.effectBar}>{
                 behaviors.map(b => 
-                    <Behavior data={ b.simulate(creature, resolver, battle) }/>
+                    // $FlowFixMe
+                    <Behavior data={ b.simulate(creature, resolver, state.battle) }/>
                 )
             }</div>
             <div style={{ backgroundColor: color, ...sty.img }}/>
@@ -48,7 +50,7 @@ export const renderCreature: Component<Props> = ({ isEnemy, creature }: Props) =
             <div>{health}/{maxHealth}</div>
         </div>
     </Entity>
-}
+})
 
 const sty = {
     creature: {

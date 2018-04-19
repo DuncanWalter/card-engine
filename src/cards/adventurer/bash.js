@@ -13,13 +13,11 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
     damage: 8,
     energy: 2,
 }, {
-    energyTemplate: (meta: BashData) => meta.energy.toString(),
+    energyTemplate: '#{energy}',
     color: '#bb4433',
-    titleTemplate: (meta: BashData) => 'Bash',
-    textTemplate: (meta: BashData) => <p>Deal {meta.damage} damage and 1 weakness to a target.</p>,
+    titleTemplate: 'Bash',
+    textTemplate: `Deal #{damage} damage and 1 weakness to a target.`,
 })
-
-
 
 
 // TODO: the bash vulnerability should be a default listener on the damage action

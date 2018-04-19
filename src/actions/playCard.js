@@ -3,7 +3,6 @@ import type { CustomAction } from './action'
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
 import { Player } from '../creatures/player'
-import { battleSlice } from '../game/battle/battleState'
 import { ConsumerArgs } from './listener';
 import { CardStack } from '../cards/cardStack';
 import { BindEnergy } from './bindEnergy';
@@ -13,6 +12,8 @@ type Data = {
     success: boolean,
     destination?: CardStack,
 }
+
+
 
 export const playCard: Symbol = Symbol('playCard')
 export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCard, function*({ game, data, subject, actor, resolver, cancel }: ConsumerArgs<Data>): * { 
@@ -25,16 +26,13 @@ export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCa
     if (game.hand.has(subject)) game.hand.remove(subject)
     game.activeCards.addToTop(subject) // TODO: could be safer than push pop
 
-    // game.emit()
-    battleSlice.stream.emit()
-
     yield subject.play({ 
         resolver,
         actor,
         subject,
         target: data.target,
         data: subject.data,
-        game: battleSlice.state,
+        game,
     })
 
     game.activeCards.take()

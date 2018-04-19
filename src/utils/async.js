@@ -42,17 +42,14 @@ function next<R, B>(gen: Generator<Promise<B>, R, B>, resolve: (v: R) => void, p
         let isSynced = true
         value.then((value: B) => { // TODO:check if resolved. if not, setImediate
             if(isSynced){
-                // console.log('still synced')
                 next(gen, resolve, value)
             } else {
-                // console.log('ASYNC DETECTED')
                 setImmediate(() => next(gen, resolve, value))
             }
         })
         isSynced = false
     } else {
-        console.log(done, value)
-        console.log(`Yielded a non-promise in async function ${any(value)}`)
+        throw new Error(`Yielded a non-promise in async function ${any(value)}`)
     }
 }
 
@@ -63,13 +60,13 @@ type Fn<A, R> = ((a: A) => Promise<R>) | ((a: A) => Generator<Promise<any>, R, a
 
 // TODO: is there a way to make this express the stuff fully?
 export function synchronize<A, R>(fun: Fn<A, R>, self?: any): (a: A) => Promise<R> {    
-    return (args: A) => {
+    return (...args: A) => {
         // new Promise(resolve => {
         if(fun instanceof GeneratorFunction){
-            return new SyncPromise(resolve => next(fun.call(self, args), resolve))
+            return new SyncPromise(resolve => next(fun.call(self, ...args), resolve))
         } else {
             // $FlowFixMe
-            return new SyncPromise(resolve => resolve(fun.call(self, args)))
+            return new SyncPromise(resolve => resolve(fun.call(self, ...args)))
         }
     }
 }

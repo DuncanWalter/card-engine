@@ -7,9 +7,9 @@ let syntaxes = [
     // [/{(.+)#(.*)#}/, data => (color, text) => <p style={{color}}>{text}</p>],
 ]
 
-let tokenizer = new RegExp(`(${ syntaxes.map(syntax => syntax[0].source).join('|') })`)
+let tokenizer = new RegExp(`(${ syntaxes.map(([regex, __]) => regex.source).join('|') })`)
 
-export function interpolate<Data>(text: string, data: Data): any {
+export function interpolate<Data: { [string]: any }>(text: string, data: Data): any {
 
     const res = []
     const tt = new RegExp(tokenizer, 'g')
@@ -20,10 +20,9 @@ export function interpolate<Data>(text: string, data: Data): any {
             syntax[0].exec(match[0]) != null
         ).map(syntax => {
             let [$0, $1, $2] = syntax[0].exec(match[0])
-            let ret = syntax[1](data, $1, $2)
+            let ret = syntax[1](data, $1)
             return ret
         })
-        // console.log(subs.length)
         // TODO: Why is this matching the safety string? This makes no sense
         // regex exec must only put the match index one after the last match or something
         res.push(subs[subs.length - 1])
@@ -31,7 +30,7 @@ export function interpolate<Data>(text: string, data: Data): any {
     return <span>{res}</span>
 }
 
-export function createInterpolationContext<Data>(expected: Data, resultant: Data, config: any): any {
+export function createInterpolationContext<Data: { [string]: any }>(expected: Data, resultant: Data, config: any): any {
     return Object.keys(expected).reduce((acc, key) => {
         switch(true){
             // TODO: use normal text color

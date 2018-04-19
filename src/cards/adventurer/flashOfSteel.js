@@ -12,10 +12,10 @@ export const FlashOfSteel: Class<Card<FlashOfSteelData>> = MetaCard(flashOfSteel
     energy: 0,
     damage: 4,
 }, {
-    energyTemplate: (meta: FlashOfSteelData) => meta.energy.toString(),
+    energyTemplate: '#{energy}',
     color: '#cccc44',
-    titleTemplate: (meta: FlashOfSteelData) => 'FlashOfSteel',
-    textTemplate: (meta: FlashOfSteelData) => <p>Deal {meta.damage} damage to a target. Draw a card.</p>,
+    titleTemplate: 'Flash Of Steel',
+    textTemplate: 'Deal #{damage} damage to a target. Draw a card.',
 })
 
 function* playFlashOfSteel({ resolver }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{

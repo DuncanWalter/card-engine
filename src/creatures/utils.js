@@ -1,9 +1,10 @@
-import { state as battle } from "../game/battle/battleState";
 import { Creature } from "./creature"
+import { state } from '../state'
 
+// TODO: add and random thingy
 function pickTarget(self){
-    if(battle.enemies.includes(self)){
-        return battle.player
+    if(state.battle.enemies.includes(self)){
+        return state.battle.player
 
         // TODO: taunt and phantom
 
@@ -19,8 +20,11 @@ function pickTarget(self){
         // }
     } else {
         // TODO: psuedorandom
-        return battle.enemies[Math.floor(Math.random() * battle.enemies.length)]
+        return state.battle.enemies[Math.floor(Math.random() * state.battle.enemies.length)]
 
 
     }
 }
+
+
+

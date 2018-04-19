@@ -4,14 +4,12 @@ import type { Action } from './../actions/action'
 import type { Component } from '../component'
 import { PlayCard } from '../actions/playCard'
 import { synchronize } from '../utils/async'
-import { battleSlice, GameState } from "../game/battle/battleState"
+import { GameState } from "../game/battle/battleState"
 import { resolver } from "../actions/actionResolver"
-import { Entity, entitySlice } from '../components/entity'
 import { Effect } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
-
-const battle = battleSlice.state
+import { state } from '../state'
 
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
     actor: A,
@@ -26,9 +24,9 @@ export class Card<Data: Object = {}> {
     id: Symbol
     appearance: {
         color: string, // TODO: this is a stand in for images
-        textTemplate: (meta: Data) => string | string,
-        titleTemplate: (meta: Data) => string | string,
-        energyTemplate: (meta: Data) => string | string,
+        textTemplate: string,
+        titleTemplate: string,
+        energyTemplate: string,
     }
     data: Data
     listener: ListenerGroup = []
@@ -44,15 +42,15 @@ export class Card<Data: Object = {}> {
     }{
         let meta: Data = this.data
         resolver.simulate(resolver => {
-            this.play({ actor, subject, target, resolver, game: battle }).then(v => meta = v)
+            this.play({ actor, subject, target, resolver, game: state.battle }).then(v => meta = v)
         })
 
         let ctx = createInterpolationContext(this.data, meta, {})
 
         return {
-            energy: typeof this.appearance.energyTemplate == 'string' ? interpolate(this.appearance.energyTemplate, ctx) : this.appearance.energyTemplate(meta),
-            title: typeof this.appearance.titleTemplate == 'string' ? interpolate(this.appearance.titleTemplate, ctx) : this.appearance.titleTemplate(meta),
-            text: typeof this.appearance.textTemplate == 'string' ? interpolate(this.appearance.textTemplate, ctx) : this.appearance.textTemplate(meta),
+            energy: interpolate(this.appearance.energyTemplate, ctx),
+            title: interpolate(this.appearance.titleTemplate, ctx),
+            text: interpolate(this.appearance.textTemplate, ctx),
             color: this.appearance.color,
         }
     }
@@ -66,9 +64,9 @@ export function MetaCard<Meta: Object>(
     data: Meta,
     appearance: {
         color: string,
-        textTemplate: (meta: Meta) => string | string,
-        titleTemplate: (meta: Meta) => string | string,
-        energyTemplate: (meta: Meta) => string | string,
+        textTemplate: string,
+        titleTemplate: string,
+        energyTemplate: string,
     },
     ...effects: [Class<Effect>, number][]
 ){

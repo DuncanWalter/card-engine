@@ -4,16 +4,17 @@ import type { Effect } from './effect'
 type Props = { effect: Effect }
 export const renderEffect: Component<Props> = ({ effect }: Props) => {
     let styles = renderData(effect)
-    return <div style={styles.border}>
+    return styles ? <div style={styles.border}>
         <div style={styles.base}>
             <p>{effect.stacked ? effect.stacks : ''}</p>
         </div>
-    </div>
+    </div> : null
 }
 
 function renderData(effect: Effect){
 
     let a = effect.appearance
+    if(!a)return
     let seg = 2 * 3.1415 / a.sides
     let theta = seg * (a.rotation ? a.rotation : 0)
     let points = []
@@ -28,6 +29,7 @@ function renderData(effect: Effect){
     return {
         base: { 
             display: 'flex',
+            // $FlowFixMe
             backgroundColor: effect.appearance.innerColor,
             color:'#ffeedd', 
             justifyContent: 'center',
@@ -48,6 +50,7 @@ function renderData(effect: Effect){
             '-webkit-clip-path': poly,
             clipPath: poly,
             margin: '3px',
+            // $FlowFixMe
             backgroundColor: effect.appearance.outerColor,
         },
     }

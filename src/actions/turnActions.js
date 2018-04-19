@@ -20,7 +20,7 @@ export const StartTurn: CustomAction<> = MetaAction(startTurn, function*({ game,
             quantity: game.player.maxEnergy 
         }), startTurn, fill)
         yield resolver.processAction(new DrawCard(game.player, {}, { count: 5 }, startTurn))
-        for(ally of [...game.allies]){
+        for(let ally of [...game.allies]){
             yield resolver.processAction(new StartTurn({}, ally, {}))
         }
         game.player.isActive = true

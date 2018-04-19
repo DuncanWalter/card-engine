@@ -1,17 +1,14 @@
 import type { Component } from '../component'
-import { Slice, createSlice } from "../utils/state";
+import { Slice, createStore, createReducer } from "../utils/state";
 import { overStream } from "./overStream";
 import { h } from 'preact'
 
-
-export const animationTimer = createSlice({
-    tick: state => {
-        let time = Date.now()
-        return {
-            time,
-            delta: (time - state.time) / 1000,
-            hash: state.hash++ % 1024
-        }
+const { dispatch, stream } = createStore(state => {
+    let time = Date.now()
+    return {
+        time,
+        delta: (time - state.time) / 1000,
+        hash: state.hash++ % 1024
     }
 }, {
     time: Date.now(),
@@ -20,8 +17,10 @@ export const animationTimer = createSlice({
 })
 
 requestAnimationFrame(function loop(){ 
-    animationTimer.dispatcher.tick()
+    dispatch({ type: '' })
     requestAnimationFrame(loop)
 })
 
-export const withAnimation = (name: string) => (component: Component<>) => overStream(animationTimer.stream, name)(component)
+export const withAnimation = () => (component: Component<any>) => overStream(stream)(component)
+
+// export const animated = (component: Component<any>) =>  

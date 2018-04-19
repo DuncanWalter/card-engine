@@ -1,12 +1,22 @@
-import { Slice, createSlice } from "../../utils/state"
-import { battleSlice } from "../battle/battleState"
-import { Card } from "../../cards/card"
+import type { State } from "../../state";
+import type { Reducer } from "../../utils/state"
+import type { Card } from "../../cards/card"
+import { createReducer } from "../../utils/state"
 import { view } from "vitrarius"
-import { animationTimer } from "../../components/withAnimation"
-import { entitySlice } from "../../components/entity";
 
-const game = battleSlice.state
-const entity = entitySlice.state
+interface HandState {
+    cursor: {
+        x: number,
+        y: number,
+    },
+    dragging: boolean,
+    anchor: {
+        x: number,
+        y: number,
+    },
+    cardSlots: CardSlot[],
+    cardSprites: CardSprite[],
+}
 
 interface CardSlot {
     card: Card<>,
@@ -71,7 +81,7 @@ function easeTo(from, to, delta, speed){
 }
 
 
-export const handSlice = createSlice({
+export const handReducer: Reducer<HandState, any, State> = createReducer({
     setFocus: (state, data) => {
         if (state.dragging) return state
         return view('focus', () => data, state)
@@ -82,9 +92,9 @@ export const handSlice = createSlice({
         if (state.focus != data) return state
         return view('focus', () => null, state)
     },
-    update: (state, data) => {
+    updateHand: (state, data, { battle, entity }) => {
         // TODO: tick it over a frame
-        let visibleCards = [...game.hand, ...game.activeCards]
+        let visibleCards = [...battle.hand, ...battle.activeCards]
 
         let preservedSlots = state.cardSlots.filter(slot => {
             return visibleCards.indexOf(slot.card) >= 0
@@ -94,14 +104,14 @@ export const handSlice = createSlice({
             let card = visibleCards.splice(subIndex, 1, null)[0]
 
             // $FlowFixMe
-            let isActive = game.activeCards.has(card)
+            let isActive = battle.activeCards.has(card)
             let isDragging = false
             let isFocussed = entity.cursorFocus == card
 
             let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
 
             let angle = target.a
-            target = easeTo(slot.pos, target, animationTimer.state.delta, 900)
+            target = easeTo(slot.pos, target, 0.0166, 900)
             target.a = angle
 
             return {
@@ -118,7 +128,7 @@ export const handSlice = createSlice({
             let index = preservedSlots.length + subIndex
 
             // $FlowFixMe
-            let isActive = game.activeCards.has(card)
+            let isActive = battle.activeCards.has(card)
             let isDragging = false
             let isFocussed = entity.cursorFocus == card
 
@@ -133,7 +143,7 @@ export const handSlice = createSlice({
             }
         })
 
-        visibleCards = [...game.hand, ...game.activeCards]
+        visibleCards = [...battle.hand, ...battle.activeCards]
         state.cardSprites.push(...state.cardSlots.filter(slot => {
             return visibleCards.indexOf(slot.card) < 0
         }).map(slot => {
@@ -150,7 +160,7 @@ export const handSlice = createSlice({
 
         let cardSprites = state.cardSprites.map(sprite => {
             return {
-                pos: easeTo(sprite.pos, sprite.trg, animationTimer.state.delta, 1100),
+                pos: easeTo(sprite.pos, sprite.trg, 0.0166, 1100),
                 trg: sprite.trg,
                 a: 0,
             }
@@ -158,15 +168,18 @@ export const handSlice = createSlice({
 
         // if(cardSprites.length)console.log(cardSprites.length, cardSprites[0].pos)
 
+
         return {
-            cursor: state.cursor,
+            cursor: { x: Math.random(), y: 3 },
             dragging: false,
             anchor: state.anchor,
             cardSlots: [...preservedSlots, ...newSlots],
             cardSprites,
         }
     },
-}, {
+})
+
+export const handInitial: HandState = {
     cursor: {
         x: -1,
         y: -1,
@@ -178,10 +191,8 @@ export const handSlice = createSlice({
     },
     cardSlots: [],
     cardSprites: [],
-})
+}
 
-
-
-export function update(){
-    handSlice.dispatcher.update()
+export function updateHand(dispatch: ({ type: string }) => void){
+    dispatch({ type: 'updateHand' })
 }

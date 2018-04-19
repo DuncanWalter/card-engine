@@ -1,32 +1,30 @@
 import type { Component } from "../component"
 import type { Card } from '../cards/card';
-import { Modal, Row, Col, Block } from '../utility'
+import { Modal, Row, Col, Block, Button } from '../utility'
 import { Route } from 'react-router-dom'
-import { state as battle } from '../game/battle/battleState'
 import { resolver } from '../actions/actionResolver'
 import { Card as CardComponent } from '../cards/component';
-import { queryEntity } from '../components/entity';
+import { queryEntity } from '../components/entityState';
 import { DraftCard } from '../actions/draftCard';
 import { navigateTo } from '../utils/navigation';
 import { CardLibrary } from '../cards/cardLibrary';
+import { dispatch, withState } from '../state';
 
-type Props = {
-    cards: {
-        card: Card<>
-    }[]
-}
+type Props = { state: * }
 
-export const CardDraft: Component<any> = ({  }: Props) => {
+export const CardDraft: Component<Props> = withState(({ state }: Props) => {
 
-    let cards = CardLibrary.sample(3).map(cc => new cc())
+    let reward = state.path.rewards.filter(reward => reward.active)[0]
 
-    console.log(cards)
+    let cards = reward.cards
 
+    let cancel
     new Promise(resolve => {
-        queryEntity(any => cards.includes(any), resolve)        
+        cancel = queryEntity(dispatch, any => cards.includes(any), resolve)        
     }).then(card => {
+        reward.collected = true // TODO: dispatch this crap
         resolver.processAction(new DraftCard({}, card, {}))
-        navigateTo('/game/pathSelection')
+        navigateTo('/game/rewards')
     })
 
     return <Modal>
@@ -36,5 +34,9 @@ export const CardDraft: Component<any> = ({  }: Props) => {
                 <CardComponent card={ card }/>
             </Block>)
         }</Row>
+        <Button onClick={() => {
+            cancel()
+            navigateTo(`/game/rewards`)
+        }}>Skip</Button>
     </Modal>
-}
+})

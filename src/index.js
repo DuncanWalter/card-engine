@@ -7,30 +7,20 @@ import { BrowserRouter as Router, Route, Link, Switch, Redirect } from "react-ro
 import { PathSelection } from './paths/pathSelection'
 import { Main } from './menu/main'
 import { useHistory } from './utils/navigation'
-import { state } from './state'
 
 import './index.styl'
 loadModules([engine])
 
-class Root extends Component {
-
-    getChildContext(){
-        return { state }
-    }
-
-    render(props){
-        return <Router> 
-            <Switch>
-                <Route path={'/menu/main'} component={ Main }/>
-                <Route path={'/game'} component={ Game }/>
-                <Route render={({ history }) => {
-                    useHistory(history)
-                    return <Redirect to={'/menu/main'}/>
-                }}/>
-            </Switch>
-        </Router>
-    }
-} 
+const Root = props => <Router> 
+    <Switch>
+        <Route path={'/menu/main'} component={ Main }/>
+        <Route path={'/game'} component={ Game }/>
+        <Route render={({ history }) => {
+            useHistory(history)
+            return <Redirect to={'/menu/main'}/>
+        }}/>
+    </Switch>
+</Router>
 
 // HMR friendly bootstrapping
 ;(function bootstrap(anchorElement){

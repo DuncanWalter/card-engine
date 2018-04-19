@@ -11,10 +11,10 @@ export const Cleave: Class<Card<CleaveData>> = MetaCard(cleave, playCleave, {
     energy: 1,
     damage: 7,
 }, {
-    energyTemplate: (meta: CleaveData) => meta.energy.toString(),
+    energyTemplate: '#{energy}',
     color: '#ee5511',
-    titleTemplate: (meta: CleaveData) => 'cleave',
-    textTemplate: (meta: CleaveData) => <p>Deal {meta.damage} damage to all enemies.</p>,
+    titleTemplate: 'Cleave',
+    textTemplate: 'Deal #{damage} damage to all enemies.',
 })
 
 function* playCleave({ resolver, game }: PlayArgs<>): Generator<any, CleaveData, any>{

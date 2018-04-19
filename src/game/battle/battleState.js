@@ -1,10 +1,13 @@
 import type { NPC } from "../../creatures/npc"
 import type { Card } from "../../cards/card"
 import type { Player } from "../../creatures/player"
+import type { State } from "../../state"
+import type { Reducer } from "../../utils/state"
 import { randomSequence, Sequence } from '../../utils/random'
 
 import { CardStack } from "../../cards/cardStack"
-import { createSlice, Slice } from "../../utils/state"
+import { createReducer } from "../../utils/state"
+
 
 function any(any: any): any { return any }
 
@@ -27,24 +30,19 @@ export interface GameState {
     deck: CardStack,
     exhaustPile: CardStack,
     activeCards: CardStack,
-
-    random: Sequence,
-
-    
     
     // room: number,
     
 }
 
-const initialState: GameState = {
-    resolver: any(null),
+export const battleInitial: GameState = {
     hand: new CardStack(),
     drawPile: new CardStack(),
     discardPile: new CardStack(),
     deck: new CardStack(),
     exhaustPile: new CardStack(),
     equipment: [],
-    player: any(null), // TODO: DIRTY!
+    player: any(null), 
     allies: [],
     enemies: [],
     activeCards: new CardStack(),
@@ -52,22 +50,21 @@ const initialState: GameState = {
     dummy: any(null),
 }
 
-export const battleSlice: Slice<GameState> = createSlice({
-    emit(state){
-        return { ... state }
+export const battleReducer: Reducer<GameState, any, any> = createReducer({
+    emitBattleState(state: GameState){
+        return { ...state }
     },
-    bind(state, data){
-        return { ...data(state) }
-    },
-}, initialState)
+})
 
-export function bind(fn: (state: GameState) => GameState){
-    battleSlice.dispatcher.bind(fn)
-}
 
-export function emit(){
-    battleSlice.dispatcher.emit()
-}
+// TODO: we need in file action dispatchers...
+// export function bind(fn: (state: GameState) => GameState){
+//     dispatcher.bind(fn)
+// }
+
+// export function emit(){
+//     battleSlice.dispatcher.emit()
+// }
 
 function clearBattleEffects(){
     // TODO: make it happen

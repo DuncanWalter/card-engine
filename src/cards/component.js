@@ -1,33 +1,37 @@
 import type { Component } from '../component'
+import type { Card as CardObject } from './card'
+import type { State } from '../state';
 import { Entity } from '../components/entity'
-import { state } from '../state'
 import { resolver } from '../actions/actionResolver'
 import { PlayCard } from '../actions/playCard'
 import { renderEffect as EffectComponent } from '../effects/renderEffect'
+import { withState } from '../state';
 
-type Props = {
-    card: Card<any>,
+interface Props {
+    card: CardObject<>,
+    state: State,
 }
 
-export const Card: Component<Props> = ({ card }: Props) => {
+export const Card: Component<Props> = withState(({ card, state }) => {
 
     // TODO: need to rework the energy part to check for price and playability 
     let { energy, color, text, title } = card.simulate({
-        actor: state.game.battle.player,
+        actor: state.battle.player,
         subject: card,
-        target: state.game.battle.dummy, 
+        target: state.battle.dummy, 
         resolver: resolver,
         data: card.data,
+        game: state.battle,
     })
 
     const clicked = e => {
         // use a dispatch and a display state TODO:
         resolver.enqueueActions(
             new PlayCard(
-                state.game.battle.player, 
+                state.battle.player, 
                 card,
                 {
-                    target: state.game.battle.dummy,
+                    target: state.battle.dummy,
                     success: false,
                 }
             )
@@ -50,7 +54,7 @@ export const Card: Component<Props> = ({ card }: Props) => {
             <div style={sty.text}>{text}</div>
         </div>
     </Entity>
-}
+})
 
 
 const sty = {

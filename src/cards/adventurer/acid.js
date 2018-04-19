@@ -7,7 +7,6 @@ import { block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { Poison } from '../../effects/poison'
 import { queryEnemy } from '../utils';
-import { state as game } from '../../game/battle/battleState';
 
 type AcidData = { 
     damage: number, 
@@ -19,10 +18,10 @@ export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
     damage: 4,
     energy: 1,
 }, {
-    energyTemplate: (meta: AcidData) => meta.energy.toString(),
+    energyTemplate: '#{energy}',
     color: '#eeff33',
-    titleTemplate: (meta: AcidData) => 'Acid',
-    textTemplate: (meta: AcidData) => <p>Deal {meta.damage} damage to a target. Convert blocked damage to poison.</p>,
+    titleTemplate: 'Acid',
+    textTemplate: 'Deal #{damage} damage to a target. Convert blocked damage to poison.',
 })
 
 function* playAcid({ resolver }: PlayArgs<>): * {

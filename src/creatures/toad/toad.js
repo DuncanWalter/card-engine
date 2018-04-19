@@ -9,7 +9,7 @@ import { Strength } from "../../effects/strength"
 
 let ribbit: Behavior, lick: Behavior, bite: Behavior
 
-function next(seed){
+function next(seed: number): Behavior {
     console.log('seed', seed)
     switch(true){
         case seed < 0.3333: {
@@ -22,6 +22,7 @@ function next(seed){
             return bite
         } 
     }
+    return bite
 }
 
 ribbit = new Behavior('ribbit', next, function*({ owner, resolver, game }){

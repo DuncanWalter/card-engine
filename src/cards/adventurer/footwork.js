@@ -13,10 +13,10 @@ export const Footwork: Class<Card<FootworkData>> = MetaCard(footwork, playFootwo
     dexterity: 2,
     energy: 1,
 }, {
-    energyTemplate: (meta: FootworkData) => meta.energy.toString(),
+    energyTemplate:'#{energy}',
     color: '#228866',
-    titleTemplate: (meta: FootworkData) => 'Footwork',
-    textTemplate: (meta: FootworkData) => <p>Gain {meta.dexterity} dexterity</p>,
+    titleTemplate: 'Footwork',
+    textTemplate: 'Gain #{dexterity} dexterity',
 }, [Exhaust, 1])
 
 function* playFootwork({ actor, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {

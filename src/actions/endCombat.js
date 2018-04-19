@@ -13,7 +13,7 @@ export const EndCombat: CustomAction<> = MetaAction(endCombat, ({ game, subject,
 
         game.player.effects.splice(0,  game.player.effects.length)
 
-        navigateTo('/game/cardDraft')
+        navigateTo('/game/rewards')
     } else {
         navigateTo('/menu/main')
     }
