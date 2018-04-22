@@ -1,12 +1,28 @@
-import { CardLibrary, C, B, A } from "../cardLibrary";
-import { CardPool } from "../cardPool";
-import { Strike } from "./strike";
-import { Defend } from "./defend";
-import { Bash } from "./bash";
-import { Footwork } from "./footwork";
-import { Acid } from "./acid";
-import { FlashOfSteel } from "./flashOfSteel";
-import { Cleave } from "./cleave";
+import { CardLibrary, F, D, C, B, A } from "../cardLibrary"
+import { CardPool } from "../cardPool"
+import { Strike } from "./strike"
+import { Defend } from "./defend"
+import { Bash } from "./bash"
+import { Footwork } from "./footwork"
+import { Acid } from "./acid"
+import { FlashOfSteel } from "./flashOfSteel"
+import { Cleave } from "./cleave"
+
+
+// strike
+// block
+// dodge
+
+// trip
+// blind
+// ward
+
+// finesse
+// flash of steel
+
+// enlightenment
+// apotheosis
+
 
 let adventurer = new CardPool()
 

@@ -4,6 +4,7 @@ import { entityReducer, entityInitial } from "./components/entityState"
 import { battleReducer, battleInitial } from "./game/battle/battleState";
 import { handReducer, handInitial } from "./game/hand/handState";
 import { pathReducer, pathInitial } from "./paths/pathState"
+import { overStream } from "./components/overStream";
 
 const toAccessor = stream => {
     let capture: State = stream
@@ -36,8 +37,8 @@ export const { dispatch, stream } = createStore(globalReducer, {
 })
 export const state = toAccessor(stream)
 
-export function withState<Props: Object>(component: Component<Props>): Component<Props> { 
-    return (props: Props) => component({ state, ...props })
+export function withState<Props: Object>(component: Component<any>): Component<any> { 
+    return overStream(stream, 'state')(component)
 }
 
 

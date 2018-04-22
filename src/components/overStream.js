@@ -1,31 +1,28 @@
 import type { Component } from '../component'
 import type { Slice } from '../utils/state'
-import { state } from '../state'
-import { h, Component as PreactComponent } from 'preact';
+import { h, Component as PreactComponent } from 'preact'
 
 // TODO: redo this cleaner, potentially actually passing update through
-export const overStream = <P: Object, S: Object>(stream: any) => (component: Component<P>): Component<P> => {
+export const overStream = <P: Object, S: Object>(stream: any, propName: string) => (component: Component<P>): Component<P> => {
 
-    return class extends PreactComponent<P, S> {
-        state = {
-            value: null,
-            callback: value => setImmediate(() => this.setState({ value })),
-        }
+    let value = null
+    let valueStream = stream.skipDuplicates()
+    valueStream.onValue(v => value = v)
+
+    class Stream extends PreactComponent<P, S> {
         componentDidMount(){
-            stream.onValue(this.state.callback)
+            this.forceUpdateHandler = v => setImmediate(() => this.setState({ [propName]: v }))
+            valueStream.onValue(this.forceUpdateHandler)
         }
         componentWillUnmount(){
-            stream.offValue(this.state.callback)
+            valueStream.offValue(this.forceUpdateHandler)
         }
         render(props){
-            let take = val => this.state.value = val
-            stream.onValue(take)
-            stream.offValue(take)
-
-            return component(props)
+            return component({ ...props, [propName]: value })
         }
-
     }
+
+    return props => <Stream {...props}/>
     
 }
 

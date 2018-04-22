@@ -12,8 +12,9 @@ import { resolver } from "../actions/actionResolver"
 interface StackBehavior {
     stacked: boolean,
     delta: (current: number) => number,
-    min: number, 
+    min: number,
     max: number,
+    on?: Symbol,
 }
 
 interface Appearance {
@@ -62,7 +63,7 @@ export const MetaEffect = function MetaEffect(
             tick,
             {
                 subjects: [owner],
-                tags: [startTurn],
+                tags: [stackBehavior.on || startTurn],
             },
             ({ subject, resolver }: ConsumerArgs<>): * => {
                 const change = stackBehavior.delta(self.stacks) - self.stacks

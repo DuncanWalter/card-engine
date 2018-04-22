@@ -7,6 +7,6 @@ import { ConsumerArgs } from "./listener";
 
 
 export const reclaimDiscardPile = Symbol('reclaimDiscardPile')
-export const ReclaimDiscardPile: CustomAction<> = MetaAction(reclaimDiscardPile, ({ resolver, game }: ConsumerArgs<>): void => { 
-    game.drawPile.shuffleIn(...game.discardPile.takeAll())
+export const ReclaimDiscardPile: CustomAction<{}> = MetaAction(reclaimDiscardPile, ({ resolver, game }: ConsumerArgs<{}>): void => { 
+    game.drawPile.add(...game.discardPile.takeAll())
 })

@@ -7,7 +7,7 @@ import { targeted } from '../../actions/damage';
 
 type DefendData = { block: number, energy: number }
 
-export const defend = Symbol('defend')
+export const defend = 'defend'
 export const Defend: Class<Card<DefendData>> = MetaCard(defend, playDefend, {
     block: 5,
     energy: 1,

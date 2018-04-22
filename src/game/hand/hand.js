@@ -7,8 +7,8 @@ import { CenterPoint } from '../../components/centerPoint'
 import { Transform } from '../../components/transform'
 import { dispatch, withState, stream } from '../../state'
 
-export const Hand: Component<*> = withAnimation()(withState(({ state }: *) => {
-    updateHand(dispatch)    
+export const Hand: Component<*> = withState(withAnimation(({ state, delta, isNewAnimationFrame }: *) => {
+    updateHand(dispatch)
     return <div style={sty.hand}>
         <div style={{ flex: 1 }}/>
         <div style={{ width: 0, height: 0 }}>{[

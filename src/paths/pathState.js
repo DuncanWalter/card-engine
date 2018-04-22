@@ -4,7 +4,8 @@ import { NPC } from "../creatures/npc"
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { getEncounter } from "./encounterLibrary"
-import { getRewards } from "./rewardLibrary";
+import { getRewards, Reward } from "./rewardLibrary"
+import { reducer } from "vitrarius"
 
 function createPath(level: number, seed: Sequence){
 
@@ -56,6 +57,15 @@ export const pathReducer: Reducer<PathState, any, State> = createReducer({
     startPath(slice, action){
         return createPath(0, randomSequence(action.seed))
     },
+    activateReward: reducer(({ reward }) => 
+        console.log('activating') || ['rewards', rs => console.log(rs) || rs.map(r => ({ ...r, active: r.id == reward.id }))]
+    ),
+    collectReward: reducer(({ reward }) => 
+        ['rewards', rs => rs.map(r => ({ ...r, collected: r.collected || r.id == reward.id }))]
+    ),
+    deactivateReward: reducer(({ reward }) => 
+        ['rewards', rs => rs.map(r => ({ ...r, active: false }))]
+    ),
 })
 
 export const pathInitial: PathState = {
@@ -78,4 +88,16 @@ export function selectFreedom(dispatch: (any) => void, freedom: PathState){
 
 export function startPath(dispatch: (any) => void, seed: number){
     dispatch({ type: 'startPath', seed })
+}
+
+export function activateReward(dispatch: (any) => void, reward: Reward){
+    dispatch({ type: 'activateReward', reward })
+}
+
+export function deactivateReward(dispatch: (any) => void, reward: Reward){
+    dispatch({ type: 'deactivateReward', reward })
+}
+
+export function collectReward(dispatch: (any) => void, reward: Reward){
+    dispatch({ type: 'collectReward', reward })
 }

@@ -10,33 +10,44 @@ import { navigateTo } from '../utils/navigation'
 import { CardLibrary } from '../cards/cardLibrary'
 import { dispatch, withState } from '../state'
 import { RemoveCard } from '../actions/removeCard';
+import { collectReward, deactivateReward } from '../paths/pathState';
 
 type Props = { state: State }
 
 export const CardRemove: Component<any> = withState(({ state }: Props) => {
 
-    let cancel
-    new Promise(resolve => {
-        cancel = queryEntity(dispatch, card => state.battle.deck.has(card), resolve)        
-    }).then(card => {
-        resolver.processAction(new RemoveCard({}, card, {}))
-        navigateTo('/game/rewards')
-    })
+    let reward = state.path.rewards.filter(reward => reward.active)[0]
 
     return <Modal>
         <h1>Remove Card</h1>
-        <Row>{
+        <div class='row' style={{ 
+            flexWrap: 'wrap', 
+            width: '72vw', 
+            height: '64vh', 
+            justifyContent: 'space-evenly',
+            overflowY: 'scroll',
+            borderTop: 'solid white 2px',
+            borderBottom: 'solid white 2px',
+            margin: '11px',
+        }}>{
             [...state.battle.deck].map(card => 
-                <div style={'width: 20%, display: inline-block'}>
-                    <Frame>
+                <div style={{ flex: '0 0 18%', display: 'border-block' }}>
+                    <Button onClick={ click => {
+                        collectReward(dispatch, reward)
+                        deactivateReward(dispatch, reward)
+                        resolver.processAction(new RemoveCard({}, card, {}))
+                        navigateTo('/game/rewards')
+                    }}>
                         <CardComponent card={ card }/>
-                    </Frame>
+                    </Button>
                 </div>
             )
-        }</Row>
+        }
+            <div style={{ flex: '0 0 95%', height: '32vh' }}></div>
+        </div>
         <Button onClick={() => {
-            cancel()
             navigateTo(`/game/rewards`)
         }}>Skip</Button>
     </Modal>
+
 })

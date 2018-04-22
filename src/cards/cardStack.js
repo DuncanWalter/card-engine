@@ -1,4 +1,5 @@
 import type { Card } from "./card";
+import { Sequence } from "../utils/random";
 
 // $FlowFixMe
 export class CardStack implements Iterable<Card<any>> {
@@ -13,7 +14,7 @@ export class CardStack implements Iterable<Card<any>> {
         return this.cards.length
     }
 
-    shuffle(): void {
+    shuffle(seed: Sequence): void {
         let swap = (a, b) => {
             let temp = this.cards[a]
             this.cards[a] = this.cards[b]
@@ -21,8 +22,9 @@ export class CardStack implements Iterable<Card<any>> {
         }
         let size = this.cards.length
         let floor = Math.floor
-        let rand = Math.random
-        this.cards.forEach((__, index) => swap(index, floor(rand()*size)))
+        this.cards.forEach((__, index) => 
+            swap(index, floor(seed.next()*size))
+        )
     }
 
     take(count?: number): Card<any>[] {
@@ -39,10 +41,10 @@ export class CardStack implements Iterable<Card<any>> {
         return rr
     }
 
-    shuffleIn(...cards: Iterable<Card<any>>): void {
-        this.cards.push(...cards)
-        this.shuffle()
-    }
+    // shuffleIn(...cards: Iterable<Card<any>>): void {
+    //     this.cards.push(...cards)
+    //     this.shuffle()
+    // }
 
     addToTop(card: Card<any>): void {
         this.cards.push(card)

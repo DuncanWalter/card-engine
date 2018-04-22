@@ -5,6 +5,7 @@ import { blockable } from "../actions/damage";
 import { vulnerability } from "./vulnerability";
 import { Card } from "../cards/card";
 import { Player } from "../creatures/player";
+import { endTurn } from "../actions/action";
 
 export const weakness = Symbol('weakness');
 export const Weakness: Class<Effect> = MetaEffect(weakness, {
@@ -19,6 +20,7 @@ export const Weakness: Class<Effect> = MetaEffect(weakness, {
     delta: x => x - 1,
     min: 1,
     max: 99,
+    on: endTurn,
 }, owner => new Listener(
     weakness,
     {

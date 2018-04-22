@@ -13,7 +13,7 @@ type AcidData = {
     energy: number,
 }
 
-export const acid = Symbol('acid')
+export const acid = 'acid'
 export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
     damage: 4,
     energy: 1,

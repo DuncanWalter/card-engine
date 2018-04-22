@@ -9,7 +9,7 @@ export { startCombat }
 export const StartCombat: CustomAction<> = MetaAction(startCombat, function({ game, resolver }: ConsumerArgs<>): void { 
     
     game.drawPile.add(...game.deck.clone())
-    game.drawPile.shuffle()
+    game.drawPile.shuffle(game.seed)
     resolver.enqueueActions(new StartTurn({}, game.player, {}, startCombat))
 
 })

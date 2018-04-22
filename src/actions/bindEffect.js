@@ -17,16 +17,17 @@ interface Effected {
 export const bindEffect: Symbol = Symbol('bindEffect')
 export const BindEffect: CustomAction<Data, Effected> = MetaAction(bindEffect, ({ subject, data }: ConsumerArgs<Data, Effected>) => {
     let effect: Effect, current = subject.effects.filter(e => e.constructor == data.Effect)
+    let stacks = Math.floor(data.stacks)
     if(current.length){
         effect = current[0]
-        effect.stacks += data.stacks
+        effect.stacks += stacks
         effect.stacks = Math.min(effect.stackBehavior.max, effect.stacks)
         if(effect.stacks < effect.stackBehavior.min){
             let index = subject.effects.indexOf(effect)
             subject.effects.splice(index, 1)
         }
     } else {
-        effect = new data.Effect(subject, data.stacks)
+        effect = new data.Effect(subject, stacks)
         subject.effects.push(effect)
     }
 })

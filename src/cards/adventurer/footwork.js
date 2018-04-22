@@ -8,7 +8,7 @@ import { Exhaust } from '../../effects/exhaust'
 
 type FootworkData = { dexterity: number, energy: number }
 
-export const footwork = Symbol('footwork')
+export const footwork = 'footwork'
 export const Footwork: Class<Card<FootworkData>> = MetaCard(footwork, playFootwork, {
     dexterity: 2,
     energy: 1,

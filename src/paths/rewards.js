@@ -1,12 +1,14 @@
 import { Modal, Block, Col, Button } from "../utility";
 import type { Component } from "../component"
 import type { Reward as RewardT } from ".rewardLibrary"
-import { withState } from "../state"
+import { withState, stream } from "../state"
 import { navigateTo } from "../utils/navigation";
+import { overStream } from "../components/overStream";
 
 type Props = { state: *, match: any }
 
 export const Rewards: Component<*> = withState(({ state, match }) => {
+    console.log(state)
     return <div>
         <Modal>
             <h1>Combat Rewards</h1>

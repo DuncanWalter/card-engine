@@ -7,7 +7,7 @@ import { DrawCard } from '../../actions/drawCard'
 
 type FlashOfSteelData = { damage: number, energy: number }
 
-export const flashOfSteel = Symbol('flashOfSteel')
+export const flashOfSteel = 'flashOfSteel'
 export const FlashOfSteel: Class<Card<FlashOfSteelData>> = MetaCard(flashOfSteel, playFlashOfSteel, {
     energy: 0,
     damage: 4,

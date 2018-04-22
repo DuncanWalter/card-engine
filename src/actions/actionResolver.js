@@ -240,7 +240,6 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
     if(!this.simulating){
         // TODO: figure out what to do here
         this.emit()
-        // console.log(this.gameStateSlice.enemies[0])
     }
     return action
 }

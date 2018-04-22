@@ -10,7 +10,9 @@ export const Main: Component<> = props => <Modal>
             <Block><h1>Deck Dawdle</h1></Block>
             <Route render={({ history }) => 
                 <Button onClick={click => {
-                    resolver.processAction(new StartGame({}, {}, {}))
+                    resolver.processAction(new StartGame({}, {}, {
+                        seed: 100345,
+                    }))
                     history.push('/game/pathSelection')
                 }}>Begin</Button>
             }/>

@@ -8,7 +8,7 @@ import { queryEnemy } from '../utils'
 
 type BashData = { damage: number, energy: number }
 
-export const bash = Symbol('bash')
+export const bash = 'bash'
 export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
     damage: 8,
     energy: 2,
@@ -16,7 +16,7 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
     energyTemplate: '#{energy}',
     color: '#bb4433',
     titleTemplate: 'Bash',
-    textTemplate: `Deal #{damage} damage and 1 weakness to a target.`,
+    textTemplate: `Deal #{damage} damage. Bloodied: apply 2 vulnerability.`,
 })
 
 
@@ -35,6 +35,7 @@ function* playBash({ resolver }: PlayArgs<>): Generator<any, BashData, any> {
                 blockable,
             ),
         )
+        // TODO: should be an on damage listener?
         yield resolver.processAction(new BindEffect(this, target, {
             Effect: Vulnerability,
             stacks: 2,

@@ -6,7 +6,7 @@ import { queryEnemy } from './../utils'
 
 type StrikeData = { damage: number, energy: number }
 
-export const strike = Symbol('strike')
+export const strike = 'strike'
 export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
     energy: 1,
     damage: 6,

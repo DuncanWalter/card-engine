@@ -11,6 +11,21 @@ import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
 import { state } from '../state'
 
+export const cardFactory = {
+    cards: (new Map(): Map<string, Class<Card<any>>>),
+    register(id: string, Constructor: Class<Card<any>>): void {
+        this.cards.set(id, Constructor)
+    },
+    create(id: string): Card<any> {
+        let Cons = this.cards.get(id)
+        if(Cons){
+            return new Cons()
+        } else {
+            throw new Error(`no registered card type with id ${id}`)
+        }
+    },
+}
+
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
     actor: A,
     subject: Card<any>,
@@ -21,7 +36,7 @@ export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
 
 // TODO: play args should have data and use another type argument
 export class Card<Data: Object = {}> {
-    id: Symbol
+    id: string
     appearance: {
         color: string, // TODO: this is a stand in for images
         textTemplate: string,
@@ -45,6 +60,12 @@ export class Card<Data: Object = {}> {
             this.play({ actor, subject, target, resolver, game: state.battle }).then(v => meta = v)
         })
 
+        Object.keys(meta).forEach(key => {
+            if(typeof meta[key] === 'number'){
+                meta[key] = Math.floor(meta[key])
+            }
+        })
+
         let ctx = createInterpolationContext(this.data, meta, {})
 
         return {
@@ -54,12 +75,20 @@ export class Card<Data: Object = {}> {
             color: this.appearance.color,
         }
     }
+
+    upgrades(){
+
+    }
+
+    clone(){
+        return cardFactory.create(this.id)
+    }
 }
 
 function any(any: any): any { return any }
 
-export function MetaCard<Meta: Object>(
-    id: Symbol,
+export function MetaCard<Meta: {}>(
+    id: string,
     play: ((ctx: PlayArgs<>) => Meta) | ((ctx: PlayArgs<>) => Generator<any, Meta, any>),
     data: Meta,
     appearance: {
@@ -69,9 +98,9 @@ export function MetaCard<Meta: Object>(
         energyTemplate: string,
     },
     ...effects: [Class<Effect>, number][]
-){
+): Class<Card<Meta>> {
     // TODO: WTH does this need to be any?
-    return class CustomCard extends Card<any> {
+    class CustomCard extends Card<Meta> {
         constructor(){
             super()
             this.data = Object.assign({ }, data)
@@ -82,6 +111,10 @@ export function MetaCard<Meta: Object>(
             this.listener = any([this.effects])
         }
     }
+
+    cardFactory.register(id, CustomCard)
+
+    return CustomCard
 }
 
 

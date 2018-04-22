@@ -9,9 +9,12 @@ export interface Reward {
     collect: (self: Reward, state: State) => Promise<void>,
     active: boolean,
     description: string,
+    id: Symbol,
 }
 
 const rewardLibrary: Reward[] = []
+function any(any: any): any { return any }
+
 
 export function registerReward(description: string, cost: number, collect: (self: Reward, state: State) => any, init?: (reward: Reward, level: number, seed: Sequence) => Reward){
     rewardLibrary.push({
@@ -21,6 +24,7 @@ export function registerReward(description: string, cost: number, collect: (self
         init: init || (i => i),
         active: false,
         description,
+        id: any(null),
     })
 }
 
@@ -30,16 +34,14 @@ export function getRewards(rewardFunds: number, level: number, seed: Sequence){
     let funds = rewardFunds
     while(funds > 0){
         available = available.filter(reward => reward.cost <= funds)
-        console.log(funds, available)
         let candidates = available.filter(reward => reward.cost - funds < 1.5 + seed.next())
-        console.log(candidates)
         let choice = candidates[Math.floor(seed.next() * candidates.length)]
-        console.log(choice)
         funds -= choice.cost
         rewards.push(choice)
     }
     return rewards.map(reward => ({ 
         ...reward.init(reward, level, seed),
         collected: false, 
+        id: Symbol('id'),
     }))
 }

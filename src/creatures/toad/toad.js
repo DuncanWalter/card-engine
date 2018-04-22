@@ -40,7 +40,7 @@ ribbit = new Behavior('ribbit', next, function*({ owner, resolver, game }){
 lick = new Behavior('lick', next, function*({ owner, resolver, game }){
     yield resolver.processAction(new BindEffect(owner, game.player, {
         Effect: Weakness,
-        stacks: 2,
+        stacks: 1,
     }))
     return { isDebuffing: true }
 })

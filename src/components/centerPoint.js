@@ -10,5 +10,4 @@ const sty = {
     position: 'relative',
 }
 
-export const CenterPoint: Component<{ content: any }> = 
-    ({ content }) => <div style={sty}>{ content }</div>
+export const CenterPoint: Component<{ content: any }> = ({ content }) => <div style={sty}>{ content }</div>

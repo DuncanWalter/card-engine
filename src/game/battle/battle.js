@@ -12,7 +12,7 @@ import { withAnimation } from '../../components/withAnimation';
 const unit = <div style={{ flex: 1 }}/>
 
 
-export const Battle = withAnimation()(withState(({ state }) => {
+export const Battle = withState(({ state }) => {
 
     let battle = state.battle
     
@@ -49,7 +49,7 @@ export const Battle = withAnimation()(withState(({ state }) => {
             <div style={{ flex: 1 }}/>
         </div>
     </div>
-}))
+})
 
 const sty = {
     button: {

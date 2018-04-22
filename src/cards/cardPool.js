@@ -1,5 +1,6 @@
 import { Card } from "./card"
 import { CardStack } from "./cardStack"
+import { Sequence } from "../utils/random";
 
 export class CardPool<Key=Class<Card<any>>, Child: CardPool<any, any>=CardPool<>> {
 
@@ -34,11 +35,11 @@ export class CardPool<Key=Class<Card<any>>, Child: CardPool<any, any>=CardPool<>
         }
     }
 
-    sample(count: number, distribution?: Map<mixed, number>): Class<Card<any>>[] {
+    sample(count: number, seed: Sequence, distribution?: Map<mixed, number>): Class<Card<any>>[] {
         if ( !count ) return []
         if ( this.cards.size ) {
             let cards = new CardStack(...[...this.cards].map(CC => new CC()))
-            cards.shuffle()
+            cards.shuffle(seed)
             return cards.take(count).map(cc => cc.constructor)
         }
         
@@ -63,11 +64,11 @@ export class CardPool<Key=Class<Card<any>>, Child: CardPool<any, any>=CardPool<>
 
         cards = []   
         this.children.forEach((child, key) => {
-            cards.push(...child.sample(scale * (dd.get(key) || 1), dd))
+            cards.push(...child.sample(scale * (dd.get(key) || 1), seed, dd))
         })
 
         stack = new CardStack(...cards)
-        stack.shuffle()
+        stack.shuffle(seed)
         cards = stack.take(count)
         if(cards.length < count){ console.log('failed to faithfully sample card pool') }
         return cards

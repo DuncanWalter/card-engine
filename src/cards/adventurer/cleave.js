@@ -6,7 +6,7 @@ import { queryEnemy } from './../utils'
 
 type CleaveData = { damage: number, energy: number }
 
-export const cleave = Symbol('cleave')
+export const cleave = 'cleave'
 export const Cleave: Class<Card<CleaveData>> = MetaCard(cleave, playCleave, {
     energy: 1,
     damage: 7,
