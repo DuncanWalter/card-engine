@@ -30,9 +30,7 @@ export interface GameState {
     deck: CardStack,
     exhaustPile: CardStack,
     activeCards: CardStack,
-    
-    // room: number,
-    
+    famePoints: number,    
 }
 
 export const battleInitial: GameState = {
@@ -48,6 +46,7 @@ export const battleInitial: GameState = {
     activeCards: new CardStack(),
     random: randomSequence(Math.random() * 21452352),
     dummy: any(null),
+    famePoints: 0,
 }
 
 export const battleReducer: Reducer<GameState, any, any> = createReducer({

@@ -21,12 +21,12 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
 
 
 // TODO: the bash vulnerability should be a default listener on the damage action
-function* playBash({ resolver }: PlayArgs<>): Generator<any, BashData, any> {
+function* playBash({ resolver, actors }: PlayArgs<>): Generator<any, BashData, any> {
     let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
-                this, 
+                actors, 
                 target,
                 {
                     damage: this.data.damage,

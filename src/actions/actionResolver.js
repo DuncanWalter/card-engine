@@ -15,7 +15,7 @@ function testListener(action: Action<>, listener: Listener<>){
     let matched = false
     const h = listener.header
     if(h.actors){
-        if(h.actors.indexOf(action.actor) >= 0){
+        if(h.actors.reduce((acc, actor) => acc || action.actors.has(actor), false)){
             matched = true
         } else {
             return false
@@ -228,7 +228,8 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
                 cancel,
                 resolver: any(that),
                 subject: action.subject,
-                actor: action.actor,
+                actors: action.actors,
+                action,
                 game: that.state.battle,
                 internal: () => { 
                     throw new Error('Internal listener envoked by non-wrapper listener') 

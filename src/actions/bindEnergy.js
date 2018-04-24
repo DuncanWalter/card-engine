@@ -8,5 +8,5 @@ type Data = {
 
 export const bindEnergy: Symbol = Symbol('bindEnergy')
 export const BindEnergy: CustomAction<Data> = MetaAction(bindEnergy, ({ game, data }: ConsumerArgs<Data>): void => {
-    game.player.energy += data.quantity
+    game.player.energy += Math.floor(data.quantity)
 })

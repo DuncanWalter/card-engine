@@ -5,7 +5,7 @@ import { Defend } from "./defend"
 import { Bash } from "./bash"
 import { Footwork } from "./footwork"
 import { Acid } from "./acid"
-import { FlashOfSteel } from "./flashOfSteel"
+import { FlashOfSteel } from "../brawler/flashOfSteel"
 import { Cleave } from "./cleave"
 
 

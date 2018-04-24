@@ -24,11 +24,11 @@ export const Block: Class<Effect> = MetaEffect(block, {
         subjects: [owner],
         tags: [blockable],
     },
-    function({ data, resolver, actor, cancel }: ConsumerArgs<>): void {
+    function({ data, resolver, actors, cancel }: ConsumerArgs<>): void {
         if (resolver.simulating) return
         if(typeof data.damage == 'number'){
             if(data.damage <= self.stacks){
-                resolver.processAction(new BindEffect(actor, owner, {
+                resolver.processAction(new BindEffect(actors, owner, {
                     Effect: Block,
                     stacks: -data.damage,
                 }))
@@ -36,7 +36,7 @@ export const Block: Class<Effect> = MetaEffect(block, {
                 cancel()
             } else {
                 data.damage -= self.stacks
-                resolver.processAction(new BindEffect(actor, owner, {
+                resolver.processAction(new BindEffect(actors, owner, {
                     Effect: Block,
                     stacks: -self.stacks,
                 }))

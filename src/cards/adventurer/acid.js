@@ -24,11 +24,11 @@ export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
     textTemplate: 'Deal #{damage} damage to a target. Convert blocked damage to poison.',
 })
 
-function* playAcid({ resolver }: PlayArgs<>): * {
+function* playAcid({ resolver, actors }: PlayArgs<>): * {
     let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = new Damage(
-            this, 
+            actors, 
             target,
             {
                 damage: this.data.damage,
@@ -39,12 +39,12 @@ function* playAcid({ resolver }: PlayArgs<>): * {
         action.defaultListeners.push(new Listener(
             block,
             {},
-            function*({ internal, data, actor, subject, resolver, next }: ConsumerArgs<>): Generator<any, any, any> {
+            function*({ internal, data, actors, subject, resolver, next }: ConsumerArgs<>): Generator<any, any, any> {
                 const damage = data.damage
                 yield internal()
                 const poison = (damage - data.damage)
                 yield next()
-                yield resolver.processAction(new BindEffect(actor, subject, {
+                yield resolver.processAction(new BindEffect(actors, subject, {
                     Effect: Poison,
                     stacks: poison,
                 }, acid))

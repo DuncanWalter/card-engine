@@ -3,21 +3,23 @@ import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
+import { DrawCards } from '../../actions/drawCards';
 
-type StrikeData = { damage: number, energy: number }
+type PalmStrikeData = { damage: number, energy: number, draw: number }
 
-export const strike = 'strike'
-export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
+export const palmStrike = 'palmStrike'
+export const PalmStrike: Class<Card<PalmStrikeData>> = MetaCard(palmStrike, playPalmStrike, {
     energy: 1,
-    damage: 6,
+    damage: 9,
+    draw: 1,
 }, {
     energyTemplate: '#{energy}',
-    color: '#dd2244',
-    titleTemplate: 'Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy.',
+    color: '#ee4422',
+    titleTemplate: 'PalmStrike',
+    textTemplate: 'Deal #{damage} damage to an enemy. Draw #{draw} cards.',
 })
 
-function* playStrike({ resolver, actors }: PlayArgs<>): Generator<any, StrikeData, any>{
+function* playPalmStrike({ resolver, actors }: PlayArgs<>): Generator<any, PalmStrikeData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
@@ -31,7 +33,8 @@ function* playStrike({ resolver, actors }: PlayArgs<>): Generator<any, StrikeDat
                 blockable,
             ),
         )
-        return { damage: action.data.damage, energy: this.data.energy }
+        yield resolver.processAction(new DrawCards(actors, {}, { count: this.data.draw }))
+        return { damage: action.data.damage, energy: this.data.energy, draw: this.data.draw }
     } else {
         return this.data
     }

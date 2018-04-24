@@ -26,8 +26,8 @@ export const Dexterity: Class<Effect> = MetaEffect(dexterity, {
         type: bindEffect,
         tags: [targeted],
     },
-    function({ data, actor }: ConsumerArgs<>): void {
-        if(actor instanceof Card){
+    function({ data, action }: ConsumerArgs<>): void {
+        if(action.hasActorOfType(Card)){
             if(typeof data.stacks == 'number'){
                 if(data.stacks >= 0){
                     data.stacks += self.stacks

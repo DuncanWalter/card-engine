@@ -19,21 +19,21 @@ export const Footwork: Class<Card<FootworkData>> = MetaCard(footwork, playFootwo
     textTemplate: 'Gain #{dexterity} dexterity',
 }, [Exhaust, 1])
 
-function* playFootwork({ actor, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {
-    if(actor instanceof Creature){
-        const action: BindEffect = yield resolver.processAction(
-            new BindEffect(
-                this, 
-                actor,
-                {
-                    Effect: Dexterity,
-                    stacks: this.data.dexterity,
-                },
-                dexterity,
-            ),
-        )
-        return { dexterity: action.data.stacks, energy: this.data.energy }
-    } else {
-        return this.data
-    }
+function* playFootwork({ actors, game, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {
+    // if(actor instanceof Creature){
+    const action: BindEffect = yield resolver.processAction(
+        new BindEffect(
+            actors, 
+            game.player,
+            {
+                Effect: Dexterity,
+                stacks: this.data.dexterity,
+            },
+            dexterity,
+        ),
+    )
+    return { dexterity: action.data.stacks, energy: this.data.energy }
+    // } else {
+    //     return this.data
+    // }
 }

@@ -18,8 +18,9 @@ export type ListenerGroup = Listener<>
 export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
     data: Data,
     subject: Subject,
-    actor: Actor,
+    actors: Set<Actor>,
     resolver: ActionResolver,
+    action: Action<mixed, mixed, mixed>,
     next: () => Promise<void>,
     cancel: () => void,
     game: $ReadOnly<GameState>,
@@ -50,3 +51,6 @@ export class Listener<Data=any, Subject=any, Actor=any>{
 export const reject: Header<> = {
     filter: a => false
 }
+
+const deaf = Symbol('deaf')
+export const deafListener: Listener<any, any, any> = new Listener(deaf, { type: deaf }, () => {}, false)

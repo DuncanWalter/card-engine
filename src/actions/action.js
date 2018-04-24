@@ -12,19 +12,29 @@ function any(any: any): any { return any }
 
 export class Action<Data=any, Subject=any, Actor=any> extends Listener<> {
     id: Symbol
-    actor: Actor
+    actors: Set<Actor>
     subject: Subject
     tags: Symbol[]
     data: Data
     defaultListeners: Listener<>[]
+
+    hasActorOfType(Type: Function){
+        return [...this.actors].reduce((acc, actor) => acc || actor instanceof Type, false)
+    }
     
-    constructor(id: Symbol, consumer: Consumer<>, actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
+    constructor(id: Symbol, consumer: Consumer<>, actor: Actor | Set<Actor>, subject: Subject, data: Data, ...tags: Symbol[]){
         super(id, reject, consumer, false)
         this.data = data
-        this.actor = actor
         this.subject = subject
         this.tags = tags
         this.defaultListeners = []
+
+        if(actor instanceof Set){
+            this.actors = actor
+        } else {
+            this.actors = new Set()
+            this.actors.add(actor)
+        }
     }
 }
 
@@ -37,12 +47,12 @@ export function MetaAction<Data, Subject, Actor>(
     return any(class CustomAction extends Action<Data, Subject, Actor> {
 
         id: Symbol
-        actor: Actor
+        actors: Set<Actor>
         subject: Subject
         tags: Symbol[]
         data: Data
 
-        constructor(actor: Actor, subject: Subject, data: Data, ...tags: Symbol[]){
+        constructor(actor: Actor | Set<Actor>, subject: Subject, data: Data, ...tags: Symbol[]){
             super(id, consumer, actor, subject, data, id, ...tags)
         }
     })

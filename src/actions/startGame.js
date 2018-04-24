@@ -7,6 +7,8 @@ import { TrainingDummy } from "../creatures/trainingDummy"
 import { dispatch } from "../state"
 import { startPath, generateFreedoms } from "../paths/pathState"
 import { Sequence, randomSequence } from "../utils/random"
+import { Strike } from "../cards/adventurer/strike";
+import { Defend } from "../cards/adventurer/defend";
 
 // <{ loadFile?: string }> // TODO: data for card pool selection etc
 export const startGame: Symbol = Symbol('startGame')
@@ -24,8 +26,8 @@ export const StartGame: CustomAction<{ seed: number }> = MetaAction(startGame, (
     game.enemies = []
     game.allies = []
     game.equipment = []
-    game.deck.add(...[...CardLibrary.sample(2, seed)].map(CC => new CC()))
-    game.deck.add(...[...CardLibrary.sample(4, seed)].map(CC => new CC()))
+    game.deck.add(new Strike(), new Strike(), new Strike())
+    game.deck.add(new Defend(), new Defend(), new Defend())
     game.deck.add(...[...CardLibrary.sample(4, seed)].map(CC => new CC()))
 
     startPath(dispatch, data.seed)

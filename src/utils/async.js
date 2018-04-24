@@ -60,6 +60,7 @@ type Fn<A, R> = ((a: A) => Promise<R>) | ((a: A) => Generator<Promise<any>, R, a
 
 // TODO: is there a way to make this express the stuff fully?
 export function synchronize<A, R>(fun: Fn<A, R>, self?: any): (a: A) => Promise<R> {    
+    // $FlowFixMe
     return (...args: A) => {
         // new Promise(resolve => {
         if(fun instanceof GeneratorFunction){

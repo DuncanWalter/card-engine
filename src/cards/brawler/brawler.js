@@ -1,13 +1,12 @@
-import { CardLibrary, C, B, A } from "../cardLibrary";
-import { CardPool } from "../cardPool";
-import { Strike } from "./strike";
-import { Defend } from "./defend";
-import { Bash } from "./bash";
-import { Footwork } from "./footwork";
-import { Acid } from "./acid";
-import { FlashOfSteel } from "./flashOfSteel";
-import { Cleave } from "./cleave";
-
+import { CardLibrary, F, D, C, B, A } from "../cardLibrary"
+import { CardPool } from "../cardPool"
+import { PalmStrike } from "./palmStrike";
+import { Anger } from "./anger";
+import { FightersStance } from "./fightersStance";
+import { Rage } from "./rage";
+import { DoubleStrike } from "./doubleStrike";
+import { Adrenaline } from "./adreneline";
+import { FlashOfSteel } from "./flashOfSteel"
 
 
 // rampage
@@ -42,41 +41,39 @@ import { Cleave } from "./cleave";
 
 // jab
 
-
 let brawler = new CardPool()
-
-// Grade F Brawler cards
-let brawlerF = new CardPool()
-// brawlerF.add(Defend)
-// brawlerF.add(Strike)
-brawler.register(C, brawlerF)
 
 // Grade D Brawler cards
 let brawlerD = new CardPool()
-// brawlerD.add(Acid)
-// brawlerD.add(Bash)
-// brawlerD.add(Cleave)
-brawler.register(B, brawlerD)
+brawlerD.add(Anger)
+brawlerD.add(FightersStance)
+brawlerD.add(PalmStrike)
+brawler.register(D, brawlerD)
 
 // Grade C Brawler cards
 let brawlerC = new CardPool()
-adventurerA.add(FlashOfSteel)
-adventurerA.add(Footwork)
-adventurer.register(A, adventurerA)
+brawlerC.add(Rage)
+brawlerC.add(DoubleStrike)
+brawler.register(C, brawlerC)
 
 // Grade B 
-let brawlerC = new CardPool()
+let brawlerB = new CardPool()
+brawlerB.add(Adrenaline)
+brawler.register(B, brawlerB)
+
+// Grade A
+let brawlerA = new CardPool()
+brawlerA.add(FlashOfSteel)
+brawler.register(A, brawlerA)
+
+CardLibrary.register('brawler', brawler)
 
 
-let brawlerC = new CardPool()
-
-
-CardLibrary.register('adventurer', adventurer)
 
 
 
 
 
 
-
-
+// distros over disjoint sets
+// set unions for any sets

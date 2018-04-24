@@ -27,7 +27,7 @@ export const cardFactory = {
 }
 
 export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
-    actor: A,
+    actors: Set<A>,
     subject: Card<any>,
     target: T,
     resolver: ActionResolver,
@@ -35,7 +35,7 @@ export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
 }
 
 // TODO: play args should have data and use another type argument
-export class Card<Data: Object = {}> {
+export class Card<Data: Object = any> {
     id: string
     appearance: {
         color: string, // TODO: this is a stand in for images
@@ -49,7 +49,7 @@ export class Card<Data: Object = {}> {
 
     play: (ctx: PlayArgs<>) => Promise<Data> // TODO: strong type these?
 
-    simulate({ actor, subject, target, resolver }: PlayArgs<>):{
+    simulate({ actors, subject, target, resolver }: PlayArgs<>):{
         text: string,
         color: string,
         title: string,
@@ -57,7 +57,7 @@ export class Card<Data: Object = {}> {
     }{
         let meta: Data = this.data
         resolver.simulate(resolver => {
-            this.play({ actor, subject, target, resolver, game: state.battle }).then(v => meta = v)
+            this.play({ actors, subject, target, resolver, game: state.battle }).then(v => meta = v)
         })
 
         Object.keys(meta).forEach(key => {

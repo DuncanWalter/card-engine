@@ -3,21 +3,23 @@ import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
+import { Discard } from '../../actions/discard';
+import { Exhaust } from '../../effects/exhaust';
 
-type StrikeData = { damage: number, energy: number }
+type JabData = { damage: number, energy: number }
 
-export const strike = 'strike'
-export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
-    energy: 1,
-    damage: 6,
+export const jab = 'jab'
+export const Jab: Class<Card<JabData>> = MetaCard(jab, playJab, {
+    energy: 0,
+    damage: 5,
 }, {
     energyTemplate: '#{energy}',
-    color: '#dd2244',
-    titleTemplate: 'Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy.',
-})
+    color: '#662222',
+    titleTemplate: 'Jab',
+    textTemplate: 'Deal #{damage} damage to an enemy. #[Exhaust].',
+}, [Exhaust, 1])
 
-function* playStrike({ resolver, actors }: PlayArgs<>): Generator<any, StrikeData, any>{
+function* playJab({ resolver, actors }: PlayArgs<>): Generator<any, JabData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(

@@ -17,14 +17,14 @@ export const Cleave: Class<Card<CleaveData>> = MetaCard(cleave, playCleave, {
     textTemplate: 'Deal #{damage} damage to all enemies.',
 })
 
-function* playCleave({ resolver, game }: PlayArgs<>): Generator<any, CleaveData, any>{
+function* playCleave({ resolver, game, actors }: PlayArgs<>): Generator<any, CleaveData, any>{
 
     // TODO: get nested simulations up so that aoe can list damages correctly
 
     for(let promise of [...game.enemies].map(enemy =>
         resolver.processAction(
             new Damage(
-                this,
+                actors,
                 enemy,
                 {
                     damage: this.data.damage,

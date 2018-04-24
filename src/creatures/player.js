@@ -6,6 +6,8 @@ export class Player extends Creature {
     maxEnergy: number
     isActive: boolean
 
+
+    
     constructor(health: number, maxHealth?: number){
         super(health, maxHealth)
         this.maxEnergy = 3 // TODO: how do energy stuffs?
@@ -15,7 +17,7 @@ export class Player extends Creature {
     }
     
     set energy(value: number){
-        this.__energy__ = Math.floor(Math.max(0, Math.min(this.maxEnergy, value)))
+        this.__energy__ = Math.floor(Math.max(0, 99, value))
     }
 
     get energy(): number {

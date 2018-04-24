@@ -16,9 +16,9 @@ type Data = {
 
 
 export const playCard: Symbol = Symbol('playCard')
-export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCard, function*({ game, data, subject, actor, resolver, cancel }: ConsumerArgs<Data>): * { 
+export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Data>): * { 
 
-    if (actor.energy < subject.data.energy) return cancel()
+    if (game.player.energy < subject.data.energy) return cancel()
     yield resolver.processAction(new BindEnergy({}, {}, {
         quantity: -subject.data.energy
     }))
@@ -26,9 +26,11 @@ export const PlayCard: CustomAction<Data, Card<any>, Player> = MetaAction(playCa
     if (game.hand.has(subject)) game.hand.remove(subject)
     game.activeCards.addToTop(subject) // TODO: could be safer than push pop
 
+    actors.add(subject)
+
     yield subject.play({ 
         resolver,
-        actor,
+        actors,
         subject,
         target: data.target,
         data: subject.data,

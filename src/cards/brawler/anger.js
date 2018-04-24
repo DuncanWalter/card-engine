@@ -3,21 +3,24 @@ import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
+import { AddToDiscardPile } from '../../actions/addToDiscard';
 
-type StrikeData = { damage: number, energy: number }
+type AngerData = { damage: number, energy: number }
 
-export const strike = 'strike'
-export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
-    energy: 1,
-    damage: 6,
+// TODO: make it etherial
+
+export const anger = 'anger'
+export const Anger: Class<Card<AngerData>> = MetaCard(anger, playAnger, {
+    energy: 0,
+    damage: 5,
 }, {
     energyTemplate: '#{energy}',
-    color: '#dd2244',
-    titleTemplate: 'Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy.',
+    color: '#ee4422',
+    titleTemplate: 'Anger',
+    textTemplate: 'Deal #{damage} damage to an enemy. Add a copy of Anger to the discard pile.',
 })
 
-function* playStrike({ resolver, actors }: PlayArgs<>): Generator<any, StrikeData, any>{
+function* playAnger({ resolver, actors }: PlayArgs<>): Generator<any, AngerData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
@@ -31,6 +34,7 @@ function* playStrike({ resolver, actors }: PlayArgs<>): Generator<any, StrikeDat
                 blockable,
             ),
         )
+        yield resolver.processAction(new AddToDiscardPile(this, this.clone(), {}))
         return { damage: action.data.damage, energy: this.data.energy }
     } else {
         return this.data

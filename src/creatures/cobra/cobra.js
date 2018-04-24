@@ -19,10 +19,10 @@ bite = new Behavior('Bite', seed => seed > 0.5 ? bite : hiss, function*({ owner,
     action.defaultListeners.push(new Listener(
         damage, 
         {},
-        function*({ data, resolver, actor, subject, internal }): * {
+        function*({ data, resolver, actors, subject, internal }): * {
             yield internal()
             if(data.damage > 0){
-                yield resolver.processAction(new BindEffect(actor, subject, {
+                yield resolver.processAction(new BindEffect(actors, subject, {
                     Effect: Poison,
                     stacks: 3,
                 }))

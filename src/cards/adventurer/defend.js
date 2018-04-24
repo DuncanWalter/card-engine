@@ -18,22 +18,22 @@ export const Defend: Class<Card<DefendData>> = MetaCard(defend, playDefend, {
     textTemplate: 'Gain #{block} block.',
 })
 
-function* playDefend({ actor, resolver }: PlayArgs<>): Generator<any, DefendData, any> {
-    if(actor instanceof Creature){
-        const action: BindEffect = yield resolver.processAction(
-            new BindEffect(
-                this, 
-                actor,
-                {
-                    Effect: Block,
-                    stacks: this.data.block,
-                },
-                block,
-                targeted,
-            ),
-        )
-        return { block: action.data.stacks, energy: this.data.energy }
-    } else {
-        return this.data
-    }
+function* playDefend({ actors, game, resolver }: PlayArgs<>): Generator<any, DefendData, any> {
+    // if(game instanceof Creature){
+    const action: BindEffect = yield resolver.processAction(
+        new BindEffect(
+            actors, 
+            game.player,
+            {
+                Effect: Block,
+                stacks: this.data.block,
+            },
+            block,
+            targeted,
+        ),
+    )
+    return { block: action.data.stacks, energy: this.data.energy }
+    // } else {
+    //     return this.data
+    // }
 }

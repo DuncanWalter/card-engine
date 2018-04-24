@@ -3,7 +3,7 @@ import { MetaAction, startTurn, endTurn } from "./action"
 import { Creature } from "../creatures/creature"
 import { Player } from "../creatures/player"
 // import { NPC } from "../creatures/npc"
-import { DrawCard } from "./drawCard"
+import { DrawCards } from "./drawCards"
 import { TakeTurn } from "./takeTurn"
 import { ConsumerArgs } from "./listener"
 import { BindEnergy } from "./bindEnergy"
@@ -19,7 +19,7 @@ export const StartTurn: CustomAction<> = MetaAction(startTurn, function*({ game,
         yield resolver.processAction(new BindEnergy({}, {}, { 
             quantity: game.player.maxEnergy 
         }), startTurn, fill)
-        yield resolver.processAction(new DrawCard(game.player, {}, { count: 5 }, startTurn))
+        yield resolver.processAction(new DrawCards(game.player, {}, { count: 5 }, startTurn))
         for(let ally of [...game.allies]){
             yield resolver.processAction(new StartTurn({}, ally, {}))
         }

@@ -24,7 +24,7 @@ export const Weakness: Class<Effect> = MetaEffect(weakness, {
 }, owner => new Listener(
     weakness,
     {
-        filter: action => action.actor instanceof Card && owner instanceof Player || action.actor == owner,
+        filter: action => action.actors.has(owner),
         tags: [blockable],
         type: damage,
     },
