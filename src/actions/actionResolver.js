@@ -219,7 +219,7 @@ function* processAction(action: Action<>): Generator<any, Action<>, any> {
         
         return active = a && b && active
     }
-    const cancel: () => void = () => { active = false }
+    const cancel: () => void = () => { active = false; console.log('cancelling') }
     const next: () => Promise<void> = synchronize(function*(): Generator<any, any, any> {
         while(continuing()){
             yield executionQueue[index].consumer({ 

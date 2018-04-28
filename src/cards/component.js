@@ -14,9 +14,13 @@ interface Props {
 
 export const Card: Component<Props> = withState(({ card, state }) => {
 
+    const actors = new Set()
+    actors.add(state.battle.player)
+    actors.add(card)
+
     // TODO: need to rework the energy part to check for price and playability 
     let { energy, color, text, title } = card.simulate({
-        actor: state.battle.player,
+        actors,
         subject: card,
         target: state.battle.dummy, 
         resolver: resolver,
@@ -31,8 +35,7 @@ export const Card: Component<Props> = withState(({ card, state }) => {
                 state.battle.player, 
                 card,
                 {
-                    target: state.battle.dummy,
-                    success: false,
+                    from: state.battle.hand,
                 }
             )
         )

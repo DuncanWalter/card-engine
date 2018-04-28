@@ -7,31 +7,28 @@ import { Rage } from "./rage";
 import { DoubleStrike } from "./doubleStrike";
 import { Adrenaline } from "./adreneline";
 import { FlashOfSteel } from "./flashOfSteel"
+import { Rampage } from "./rampage";
+import { TripleStrike } from "./tripleStrike";
+import { Flex } from "./flex";
+import { LegReap } from "./LegReap";
+import { CheapShot } from "./cheapShot";
 
-
-// rampage
-// double strike
-// triple strike
-// rage () -> perma
+// motion blur
 // momentum
-// fighter's stance (cloak and dagger)
 // improvise???
 // quick strike
-// flash of steel
-// flex
 // sweeping strike
 // flurry (double sweep)
 // finisher
 // battle rythm (draw for vulnerability or dazed)
 // reckless strike (attack for dazed)
-// anger
 // crippling strike (cheap shot)
-// adreneline
 // stimulants
 // numbness ???
 // thunderclap
 // flying knee (spinning backhand)
-// heelhook / dropkick
+// reckless charge
+// burst / double tap
 
 // heal when taking damage?
 // footwork?
@@ -48,17 +45,22 @@ let brawlerD = new CardPool()
 brawlerD.add(Anger)
 brawlerD.add(FightersStance)
 brawlerD.add(PalmStrike)
+brawlerD.add(CheapShot)
 brawler.register(D, brawlerD)
 
 // Grade C Brawler cards
 let brawlerC = new CardPool()
-brawlerC.add(Rage)
 brawlerC.add(DoubleStrike)
+brawlerC.add(Flex)
+brawlerC.add(LegReap)
+brawlerC.add(Rage)
+brawlerC.add(Rampage)
 brawler.register(C, brawlerC)
 
 // Grade B 
 let brawlerB = new CardPool()
 brawlerB.add(Adrenaline)
+brawlerB.add(TripleStrike)
 brawler.register(B, brawlerB)
 
 // Grade A

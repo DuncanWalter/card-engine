@@ -15,7 +15,7 @@ export const PalmStrike: Class<Card<PalmStrikeData>> = MetaCard(palmStrike, play
 }, {
     energyTemplate: '#{energy}',
     color: '#ee4422',
-    titleTemplate: 'PalmStrike',
+    titleTemplate: 'Palm Strike',
     textTemplate: 'Deal #{damage} damage to an enemy. Draw #{draw} cards.',
 })
 

@@ -83,6 +83,16 @@ export class Card<Data: Object = any> {
     clone(){
         return cardFactory.create(this.id)
     }
+
+    stacksOf(effect: Symbol): number {
+        let effects: Effect[] = this.effects.filter(effect => effect.id == effect)
+        if(effects.length === 0){
+            return 0
+        } else {
+            return effects[0].stacks
+        }
+    }
+
 }
 
 function any(any: any): any { return any }

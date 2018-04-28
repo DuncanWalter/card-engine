@@ -24,6 +24,14 @@ export const Rampage: Class<Card<RampageData>> = MetaCard(rampage, playRampage, 
     textTemplate: 'Deal #{damage} damage to an enemy. Deals #{scaling} more damage for each time this card has been played this combat.',
 })
 
+let rampageSymbol = Symbol('rampage')
+let RampageStacks = MetaEffect(rampageSymbol, null, {
+    stacked: true,
+    delta: x => x,
+    max: 999,
+    min: 0,
+}, (owner, self) => deafListener,  [], [])
+
 function* playRampage({ resolver, actors }: PlayArgs<>): Generator<any, RampageData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
@@ -32,9 +40,9 @@ function* playRampage({ resolver, actors }: PlayArgs<>): Generator<any, RampageD
                 actors,
                 target,
                 {
-                    damage: this.data.damage + this.stacksOf(RampageStacks) * this.data.scaling,
+                    damage: this.data.damage + this.stacksOf(rampageSymbol) * this.data.scaling,
                 },
-                targeted, 
+                targeted,
                 blockable,
             ),
         )
@@ -51,13 +59,3 @@ function* playRampage({ resolver, actors }: PlayArgs<>): Generator<any, RampageD
         return this.data
     }
 }
-
-let RampageStacks = MetaEffect(Symbol('rampage'), null, {
-    stacked: true,
-    delta: x => x,
-    max: 999,
-    min: 0,
-}, (owner, self) => deafListener,  [], [])
-
-
-

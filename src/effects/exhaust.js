@@ -5,6 +5,8 @@ import { vulnerability } from "./vulnerability"
 import { BindEffect, bindEffect } from "../actions/bindEffect"
 import { playCard, PlayCard } from "../actions/playCard"
 import { Listener } from "../actions/listener"
+import { addToDiscardPile } from "../actions/addToDiscard";
+import { ExhaustCard } from "../actions/exhaustCard";
 
 export const exhaust = Symbol('exhaust')
 export const Exhaust: Class<Effect> = MetaEffect(exhaust, {
@@ -22,10 +24,12 @@ export const Exhaust: Class<Effect> = MetaEffect(exhaust, {
     exhaust,
     {
         subjects: [owner],
-        type: playCard,
+        type: addToDiscardPile,
+        tags: [playCard],
     },
-    function({ game, data }: ConsumerArgs<>): void {
-        data.destination = game.exhaustPile
+    function*({ game, data, resolver, cancel }: ConsumerArgs<>): * {
+        yield resolver.processAction(new ExhaustCard(self, owner, {}))
+        return cancel()
     },
     false,  
-), [], [playCard])
+), [], [addToDiscardPile])

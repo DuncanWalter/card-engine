@@ -79,12 +79,12 @@ export const engine = new Module('engine', ({ global, next }) => {
         navigateTo('/game/cardRemove')
     })
 
-    registerReward('Gain 1 fame point.', 2, function* remove(self, state): * {
-        collectReward(dispatch, self)
-        yield resolver.processAction(new BindFamePoints({}, state.battle.player, {
-            points: 1,
-        }))
-    })
+    // registerReward('Gain 1 fame point.', 2, function* remove(self, state): * {
+    //     collectReward(dispatch, self)
+    //     yield resolver.processAction(new BindFamePoints({}, state.battle.player, {
+    //         points: 1,
+    //     }))
+    // })
     
 
     next()

@@ -1,4 +1,4 @@
-import { Creature } from "./creature";
+import { Creature } from "./creature"
 
 export class Player extends Creature {
 
@@ -6,7 +6,7 @@ export class Player extends Creature {
     maxEnergy: number
     isActive: boolean
 
-
+    // cardSets: Set<CardSet>
     
     constructor(health: number, maxHealth?: number){
         super(health, maxHealth)
@@ -17,7 +17,7 @@ export class Player extends Creature {
     }
     
     set energy(value: number){
-        this.__energy__ = Math.floor(Math.max(0, 99, value))
+        this.__energy__ = Math.floor(Math.max(0, Math.min(99, value)))
     }
 
     get energy(): number {

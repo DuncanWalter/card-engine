@@ -4,6 +4,7 @@ import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { AddToDiscardPile } from '../../actions/addToDiscard';
+import { Volatile } from '../../effects/volatile';
 
 type AngerData = { damage: number, energy: number }
 
@@ -12,13 +13,13 @@ type AngerData = { damage: number, energy: number }
 export const anger = 'anger'
 export const Anger: Class<Card<AngerData>> = MetaCard(anger, playAnger, {
     energy: 0,
-    damage: 5,
+    damage: 4,
 }, {
     energyTemplate: '#{energy}',
     color: '#ee4422',
     titleTemplate: 'Anger',
-    textTemplate: 'Deal #{damage} damage to an enemy. Add a copy of Anger to the discard pile.',
-})
+    textTemplate: 'Deal #{damage} damage to an enemy. Add a copy of Anger to the discard pile. #[Volatile].',
+}, [Volatile, 1])
 
 function* playAnger({ resolver, actors }: PlayArgs<>): Generator<any, AngerData, any>{
     let target = yield queryEnemy(any => true)

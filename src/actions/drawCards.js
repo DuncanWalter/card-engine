@@ -17,8 +17,8 @@ export const DrawCards: CustomAction<Data> = MetaAction(drawCards, function*({ a
     // TODO: is this how I want to do max hand size?
     while(data.count-- && game.discardPile.size + game.drawPile.size){
         if(!game.drawPile.size){
-            resolver.processAction(new ReclaimDiscardPile({}, {}, {}))
+            yield resolver.processAction(new ReclaimDiscardPile({}, {}, {}, drawCards))
         }
-        yield resolver.processAction(new AddToHand(actors, ...game.drawPile.take(1), {}))
+        yield resolver.processAction(new AddToHand(actors, ...game.drawPile.take(1), {}, drawCards))
     }
 })

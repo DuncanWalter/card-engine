@@ -4,23 +4,34 @@ import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 
-type DoubleStrikeData = { damage: number, energy: number }
+type TripleStrikeData = { damage: number, energy: number }
 
-export const doubleStrike = 'doubleStrike'
-export const DoubleStrike: Class<Card<DoubleStrikeData>> = MetaCard(doubleStrike, playDoubleStrike, {
+export const tripleStrike = 'tripleStrike'
+export const TripleStrike: Class<Card<TripleStrikeData>> = MetaCard(tripleStrike, playTripleStrike, {
     energy: 1,
-    damage: 5,
+    damage: 4,
 }, {
     energyTemplate: '#{energy}',
-    color: '#dd4466',
-    titleTemplate: 'Double Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy twice.',
+    color: '#dd6688',
+    titleTemplate: 'Triple Strike',
+    textTemplate: 'Deal #{damage} damage to an enemy thrice.',
 })
 
-function* playDoubleStrike({ resolver, actors }: PlayArgs<>): Generator<any, DoubleStrikeData, any>{
+function* playTripleStrike({ resolver, actors }: PlayArgs<>): Generator<any, TripleStrikeData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
+            new Damage(
+                actors,
+                target,
+                {
+                    damage: this.data.damage,
+                },
+                targeted, 
+                blockable,
+            ),
+        )
+        yield resolver.processAction(
             new Damage(
                 actors,
                 target,

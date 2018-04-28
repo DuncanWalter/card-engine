@@ -14,7 +14,7 @@ import { Defend } from "../cards/adventurer/defend";
 export const startGame: Symbol = Symbol('startGame')
 export const StartGame: CustomAction<{ seed: number }> = MetaAction(startGame, ({ resolver, game, data }: ConsumerArgs<{ seed: number }>): void => {
     
-    let seed = randomSequence(data.seed)
+    let seed = randomSequence(data.seed * Math.random())
 
     game.dummy = new TrainingDummy(10)
     game.player = new Player(65) /*/, 'fighter', 'acrobat' // Monk /*/
@@ -26,9 +26,9 @@ export const StartGame: CustomAction<{ seed: number }> = MetaAction(startGame, (
     game.enemies = []
     game.allies = []
     game.equipment = []
-    game.deck.add(new Strike(), new Strike(), new Strike())
-    game.deck.add(new Defend(), new Defend(), new Defend())
-    game.deck.add(...[...CardLibrary.sample(4, seed)].map(CC => new CC()))
+    // game.deck.add(new Strike(), new Strike(), new Strike())
+    // game.deck.add(new Defend(), new Defend(), new Defend())
+    game.deck.add(...[...CardLibrary.sample(10, seed)].map(CC => new CC()))
 
     startPath(dispatch, data.seed)
     generateFreedoms(dispatch)
