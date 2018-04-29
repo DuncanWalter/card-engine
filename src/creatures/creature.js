@@ -45,8 +45,8 @@ export class Creature {
         return this.__health__
     }
 
-    stacksOf(effect: Symbol): number {
-        let effects: Effect[] = this.effects.filter(effect => effect.id == effect)
+    stacksOf(effectType: Symbol): number {
+        let effects: Effect[] = this.effects.filter(effect => effect.id == effectType)
         if(effects.length === 0){
             return 0
         } else {

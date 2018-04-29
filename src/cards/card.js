@@ -84,8 +84,8 @@ export class Card<Data: Object = any> {
         return cardFactory.create(this.id)
     }
 
-    stacksOf(effect: Symbol): number {
-        let effects: Effect[] = this.effects.filter(effect => effect.id == effect)
+    stacksOf(effectType: Symbol): number {
+        let effects: Effect[] = this.effects.filter(effect => effect.id == effectType)
         if(effects.length === 0){
             return 0
         } else {

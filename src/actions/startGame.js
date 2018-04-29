@@ -17,7 +17,7 @@ export const StartGame: CustomAction<{ seed: number }> = MetaAction(startGame, (
     let seed = randomSequence(data.seed * Math.random())
 
     game.dummy = new TrainingDummy(10)
-    game.player = new Player(65) /*/, 'fighter', 'acrobat' // Monk /*/
+    game.player = new Player(65, 65, 'Adventurer', 'Brawler') /*/, 'fighter', 'acrobat' // Monk /*/
     game.deck.clear()
     game.drawPile.clear()
     game.hand.clear()
@@ -28,7 +28,30 @@ export const StartGame: CustomAction<{ seed: number }> = MetaAction(startGame, (
     game.equipment = []
     // game.deck.add(new Strike(), new Strike(), new Strike())
     // game.deck.add(new Defend(), new Defend(), new Defend())
-    game.deck.add(...[...CardLibrary.sample(10, seed)].map(CC => new CC()))
+
+    let cards = CardLibrary.sample(5, {
+        Adventurer: 1.5,
+        Brawler: 0.6,
+    }, {
+        F: 0.9,
+        D: 0.5,
+        C: 0.3,
+        B: 0.1,
+    }, seed)
+
+    game.deck.add(...cards.map(CC => new CC()))
+    
+    cards = CardLibrary.sample(5, {
+        Adventurer: 0.5,
+        Brawler: 1.0,
+    }, {
+        F: 0.9,
+        D: 0.5,
+        C: 0.3,
+        B: 0.1,
+    }, seed)
+
+    game.deck.add(...cards.map(CC => new CC()))
 
     startPath(dispatch, data.seed)
     generateFreedoms(dispatch)

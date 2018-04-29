@@ -5,15 +5,15 @@ export class Player extends Creature {
     __energy__: number
     maxEnergy: number
     isActive: boolean
-
-    // cardSets: Set<CardSet>
+    sets: string[]
     
-    constructor(health: number, maxHealth?: number){
+    constructor(health: number, maxHealth?: number, ...setNames: string[]){
         super(health, maxHealth)
         this.maxEnergy = 3 // TODO: how do energy stuffs?
         this.energy = this.maxEnergy
         this.color = '#4488dd'
         this.isActive = false
+        this.sets = setNames
     }
     
     set energy(value: number){

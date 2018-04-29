@@ -7,6 +7,7 @@ import { playCard, PlayCard } from "../actions/playCard"
 import { Listener } from "../actions/listener"
 import { addToDiscardPile } from "../actions/addToDiscard";
 import { ExhaustCard } from "../actions/exhaustCard";
+import { Card } from "../cards/card";
 
 export const exhaust = Symbol('exhaust')
 export const Exhaust: Class<Effect> = MetaEffect(exhaust, {
@@ -28,8 +29,10 @@ export const Exhaust: Class<Effect> = MetaEffect(exhaust, {
         tags: [playCard],
     },
     function*({ game, data, resolver, cancel }: ConsumerArgs<>): * {
-        yield resolver.processAction(new ExhaustCard(self, owner, {}))
-        return cancel()
+        if(owner instanceof Card){
+            yield resolver.processAction(new ExhaustCard(self, owner, {}))
+            return cancel()
+        }
     },
     false,  
 ), [], [addToDiscardPile])

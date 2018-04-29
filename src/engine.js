@@ -42,8 +42,6 @@ import { BindFamePoints } from './actions/bindFamePoints';
 // exclusive tags
 // inclusive tags
 
-
-
 export const engine = new Module('engine', ({ global, next }) => {
 
     registerEncounter(10, Turtle)
@@ -70,10 +68,19 @@ export const engine = new Module('engine', ({ global, next }) => {
         activateReward(dispatch, self)
         navigateTo('/game/cardDraft')
     }, (self, level, seed) => {
-        // $FlowFixMe
-        self.cards = CardLibrary.sample(Math.floor(3 + level / 6.5), seed).map(C => new C())
+        let cards = CardLibrary.sample(Math.floor(3 + level / 6.5), {
+            Brawler: 1.0,
+        }, {
+            F: 0.5,
+            D: 0.9,
+            C: 0.6,
+            B: 0.2,
+            A: 0.1,
+        }, seed).map(CC => new CC())
+        self.cards = cards
         return self
     })
+
     registerReward('Remove a Card.', 3, function* remove(self, state): * {
         activateReward(dispatch, self)
         navigateTo('/game/cardRemove')

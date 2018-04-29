@@ -59,7 +59,7 @@ function targetLocation(isActive, isFocussed, index, handSize){
 
     return {
         x: offset,
-        y: 19 * (handWidth / maxHandSize * centeredIndex) ** 2 + (raise ? -150 : -35),
+        y: 19 * (handWidth / maxHandSize * centeredIndex) ** 2 + (raise ? -180 : -65),
         a: angle,
     }
 }

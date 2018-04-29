@@ -1,4 +1,4 @@
-import { CardLibrary, F, D, C, B, A } from "../cardLibrary"
+import { CardLibrary } from "../cardLibrary"
 import { CardPool } from "../cardPool"
 import { PalmStrike } from "./palmStrike";
 import { Anger } from "./anger";
@@ -12,6 +12,8 @@ import { TripleStrike } from "./tripleStrike";
 import { Flex } from "./flex";
 import { LegReap } from "./LegReap";
 import { CheapShot } from "./cheapShot";
+import { CardSet } from "../cardSet";
+import { Strike } from "../adventurer/strike";
 
 // motion blur
 // momentum
@@ -38,37 +40,27 @@ import { CheapShot } from "./cheapShot";
 
 // jab
 
-let brawler = new CardPool()
+let brawler = new CardSet('Brawler', '#7a190b', 'Offense-focused combo cards.')
 
-// Grade D Brawler cards
-let brawlerD = new CardPool()
-brawlerD.add(Anger)
-brawlerD.add(FightersStance)
-brawlerD.add(PalmStrike)
-brawlerD.add(CheapShot)
-brawler.register(D, brawlerD)
+brawler.add('F', Strike)
 
-// Grade C Brawler cards
-let brawlerC = new CardPool()
-brawlerC.add(DoubleStrike)
-brawlerC.add(Flex)
-brawlerC.add(LegReap)
-brawlerC.add(Rage)
-brawlerC.add(Rampage)
-brawler.register(C, brawlerC)
+brawler.add('D', Anger)
+brawler.add('D', CheapShot)
+brawler.add('D', FightersStance)
+brawler.add('D', PalmStrike)
 
-// Grade B 
-let brawlerB = new CardPool()
-brawlerB.add(Adrenaline)
-brawlerB.add(TripleStrike)
-brawler.register(B, brawlerB)
+brawler.add('C', DoubleStrike)
+brawler.add('C', Flex)
+brawler.add('C', LegReap)
+brawler.add('C', Rage)
+brawler.add('C', Rampage)
 
-// Grade A
-let brawlerA = new CardPool()
-brawlerA.add(FlashOfSteel)
-brawler.register(A, brawlerA)
+brawler.add('B', Adrenaline)
+brawler.add('B', TripleStrike)
 
-CardLibrary.register('brawler', brawler)
+brawler.add('A', FlashOfSteel)
+
+CardLibrary.register(brawler)
 
 
 

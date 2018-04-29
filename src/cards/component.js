@@ -6,6 +6,8 @@ import { resolver } from '../actions/actionResolver'
 import { PlayCard } from '../actions/playCard'
 import { renderEffect as EffectComponent } from '../effects/renderEffect'
 import { withState } from '../state';
+import { CardLibrary } from './cardLibrary';
+import { Rarity } from './cardSet';
 
 interface Props {
     card: CardObject<>,
@@ -28,6 +30,8 @@ export const Card: Component<Props> = withState(({ card, state }) => {
         game: state.battle,
     })
 
+    let cardMembership = CardLibrary.getCardMembership(state.battle.player, card)
+
     const clicked = e => {
         // use a dispatch and a display state TODO:
         resolver.enqueueActions(
@@ -43,7 +47,7 @@ export const Card: Component<Props> = withState(({ card, state }) => {
 
     return <Entity entity={card}>
         <div 
-            style={sty.base(card == state.entity.cursorFocus)} 
+            style={sty.base(card == state.entity.cursorFocus, cardMembership)} 
             onClick={clicked} 
         >   
             <div style={sty.effectsBar}>{
@@ -51,23 +55,32 @@ export const Card: Component<Props> = withState(({ card, state }) => {
                     <EffectComponent effect={effect}/>
                 )
             }</div>
-            <div style={sty.costBack}>{energy}</div>
-            <div style={sty.title}>{title}</div>
+            <div style={sty.costBack(cardMembership)}>{energy}</div>
+            <div style={sty.title(cardMembership)}>{title}</div>
             <div style={{ backgroundColor: color, ...sty.image }}></div>
-            <div style={sty.text}>{text}</div>
+            <div style={sty.text(cardMembership)}>{text}</div>
         </div>
     </Entity>
 })
 
+function colorRarity(rarity: Rarity){
+    switch(rarity){
+        case 'A': return "#775511"
+        case 'B': return "#552255"
+        case 'C': return "#225577"
+        case 'D': return "#226644"
+        case 'F': return "#333344"
+    }
+}
 
 const sty = {
-    base(isFocus){
+    base(isFocus, cardMembership: *){
         return {
             minWidth: '280px',
             minHeight: '440px',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: isFocus? '#444444': '#222222',
+            backgroundColor: cardMembership? colorRarity(cardMembership.rarity): isFocus? '#444444': '#222222',
             position: 'relative',
             borderRadius: '8px',
             padding: '4px',
@@ -75,22 +88,23 @@ const sty = {
             color: '#ffeedd',
         }
     },
-    title: {
-        flex: '1',
-        backgroundColor: '#555555',
+    title(cardMembership){ return {
+        // flex: '1',
+        height: '50px',
+        backgroundColor: cardMembership? cardMembership.color: '#555555',
         borderRadius: '8px',
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-    },
+    }},
     image: {
         flex: '5',
         borderRadius: '8px',
         borderBottom: '4px solid #222222',
         borderTop: '4px solid #222222',
     },
-    costBack: {
+    costBack(cardMembership){ return {
         position: 'absolute',
         left: 0,
         top: 0,
@@ -102,17 +116,17 @@ const sty = {
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
-    },
-    text: {
-        flex: '4',
-        backgroundColor: '#333333',
+    }},
+    text(cardMembership){ return {
+        height: '210px',
+        backgroundColor: cardMembership? cardMembership.color: '#333333',
         borderRadius: '8px',
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        padding: '30px',
-    },
+        padding: '5px 30px 5px',
+    }},
     effectsBar: {
         position: 'absolute',
         top: '57px',

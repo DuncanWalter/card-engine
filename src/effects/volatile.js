@@ -8,6 +8,7 @@ import { Listener } from "../actions/listener"
 import { Player } from "../creatures/player"
 import { endTurn } from "../actions/action"
 import { ExhaustCard } from "../actions/exhaustCard"
+import { Card } from "../cards/card";
 
 export const volatile = Symbol('volatile')
 export const Volatile: Class<Effect> = MetaEffect(volatile, {
@@ -29,7 +30,7 @@ export const Volatile: Class<Effect> = MetaEffect(volatile, {
         type: endTurn,
     },
     function*({ actors, game, data, resolver }: ConsumerArgs<>): * {
-        if(game.hand.has(owner)){
+        if(owner instanceof Card && game.hand.has(owner)){
             yield resolver.processAction(new ExhaustCard(actors, owner, { 
                 from: game.hand,
             }))

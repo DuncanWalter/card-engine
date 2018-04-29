@@ -1,5 +1,5 @@
-import type { Card } from "./card";
-import { Sequence } from "../utils/random";
+import type { Card } from "./card"
+import { Sequence } from "../utils/random"
 
 // $FlowFixMe
 export class CardStack implements Iterable<Card<any>> {

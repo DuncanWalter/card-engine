@@ -1,4 +1,4 @@
-import { CardLibrary, F, D, C, B, A } from "../cardLibrary"
+import { CardLibrary } from "../cardLibrary"
 import { CardPool } from "../cardPool"
 import { Strike } from "./strike"
 import { Defend } from "./defend"
@@ -7,6 +7,7 @@ import { Footwork } from "./footwork"
 import { Acid } from "./acid"
 import { FlashOfSteel } from "../brawler/flashOfSteel"
 import { Cleave } from "./cleave"
+import { CardSet } from "../cardSet";
 
 
 // strike
@@ -24,28 +25,19 @@ import { Cleave } from "./cleave"
 // apotheosis
 
 
-let adventurer = new CardPool()
+let adventurer = new CardSet('Adventurer', '#6f6f76', 'Basic set of cards available to all adventurers.')
 
-// Grade C Adventurer cards
-let adventurerC = new CardPool()
-adventurerC.add(Defend)
-adventurerC.add(Strike)
-adventurer.register(C, adventurerC)
+adventurer.add('F', Defend)
+adventurer.add('F', Strike)
 
-// Grade B Adventurer cards
-let adventurerB = new CardPool()
-adventurerB.add(Acid)
-adventurerB.add(Bash)
-adventurerB.add(Cleave)
-adventurer.register(B, adventurerB)
+adventurer.add('D', Bash)
+adventurer.add('D', Cleave)
 
-// Grade A Adventurer cards
-let adventurerA = new CardPool()
-adventurerA.add(FlashOfSteel)
-adventurerA.add(Footwork)
-adventurer.register(A, adventurerA)
+adventurer.add('C', Acid)
 
-CardLibrary.register('adventurer', adventurer)
+adventurer.add('B', Footwork)
+
+CardLibrary.register(adventurer)
 
 
 
