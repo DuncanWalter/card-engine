@@ -4,9 +4,9 @@ import { GameState } from "../game/battle/battleState"
 import { Behavior } from "./behavior"
 import { startCombat } from "../actions/action"
 import { Listener } from "../actions/listener"
-import MersenneTwister from "mersenne-twister"
 import { synchronize } from "../utils/async"
 import { ActionResolver, resolver } from "../actions/actionResolver"
+import { Sequence, randomSequence } from "../utils/random";
 
 
 // TODO: figure out how to scale foe health better so they don't spawn with partial health
@@ -19,7 +19,7 @@ export class NPC extends Creature {
     behavior: Behavior
     seed: {
         value: number, 
-        generator: MersenneTwister,
+        generator: Sequence,
     }
     takeTurn(resolver: ActionResolver, game: $ReadOnly<GameState>): Promise<void> {
         return synchronize(function*(): * {
@@ -43,10 +43,11 @@ export function MetaCreature(
         constructor(health){
             super(health, maxHealth)
             // TODO: get the randomness unified
-            let gen = new MersenneTwister()            
+            // TODO: where to seed from...
+            let gen = randomSequence(23451453)            
             this.seed = {
                 generator: gen,
-                value: gen.random(),
+                value: gen.next(),
             }
             this.behavior = behavior.next(this)
             this.listener.push(new Listener(

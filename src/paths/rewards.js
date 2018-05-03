@@ -3,7 +3,7 @@ import type { Component } from "../component"
 import type { Reward as RewardT } from ".rewardLibrary"
 import { withState, stream } from "../state"
 import { navigateTo } from "../utils/navigation";
-import { overStream } from "../components/overStream";
+import { overStream } from "../components/withAnimation";
 
 type Props = { state: *, match: any }
 

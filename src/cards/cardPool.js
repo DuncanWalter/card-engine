@@ -6,7 +6,6 @@ export function pickKey(distro: { [string]: number }, seed: Sequence): string {
     let keys = Object.keys(distro)
     let val = keys.reduce((acc, key) => acc + distro[key], 0) * seed.next()
     let sum = 0
-    console.log(seed)
     for(let key of keys){
         sum += distro[key] || 0
         if(sum > val){

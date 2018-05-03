@@ -1,13 +1,12 @@
 import type { Component } from '../../component'
 import { Hand } from '../hand/hand'
-import { overStream } from '../../components/overStream'
 import { renderCreature as Creature } from '../../creatures/renderCreature'
 import { EndTurn } from '../../actions/turnActions'
 import { Card } from '../../cards/card'
 import { resolver } from '../../actions/actionResolver'
 import { Button, Row, Col, Block, Frame } from '../../utility'
 import { stream, withState } from '../../state';
-import { withAnimation } from '../../components/withAnimation';
+import { withAnimation, overStream } from '../../components/withAnimation';
 
 const unit = <div style={{ flex: 1 }}/>
 

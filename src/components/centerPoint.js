@@ -1,5 +1,7 @@
 import type { Component } from '../component'
 
+// TODO: use styled component
+
 const sty = { 
     display: 'flex', 
     justifyContent: 'center', 
@@ -10,4 +12,5 @@ const sty = {
     position: 'relative',
 }
 
-export const CenterPoint: Component<{ content: any }> = ({ content }) => <div style={sty}>{ content }</div>
+export const CenterPoint: Component<{ content: any }> = ({ content }) => 
+    <div style={sty}>{ content }</div>

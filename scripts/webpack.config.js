@@ -20,6 +20,7 @@ const mixin = (base, overlay) => {
 
 const baseConfig = options => ({
     entry: ['./src/index.js'],
+    target: 'electron-renderer',
     output: {
         path: options.output ? 
             path.join(process.cwd(), options.output) :
@@ -38,8 +39,7 @@ const baseConfig = options => ({
                         'babel-plugin-syntax-class-properties',
                         'babel-plugin-transform-class-properties',
                         'babel-plugin-transform-object-rest-spread',
-                        // ['babel-plugin-inferno', {imports: true}],
-                        ['transform-react-jsx', {pragma: 'h'}],
+                        ['transform-react-jsx', { pragma: 'h' }],
                     ],
                     presets: ['flow', [
                         require('babel-preset-env'), {
@@ -54,20 +54,14 @@ const baseConfig = options => ({
                 },
             }],
         },{
-            test: /\.(styl|css)$/,
+            test: /\.css$/,
             use: [{
                 loader: 'style-loader',
             },{
                 loader: 'css-loader',
-            },{
-                loader: 'stylus-loader',
-                options: { 
-                    use: [require('nib')()],
-                    preferPathResolver: 'webpack',
-                }
             }],
         },{
-            exclude: /\.(styl|css|js|html|mjs)$/,
+            exclude: /\.(css|js|html|mjs)$/,
             use: [{
                 loader: 'url-loader',
                 options: {
@@ -88,35 +82,37 @@ const baseConfig = options => ({
         new webpack.ProvidePlugin({
             h: ['preact', 'h'],
         }),
-        (c => new c({
+        (C => new C({
             filename: 'index.bundle.html',
             template: './src/index.html',
             inject: true,
         }))(require('html-webpack-plugin')),
-        // TODO: figure out a naming convention for this stuff
-        // new webpack.DefinePlugin({
-        //     'process.env.__OPTIONS__': JSON.stringify(options._),
-        // }),
-        (c => new c({
+        (C => new C({
             exclude: /node_modules/,
             failOnError: true,
             cwd: process.cwd(),
         }))(require('circular-dependency-plugin')),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: 'development'
+        }),
     ],
 });
 
 
 const devOverlay = {
+    mode: 'development',
     entry: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'],
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        (c => new c())(require('friendly-errors-webpack-plugin')),
+        (C => new C())(require('friendly-errors-webpack-plugin')),
         new webpack.NoEmitOnErrorsPlugin(),
     ],
+    watch: true,
 };
 
 const prodOverlay = {
+    mode: 'production',
     plugins: [
         (c => new c())(require('uglifyjs-webpack-plugin')),
         new webpack.LoaderOptionsPlugin({
@@ -127,6 +123,7 @@ const prodOverlay = {
 };
 
 const testOverlay = {
+    mode: 'development',
     externals: /^[^\.].+$/,
     entry: './src/index.test.js',
 };

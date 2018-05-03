@@ -4,8 +4,6 @@ import { damage } from "../actions/damage"
 import { RemoveCreature } from "../actions/removeCreature"
 import { Listener } from "../actions/listener"
 import { resolver } from "../actions/actionResolver";
-// import { block as blockSymbol } from "../effects/block"
-// import { NPC } from "./npc"
 
 const death = Symbol('death')
 resolver.registerListenerType(death, [damage])

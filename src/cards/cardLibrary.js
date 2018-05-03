@@ -13,6 +13,11 @@ import { Player } from "../creatures/player";
 // export const B: Grade = 4 // FOS
 // export const A: Grade = 5 // Apo, Enlightenment
 
+
+type maybeCardMembership = { rarity: Rarity, color: string }
+
+
+
 const sets: Map<string, CardSet> = new Map()
 
 export const CardLibrary = {
@@ -37,7 +42,8 @@ export const CardLibrary = {
         color: string,
         rarity: Rarity, 
     } | void {
-        return player.sets.reduce((acc, name) => {
+        // $FlowFixMe
+        return player.sets.reduce((acc, name: string) => {
             let set = sets.get(name)
             if(set){
                 return set.members.get(card.constructor) || acc

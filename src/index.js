@@ -1,5 +1,4 @@
 import { render, Component } from 'preact'
-import { h } from 'preact'
 import { Game } from './game/game'
 import { loadModules } from './utils/module'
 import { engine } from './engine'
@@ -7,20 +6,42 @@ import { BrowserRouter as Router, Route, Link, Switch, Redirect } from "react-ro
 import { PathSelection } from './paths/pathSelection'
 import { Main } from './menu/main'
 import { useHistory } from './utils/navigation'
+import styled from 'styled-components';
 
-import './index.styl'
+import '../node_modules/font-awesome/css/font-awesome.min.css'
+import './index.css'
+
 loadModules([engine])
 
-const Root = props => <Router> 
-    <Switch>
-        <Route path={'/menu/main'} component={ Main }/>
-        <Route path={'/game'} component={ Game }/>
-        <Route render={({ history }) => {
-            useHistory(history)
-            return <Redirect to={'/menu/main'}/>
-        }}/>
-    </Switch>
-</Router>
+const Anchor = styled.div`
+    overflow: hidden; 
+    width: 100vw; 
+    height: 100vh; 
+    background-color: black;
+    display: flex;
+    font-size: 1.6rem;
+    text-shadow:
+        -1px -1px 3px #222,  
+        1px -1px 3px #222,
+        -1px 1px 3px #222,
+        1px 1px 3px #222;
+    color: #eeeeee;
+    font-family: Earth;
+`
+
+const Root = props => <Anchor>
+    <Router> 
+        <Switch>
+            <Route path={'/menu/main'} component={ Main }/>
+            <Route path={'/game'} component={ Game }/>
+            <Route render={({ history }) => {
+                useHistory(history)
+                return <Redirect to={'/menu/main'}/>
+            }}/>
+        </Switch>
+    </Router>
+</Anchor>
+
 
 // HMR friendly bootstrapping
 ;(function bootstrap(anchorElement){
@@ -29,7 +50,9 @@ const Root = props => <Router>
     // }
 })(document.getElementById('anchor'))
 
+function any(any: any): any { return any }
+
 // enables HMR at this root
 if( module.hot ){ 
-    (module:any).hot.accept()
+    any(module).hot.accept()
 }

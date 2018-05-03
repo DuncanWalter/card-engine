@@ -4,10 +4,9 @@ import { Switch, Route } from "react-router-dom"
 import { Battle } from "./battle/battle"
 import { Rewards } from "../paths/rewards"
 import { PathSelection } from "../paths/pathSelection"
-import { CardDraft } from "./cardDraft";
-import { withState } from "../state";
-import { CardRemove } from "./cardRemove";
-
+import { CardDraft } from "./cardDraft"
+import { withState } from "../state"
+import { CardRemove } from "./cardRemove"
 
 export const Game = withState(({ match, state }: *) => <Col>
     <div>
@@ -18,7 +17,7 @@ export const Game = withState(({ match, state }: *) => <Col>
             <p>Settings and Crap</p>
         </Row>
     </div>
-    <div style={{ flex: 1, position: 'relative' }}>
+    <div style={{ flex: 1, position: 'relative', background: 'linear-gradient(#48484f, #31313c)' }}>
         <Switch>
             <Route path={`${match.path}/pathSelection`} component={ PathSelection }/>
             <Route path={`${match.path}/battle`} component={ Battle }/>

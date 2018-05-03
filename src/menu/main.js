@@ -5,20 +5,18 @@ import { resolver } from '../actions/actionResolver'
 import { StartGame } from '../actions/startGame'
 
 export const Main: Component<> = props => <Modal>
-    <Frame>
-        <Col width='1200px' height='800px'>
-            <Block><h1>Deck Dawdle</h1></Block>
-            <Route render={({ history }) => 
-                <Button onClick={click => {
-                    resolver.processAction(new StartGame({}, {}, {
-                        seed: 100345,
-                    }))
-                    history.push('/game/pathSelection')
-                }}>Begin</Button>
-            }/>
-            <Link to='game/pathSelect'><Button>These Links</Button></Link>
-            <Link to='game/pathSelect'><Button>Are All</Button></Link>
-            <Link to='game/pathSelect'><Button>Lies</Button></Link>
-        </Col>
-    </Frame>
+    <Col style={{ width: '1200px', height: '800px' }}>
+        <Block><h1>Deck Dawdle</h1></Block>
+        <Route render={({ history }) => 
+            <Button onClick={click => {
+                resolver.processAction(new StartGame({}, {}, {
+                    seed: 100345,
+                }))
+                history.push('/game/pathSelection')
+            }}>Begin</Button>
+        }/>
+        <Link to='game/pathSelect'><Button>These Links</Button></Link>
+        <Link to='game/pathSelect'><Button>Are All</Button></Link>
+        <Link to='game/pathSelect'><Button>Lies</Button></Link>
+    </Col>
 </Modal>

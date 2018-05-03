@@ -1,5 +1,4 @@
 import type { Component } from '../component'
-import { overStream } from "./overStream";
 import { Component as PreactComponent } from 'preact'
 
 const updaters = new Set()
@@ -16,6 +15,10 @@ requestAnimationFrame(function loop(){
 
     requestAnimationFrame(loop)
 })
+
+export function registerUpdate(callback: (hash: number) => any){
+    updaters.add(callback)
+}
 
 
 export const withAnimation = (component: Component<any>) => {
@@ -41,3 +44,49 @@ export const withAnimation = (component: Component<any>) => {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let frameEdits = new Set()
+registerUpdate(hash => {
+    frameEdits.forEach(edit => {
+        edit()
+    })
+    frameEdits = new Set()
+})
+
+// TODO: redo this cleaner, potentially actually passing update through
+export const overStream = <P: Object, S: Object>(stream: any, propName: string) => (component: Component<P>): Component<P> => {
+
+    let value = null
+    let valueStream = stream.skipDuplicates()
+    valueStream.onValue(v => value = v)
+
+    class Stream extends PreactComponent<P, S> {
+        componentDidMount(){
+            this.forceUpdateHandler = v => frameEdits.add(hash => this.setState({ [propName]: v }))
+            valueStream.onValue(this.forceUpdateHandler)
+        }
+        componentWillUnmount(){
+            valueStream.offValue(this.forceUpdateHandler)
+        }
+        render(props){
+            return component({ ...props, [propName]: value })
+        }
+    }
+
+    return props => <Stream {...props}/>
+    
+}

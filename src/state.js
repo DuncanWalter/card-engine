@@ -4,7 +4,7 @@ import { entityReducer, entityInitial } from "./components/entityState"
 import { battleReducer, battleInitial } from "./game/battle/battleState";
 import { handReducer, handInitial } from "./game/hand/handState";
 import { pathReducer, pathInitial } from "./paths/pathState"
-import { overStream } from "./components/overStream";
+import { overStream } from "./components/withAnimation";
 
 const toAccessor = stream => {
     let capture: State = stream

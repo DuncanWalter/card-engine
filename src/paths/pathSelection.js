@@ -31,7 +31,7 @@ export const PathSelection: Component<any> = withState(({ state }: Props) => {
                         }))
                         resolver.enqueueActions(new StartCombat({}, {}, {}))
                     }}>
-                        <Col width='500px' height='700px'>
+                        <Col style={{ width: '500px', height: '700px' }}>
                             <h1>{path.challengeRating - state.path.level - 10}</h1>
                             { path.rewards.map(p => <Block><p>{p.description}</p></Block>) }
                         </Col>

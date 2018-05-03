@@ -1,15 +1,11 @@
+import styled from 'styled-components';
 
-import type { Component } from '../component'
-import { h } from 'preact'
-
-
-export const Transform: Component<{ content: any, position: any, rotation?: number }> = ({ position, content }) => {
-    return <div style={ process(position) }>{ content }</div>
-}
-
-function process(position){
-    return {
-        position: 'relative',
-        transform: `translate(${position.x}px, ${position.y}px) rotate(${ position.a }deg)`,
-    }
-}
+export const Transform = (props: any) => <div
+    style={{ 
+        position: 'relative', 
+        transform: `translate(${props.x}px, ${props.y}px) rotate(${ props.a }deg)`,
+    }}
+>
+    { props.children }
+</div>    
+    

@@ -38,7 +38,7 @@ export class Behavior {
 
     next(owner: NPC): Behavior {
         const next = this.selectNext(owner.seed.value)
-        owner.seed.value = owner.seed.generator.random()
+        owner.seed.value = owner.seed.generator.next()
         return next
     }
 

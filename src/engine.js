@@ -77,6 +77,7 @@ export const engine = new Module('engine', ({ global, next }) => {
             B: 0.2,
             A: 0.1,
         }, seed).map(CC => new CC())
+        // $FlowFixMe
         self.cards = cards
         return self
     })
