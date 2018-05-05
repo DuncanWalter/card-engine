@@ -66,6 +66,9 @@ export function createStore<S>(reducer: Reducer<S, *, S>, initial: S): { dispatc
         dispatch(action){
             runStats(action.type)
             let newState = reducer(state, action, state)
+            if(!newState){
+                throw Error('Reducer returned void value; maybe a return statement was forgotten?')
+            }
             if(state != newState){
                 state = newState
                 emitter.emit(newState)

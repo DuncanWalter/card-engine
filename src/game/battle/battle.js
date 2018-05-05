@@ -28,7 +28,7 @@ export const Battle = withState(({ state }) => {
 
         </div>
 
-        <Row>
+        <Row shim>
             <div class='col' style={{ flex: 2, textAlign: 'center' }}>
                 <div>Energy: {battle.player.energy}/{battle.player.maxEnergy}</div>
                 <div>Draw Pile: {battle.drawPile.size}</div>

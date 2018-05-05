@@ -40,7 +40,7 @@ import { Strike } from "../adventurer/strike";
 
 // jab
 
-let brawler = new CardSet('Brawler', '#7a190b', 'Offense-focused combo cards.')
+let brawler = new CardSet('Brawler', true, '#7a190b', 'Offense-oriented combo cards.')
 
 brawler.add('F', Strike)
 
@@ -61,13 +61,3 @@ brawler.add('B', TripleStrike)
 brawler.add('A', FlashOfSteel)
 
 CardLibrary.register(brawler)
-
-
-
-
-
-
-
-
-// distros over disjoint sets
-// set unions for any sets

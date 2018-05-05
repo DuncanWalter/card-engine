@@ -23,6 +23,8 @@ export class CardPool {
     color: string
     pairings: { [key: string]: string }
 
+    
+
     sample(count: number, distro: { [key: string]: number }, seed: Sequence): Class<Card<>>[] {
         let result = new Set()
         while(result.size < count){
@@ -44,6 +46,15 @@ export class CardPool {
         } else {
             throw new Error('Cannot register cards to unregistered catagories')
         }
+    }
+
+    members(): Iterable<Class<Card<>>>{
+        let cards = this.cards
+        return (function*(){
+            for(let cardList of cards.values()){
+                yield* cardList
+            }
+        })()
     }
 
     constructor(name: string, color: string, ...catagories: string[]){

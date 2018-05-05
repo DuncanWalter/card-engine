@@ -43,22 +43,6 @@ export const withAnimation = (component: Component<any>) => {
     return (props: any) => <Animated { ...props }/>
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let frameEdits = new Set()
 registerUpdate(hash => {
     frameEdits.forEach(edit => {
@@ -68,9 +52,9 @@ registerUpdate(hash => {
 })
 
 // TODO: redo this cleaner, potentially actually passing update through
-export const overStream = <P: Object, S: Object>(stream: any, propName: string) => (component: Component<P>): Component<P> => {
+export const overStream = <P: Object, S: Object>(stream: any, propName: string, initial?: any) => (component: Component<P>): Component<P> => {
 
-    let value = null
+    let value = initial
     let valueStream = stream.skipDuplicates()
     valueStream.onValue(v => value = v)
 

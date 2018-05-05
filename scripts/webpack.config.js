@@ -101,10 +101,10 @@ const baseConfig = options => ({
 
 const devOverlay = {
     mode: 'development',
-    entry: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'],
+    // entry: ['webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'],
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
         (C => new C())(require('friendly-errors-webpack-plugin')),
         new webpack.NoEmitOnErrorsPlugin(),
     ],

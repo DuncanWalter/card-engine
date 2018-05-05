@@ -3,20 +3,17 @@ import { Link, Route } from 'react-router-dom'
 import { Button, Block, Frame, Modal, Col } from "../utility"
 import { resolver } from '../actions/actionResolver'
 import { StartGame } from '../actions/startGame'
+import { reset } from './menuState';
+import { dispatch } from '../state';
 
 export const Main: Component<> = props => <Modal>
     <Col style={{ width: '1200px', height: '800px' }}>
         <Block><h1>Deck Dawdle</h1></Block>
         <Route render={({ history }) => 
             <Button onClick={click => {
-                resolver.processAction(new StartGame({}, {}, {
-                    seed: 100345,
-                }))
-                history.push('/game/pathSelection')
+                reset(dispatch)
+                history.push('/menu/createGame')
             }}>Begin</Button>
         }/>
-        <Link to='game/pathSelect'><Button>These Links</Button></Link>
-        <Link to='game/pathSelect'><Button>Are All</Button></Link>
-        <Link to='game/pathSelect'><Button>Lies</Button></Link>
     </Col>
 </Modal>

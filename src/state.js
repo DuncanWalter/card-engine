@@ -1,10 +1,11 @@
 import type { Component } from './component'
 import { combineReducers, createStore } from "./utils/state"
 import { entityReducer, entityInitial } from "./components/entityState"
-import { battleReducer, battleInitial } from "./game/battle/battleState";
-import { handReducer, handInitial } from "./game/hand/handState";
+import { battleReducer, battleInitial } from "./game/battle/battleState"
+import { handReducer, handInitial } from "./game/hand/handState"
 import { pathReducer, pathInitial } from "./paths/pathState"
-import { overStream } from "./components/withAnimation";
+import { overStream } from "./components/withAnimation"
+import { menuReducer, menuInitial } from "./menu/menuState"
 
 const toAccessor = stream => {
     let capture: State = stream
@@ -21,9 +22,9 @@ const globalReducer = combineReducers({
     hand: handReducer,
     entity: entityReducer,
     path: pathReducer,
+    menu: menuReducer,
     // settings
     // user
-    // menu
 })
 
 // This is type magic that should get the global state type
@@ -34,13 +35,11 @@ export const { dispatch, stream } = createStore(globalReducer, {
     hand: handInitial,
     entity: entityInitial,
     path: pathInitial,
+    menu: menuInitial,
 })
+
 export const state = toAccessor(stream)
 
 export function withState<Props: Object>(component: Component<any>): Component<any> { 
-    return overStream(stream, 'state')(component)
+    return overStream(stream, 'state', state)(component)
 }
-
-
-
-

@@ -6,7 +6,7 @@ import { Card } from "./card";
 
 export type Rarity = 'A' | 'B' | 'C' | 'D' | 'F'
 
-export const cardSets: Set<CardSet> = new Set()
+export const cardSets: Map<string, CardSet> = new Map()
 
 function any(any: any): any { return any }
 
@@ -14,6 +14,7 @@ export class CardSet {
     
     color: string
     name: string
+    playable: boolean
     cardPool: CardPool
     members: Map<Class<Card<>>, { 
         rarity: Rarity,
@@ -34,12 +35,18 @@ export class CardSet {
         return this.cardPool.sample(count, any(distro), seed)
     }
 
-    constructor(name: string, color: string, description: string){
+    cards(): Iterable<Class<Card<>>> {
+        return this.cardPool.members()
+    }
+
+    constructor(name: string, playable: boolean, color: string, description: string){
         this.members = new Map()
         this.name = name
+        this.playable = playable
         this.color = color
         this.description = description
         this.cardPool = new CardPool(name, color, 'A', 'B', 'C', 'D', 'F')
+        cardSets.set(name, this)
     }
 
 }

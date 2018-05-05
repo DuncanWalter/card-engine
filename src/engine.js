@@ -2,8 +2,6 @@ import { Module } from './utils/module'
 import { resolver } from './actions/actionResolver'
 import { StartGame } from './actions/startGame'
 
-import './cards/adventurer/adventurer'
-import './cards/brawler/brawler'
 import { stream, state, dispatch } from './state'
 import { registerEncounter } from './paths/encounterLibrary'
 import { Turtle } from './creatures/turtle/turtle'
@@ -17,6 +15,11 @@ import { activateReward, collectReward } from './paths/pathState'
 import { BindMaxHp } from './actions/bindMaxHp';
 import { SSL_OP_LEGACY_SERVER_CONNECT } from 'constants';
 import { BindFamePoints } from './actions/bindFamePoints';
+
+import './cards/adventurer/adventurer'
+import './cards/brawler/brawler'
+import './cards/necromancer/necromancer'
+import './cards/acrobat/acrobat'
 
 // how many creatures?
 
@@ -64,6 +67,7 @@ export const engine = new Module('engine', ({ global, next }) => {
         }))
     })
 
+    // TODO: make rewards respond to pplayer classes
     registerReward('Draft a Card.', 2, function* draft(self, state): * {
         activateReward(dispatch, self)
         navigateTo('/game/cardDraft')

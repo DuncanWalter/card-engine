@@ -3,7 +3,6 @@ import { CardPool } from "../cardPool"
 import { Strike } from "./strike"
 import { Defend } from "./defend"
 import { Bash } from "./bash"
-import { Footwork } from "./footwork"
 import { Acid } from "./acid"
 import { FlashOfSteel } from "../brawler/flashOfSteel"
 import { Cleave } from "./cleave"
@@ -25,7 +24,7 @@ import { CardSet } from "../cardSet";
 // apotheosis
 
 
-let adventurer = new CardSet('Adventurer', '#6f6f76', 'Basic set of cards available to all adventurers.')
+let adventurer = new CardSet('Adventurer', false, '#6f6f76', 'Basic set of cards available to all adventurers.')
 
 adventurer.add('F', Defend)
 adventurer.add('F', Strike)
@@ -34,8 +33,6 @@ adventurer.add('D', Bash)
 adventurer.add('D', Cleave)
 
 adventurer.add('C', Acid)
-
-adventurer.add('B', Footwork)
 
 CardLibrary.register(adventurer)
 

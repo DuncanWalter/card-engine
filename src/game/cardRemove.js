@@ -30,8 +30,8 @@ export const CardRemove: Component<any> = withState(({ state }: Props) => {
             borderBottom: 'solid white 2px',
             margin: '25px',
             padding: '15px',
-        }}>{
-            [...state.battle.deck].map(card => 
+        }}>
+            {[...state.battle.deck].map(card => 
                 <div 
                     style={{ flex: '0 0 18%', padding: '15px' }} 
                     onClick={ click => {
@@ -44,9 +44,8 @@ export const CardRemove: Component<any> = withState(({ state }: Props) => {
                 >
                     <CardComponent card={ card } glow={ true }/>
                 </div>
-            )
-        }
-            <div style={{ flex: '0 0 95%', height: '32vh' }}></div>
+            )}
+            <div style={{ flex: '0 0 95%', height: '32vh' }}/>
         </Row>
         <Button onClick={() => {
             navigateTo(`/game/rewards`)

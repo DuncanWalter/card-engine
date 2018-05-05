@@ -7,7 +7,9 @@ export const Col = styled.div`
     align-items: stretch;
     height: '100%';
     min-height: '100%';
-    flex: 1;
+    flex: ${ props => 
+        props.shim? 1: 'auto'
+    };
 `
 
 export const Row = styled.div`
@@ -15,7 +17,9 @@ export const Row = styled.div`
     flex-direction: row;
     align-items: stretch;
     height: '100%';
-    flex: 1;
+    flex: ${ props => 
+        props.shim? 1: 'auto'
+    };
 `
 
 export const Frame = styled.div`
@@ -56,3 +60,6 @@ export const Modal: Component<> = props => <ModalWrapper>
 export const Button: Component<> = props => <Block { ...props } style={{ cursor: 'pointer' }}>{props.children}</Block>
 
     
+export const Shim = styled.div`
+    flex: 1;
+`

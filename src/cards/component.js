@@ -319,6 +319,8 @@ export const Card: Component<Props> = withState(({ card, state, glow }) => {
         )
     }
 
+
+    // TODO: pllay costs need to be re-added
     return <Entity entity={card}>
         <CardBack membership={membership} glow={glow} onClick={clicked}>
             <CardBase membership={membership} >

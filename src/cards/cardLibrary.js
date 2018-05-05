@@ -5,18 +5,7 @@ import { Sequence } from "../utils/random";
 import { Card } from "./card";
 import { Player } from "../creatures/player";
 
-// export type Grade = 1 | 2 | 3 | 4 | 5
-
-// export const F: Grade = 1 // Strike, Defend
-// export const D: Grade = 2 // Dodge, Quick Strike
-// export const C: Grade = 3 // Blind, Trip
-// export const B: Grade = 4 // FOS
-// export const A: Grade = 5 // Apo, Enlightenment
-
-
 type maybeCardMembership = { rarity: Rarity, color: string }
-
-
 
 const sets: Map<string, CardSet> = new Map()
 
@@ -38,19 +27,27 @@ export const CardLibrary = {
     },
 
 
-    getCardMembership(player: Player, card: Card<>): { 
+    getCardMembership(player?: Player, card: Card<>): { 
         color: string,
         rarity: Rarity, 
     } | void {
-        // $FlowFixMe
-        return player.sets.reduce((acc, name: string) => {
-            let set = sets.get(name)
-            if(set){
+
+        if(!player){
+            return [...sets.values()].reduce((acc, set) => {
                 return set.members.get(card.constructor) || acc
-            } else {
-                return acc
-            }
-        }, undefined)
+            }, undefined)
+        } else {
+            return player.sets.reduce((acc, name: string) => {
+                let set = sets.get(name)
+                if(set){
+                    return set.members.get(card.constructor) || acc
+                } else {
+                    return acc
+                }
+            }, undefined)
+        }
+
+        
     }
 
 

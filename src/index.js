@@ -4,12 +4,14 @@ import { loadModules } from './utils/module'
 import { engine } from './engine'
 import { BrowserRouter as Router, Route, Link, Switch, Redirect } from "react-router-dom"
 import { PathSelection } from './paths/pathSelection'
-import { Main } from './menu/main'
 import { useHistory } from './utils/navigation'
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 import '../node_modules/font-awesome/css/font-awesome.min.css'
 import './index.css'
+import { Menu } from './menu/menu';
+
+console.log('Welcome to the Deck Dawdle client')
 
 loadModules([engine])
 
@@ -32,7 +34,7 @@ const Anchor = styled.div`
 const Root = props => <Anchor>
     <Router> 
         <Switch>
-            <Route path={'/menu/main'} component={ Main }/>
+            <Route path={'/menu'} component={ Menu }/>
             <Route path={'/game'} component={ Game }/>
             <Route render={({ history }) => {
                 useHistory(history)
@@ -41,7 +43,6 @@ const Root = props => <Anchor>
         </Switch>
     </Router>
 </Anchor>
-
 
 // HMR friendly bootstrapping
 ;(function bootstrap(anchorElement){
