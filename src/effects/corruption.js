@@ -4,31 +4,29 @@ import { vulnerability } from "./vulnerability"
 import { bindEffect } from "../actions/bindEffect"
 import { Listener, ConsumerArgs } from "../actions/listener";
 
-
-// TODO: verify that this works correctly on the last turn of the effect
-export const poison = Symbol('poison')
-export const Poison: Class<Effect> = MetaEffect(poison, {
-    name: 'Poison',
-    outerColor: '#22bb33',
-    innerColor: '#66ee88',
+export const corruption = Symbol('corruption')
+export const Corruption: Class<Effect> = MetaEffect(corruption, {
+    name: 'Corruption',
+    outerColor: '#332233',
+    innerColor: '#661166',
     description: '',
-    sides: 3,
+    sides: 6,
 }, {
     stacked: true, 
-    delta: x => x - 1,
+    delta: x => x + 1,
     min: 1,
     max: 999,
 }, (owner, self) => new Listener(
-    poison,
+    corruption,
     {
         subjects: [owner],
-        tags: [tick, poison],
+        tags: [tick, corruption],
         type: bindEffect,
     },
     function*({ resolver, subject, cancel }: ConsumerArgs<>): * {
         yield resolver.processAction(new Damage({}, subject, {
             damage: self.stacks,
-        }, poison))
+        }, Corruption))
     }, 
     false, 
 ), [tick], [])

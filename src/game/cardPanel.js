@@ -2,7 +2,7 @@ import { withState } from "../state";
 import { Row } from "../utility";
 import { Card } from "../cards/component";
 
-export const CardPanel = withState(({ state, cards }) => <Row style={{ 
+export const CardPanel = withState(({ state, cards, width, height }) => <Row style={{ 
     flexWrap: 'wrap',
     justifyContent: 'space-evenly',
     overflowY: 'scroll',
@@ -10,8 +10,9 @@ export const CardPanel = withState(({ state, cards }) => <Row style={{
     borderBottom: 'solid #eeeeee 4px',
     margin: '25px',
     padding: '15px',
-    maxHeight: '100%',
-    maxWidth: '100%',
+    flex: '1',
+    width,
+    height,
 }}>
     {cards.map(card => 
         <div style={{ flex: '0 0 18%', padding: '15px' }}>

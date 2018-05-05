@@ -70,7 +70,7 @@ export const CreateGame: Component<> = withState(({ state }) => {
 
         {
             isSelecting? <Modal>
-                <Col style={{ width: '1200px', height: '800px' }}>
+                <Col style={{ width: '86vw', height: '85vh' }}>
                     <Row>
                         <Block>
                             <h2>Card Sets</h2>
@@ -97,7 +97,7 @@ export const CreateGame: Component<> = withState(({ state }) => {
                                     <Button onClick={ dispatch(viewDetailPanel('cards')) }>Cards</Button>
                                 </Row>
                                 {detailPanel == 'cards'?
-                                    <CardPanel cards={cardSets.get(previewing)? [...cardSets.get(previewing).cards()].map(C => new C()): []}/>:
+                                    <CardPanel height='800px' width='1000px' cards={cardSets.get(previewing)? [...cardSets.get(previewing).cards()].map(C => new C()): []}/>:
                                     <h1> {cardSets.get(previewing)? cardSets.get(previewing).description: 'Empty'} </h1>
                                 }
 
@@ -105,6 +105,7 @@ export const CreateGame: Component<> = withState(({ state }) => {
                         </Block>
                     </Row>
                     <Row>
+                        <Shim/>
                         <Button onClick={ click => 
                             // TODO: need a way to cancel
                             dispatch(cancelCharacterSelection())

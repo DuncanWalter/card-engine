@@ -12,9 +12,9 @@ import { Heal } from './actions/heal'
 import { navigateTo } from './utils/navigation'
 import { CardLibrary } from './cards/cardLibrary'
 import { activateReward, collectReward } from './paths/pathState'
-import { BindMaxHp } from './actions/bindMaxHp';
-import { SSL_OP_LEGACY_SERVER_CONNECT } from 'constants';
-import { BindFamePoints } from './actions/bindFamePoints';
+import { BindMaxHp } from './actions/bindMaxHp'
+import { SSL_OP_LEGACY_SERVER_CONNECT } from 'constants'
+import { BindFamePoints } from './actions/bindFamePoints'
 
 import './cards/adventurer/adventurer'
 import './cards/brawler/brawler'
@@ -50,9 +50,12 @@ export const engine = new Module('engine', ({ global, next }) => {
     registerEncounter(10, Turtle)
     registerEncounter(11, Toad, Toad)
     registerEncounter(13, Cobra)
+    registerEncounter(14, Turtle, Turtle)
     registerEncounter(15, Toad, Toad, Toad)
     registerEncounter(16, Cobra, Turtle)
     registerEncounter(19, Cobra, Toad, Toad)
+    registerEncounter(21, Cobra, Cobra, Toad)
+    registerEncounter(22, Cobra, Cobra, Turtle)
 
     registerReward('Heal 5 health points.', 1, function* heal(self, state): * {
         collectReward(dispatch, self)
@@ -60,6 +63,7 @@ export const engine = new Module('engine', ({ global, next }) => {
             healing: 5,
         }))
     })
+
     registerReward('Gain 1 max hp.', 1, function* heal(self, state): * {
         collectReward(dispatch, self)
         yield resolver.processAction(new BindMaxHp({}, state.battle.player, {
@@ -67,7 +71,7 @@ export const engine = new Module('engine', ({ global, next }) => {
         }))
     })
 
-    // TODO: make rewards respond to pplayer classes
+    // TODO: make rewards respond to player classes
     registerReward('Draft a Card.', 2, function* draft(self, state): * {
         activateReward(dispatch, self)
         navigateTo('/game/cardDraft')
@@ -97,7 +101,6 @@ export const engine = new Module('engine', ({ global, next }) => {
     //         points: 1,
     //     }))
     // })
-    
 
     next()
 

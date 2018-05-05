@@ -177,16 +177,7 @@ interface Props {
     glow: boolean,
 }
 
-const CardText = styled.div`
-    height: 170px;
-    background: rgba(34, 34, 44, 00);
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    padding: 5px 23px 5px;
-    text-size: 0.8em;
-`
+// TODO: concider bringing back rarity indicating glow
 const CardBack = styled.div`
     width: 280px;
     height: 440px;
@@ -199,7 +190,7 @@ const CardBack = styled.div`
     box-shadow: ${ props => {
         if(props.glow){
             let color = colorRarity(props.membership.rarity)
-            return `0px 0px 5px #ffffff, 0px 0px 20px ${color}`
+            return `0px 0px 20px #ffffff`
         } else {
             return '0px 0px 0px #000000'
         }
@@ -236,17 +227,31 @@ const CardAccent = styled.div`
 
 const CardTitle = styled.div`
     height: 50px;
-    background: rgba(34, 34, 44, 00);
+    background: radial-gradient(circle, rgba(22, 22, 22, 0.35) 50%, rgba(22, 22, 22, 0.65));
     justify-content: center;
     align-items: center;
     display: flex;
     flex-direction: row;
+    border-radius: 8px;
+`
+
+const CardText = styled.div`
+    height: 170px;
+    background: radial-gradient(circle, rgba(22, 22, 22, 0.35) 50%, rgba(22, 22, 22, 0.65));
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    padding: 5px 23px 5px;
+    text-align: center;
+    border-radius: 8px;
 `
 
 const CardVignette = styled.div`
     width: 100%;
     height: 100%;
-    background: rgba(34, 34, 44, 00);
+    border-radius: 8px;
+    background: radial-gradient(circle, rgba(22, 22, 22, 0) 55%, rgba(22, 22, 22, 0.35));
 `
 
 const CardImage = styled.div`
@@ -254,6 +259,7 @@ const CardImage = styled.div`
     background-color: ${ props =>
         props.color
     };
+    border-radius: 8px;
 `
 
 const CardEffects = styled.div`
@@ -264,29 +270,47 @@ const CardEffects = styled.div`
 
 const CardCost = styled.div`
     position: absolute;
-    left: 4px;
-    top: 4px;
-    width: 50px;
-    height: 50px;
-    background-color: #777777;
-    border-radius: 8px;
-    border: 4px solid #222222;
+    left: -15px;
+    top: -15px;
+    width: 44px;
+    height: 44px;
+    background-color: #ffffff;
+    /* background: ${ props => 
+        `radial-gradient(${props.membership.color}, #ffffff)`
+    }; */
+    border-radius: 22px;
     justify-content: center;
     align-items: center;
     display: flex;
+    font-size: 2.0rem;
+    box-shadow: 0px 0px 22px #ffffff;
+    /* color: ${ props =>
+        props.membership.color
+    }; */
 `
 
-let renders = 0
-let time = Date.now()
+const CardRarity = styled.div`
+    position: absolute;
+    right: -3px;
+    bottom: 186px;
+    width: 20px;
+    height: 20px;
+    background-color: ${ props => 
+        colorRarity(props.membership.rarity)
+    };
+    box-shadow: ${ props => 
+        `
+        0px 3px 0px rgba(0, 0, 0, 0.35),
+        0px 0px 12px ${colorRarity(props.membership.rarity)};
+        `
+    };
+
+    border-radius: 10px;
+`
+
+
 
 export const Card: Component<Props> = withState(({ card, state, glow }) => {
-
-    renders++
-    if(Date.now() - time > 1000){
-        time = Date.now()
-        console.log('Card render calls:', renders)
-        renders = 0
-    }
 
     const actors = new Set()
     actors.add(state.battle.player)
@@ -319,22 +343,25 @@ export const Card: Component<Props> = withState(({ card, state, glow }) => {
         )
     }
 
-
-    // TODO: pllay costs need to be re-added
+    // TODO: play costs need to be re-added
     return <Entity entity={card}>
         <CardBack membership={membership} glow={glow} onClick={clicked}>
             <CardBase membership={membership} >
                 <CardTitle membership={membership}>{title}</CardTitle>
-                <CardAccent membership={membership}/>
+                {/* <CardAccent membership={membership}/> */}
                 <CardDivider/>
                 <CardImage color={color}>
                     <CardVignette/>
                 </CardImage>
-                <CardAccent membership={membership}/>
+                {/* <CardAccent membership={membership}/> */}
                 <CardDivider/>
                 <CardText membership={membership}>{text}</CardText>
-                <CardAccent membership={membership}/>
+                {/* <CardAccent membership={membership}/> */}
             </CardBase>
+            <CardCost membership={membership}>
+                <b>{energy}</b>
+            </CardCost>
+            <CardRarity membership={membership}/>
         </CardBack>
     </Entity>
 })
@@ -345,7 +372,7 @@ function colorRarity(rarity: Rarity){
         case 'B': return "#ce54ff"
         case 'C': return "#54a9ff"
         case 'D': return "#59ff54"
-        case 'F': return "#22222b"
-        default: return "#ffffff"
+        case 'F': return "#46464f"
+        default : return "#ffffff"
     }
 }

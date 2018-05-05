@@ -24,7 +24,7 @@ export const CardRemove: Component<any> = withState(({ state }: Props) => {
             flexWrap: 'wrap', 
             width: '72vw', 
             height: '64vh', 
-            justifyContent: '!space-evenly',
+            justifyContent: 'space-evenly',
             overflowY: 'scroll',
             borderTop: 'solid white 2px',
             borderBottom: 'solid white 2px',
@@ -33,7 +33,7 @@ export const CardRemove: Component<any> = withState(({ state }: Props) => {
         }}>
             {[...state.battle.deck].map(card => 
                 <div 
-                    style={{ flex: '0 0 18%', padding: '15px' }} 
+                    style={{ flex: '0 0 18%', padding: '15px', margin: '15px' }} 
                     onClick={ click => {
                         collectReward(dispatch, reward)
                         deactivateReward(dispatch, reward)
