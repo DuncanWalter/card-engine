@@ -9,114 +9,108 @@ import { beginSelectingCharacter, previewCharacter, selectCharacter, cancelChara
 import { cardSets } from '../cards/cardSet';
 import { CardPanel } from '../game/cardPanel';
 
+const Panel = styled.div`
+    width: 240px;
+    height: 240px;
+    margin: 20px;
+    background-color: ${ props =>
+        props.color
+    };
+`
 
 // TODO: add a clear button to the character panels?
-
 const CharacterPanel = ({ index, character }) => {
     
     const set = cardSets.get(character[index])
 
-    return <Button onClick={ click => 
+    return <Panel color={ set? set.color: '#333333' } onClick={ click => 
         beginSelectingCharacter(dispatch, index)
     }>
-        <div style={{ 
-            width: '220px', 
-            height: '220px', 
-            cursor: 'pointer', 
-            backgroundColor: set? set.color: '#333333',
-            margin: '15px', 
-        }}>
-            { set? set.name: '' }
-        </div>
-    </Button>
+        { set? set.name: 'Empty' }
+    </Panel>
     
 }
 
-
-
-
-
 export const CreateGame: Component<> = withState(({ state }) => {
-
     let { isSelecting, selectingIndex, previewing, character, detailPanel } = state.menu
-
-    return <div>
-        <Modal>
+    return isSelecting? <Modal>
+        <Col shim>
+            <Row shim>
+                <Block>
+                    <h2>Card Sets</h2>
+                    <Col>
+                        {selectingIndex!=0? <Button onClick={ click => 
+                            previewCharacter(dispatch, '')
+                        }>
+                            <h3>Empty</h3>
+                        </Button>: null}
+                        {[...cardSets.values()].filter(set => set.playable && (!character.includes(set.name) || character[selectingIndex] == set.name)).map(set =>
+                            <Button onClick={ click => 
+                                previewCharacter(dispatch, set.name)
+                            }>
+                                <h3>{set.name == previewing? set.name: set.name}</h3>
+                            </Button>
+                        )}
+                    </Col>
+                </Block>
+                <Block shim>
+                    <Col shim>
+                        <h1>{previewing}</h1>
+                        <Row>
+                            <Button onClick={ () => dispatch(viewDetailPanel('summary')) }>Summary</Button>
+                            <Button onClick={ () => dispatch(viewDetailPanel('cards')) }>Cards</Button>
+                        </Row>
+                        {detailPanel == 'cards'?
+                            // $FlowFixMe
+                            <CardPanel cards={cardSets.get(previewing)? [...cardSets.get(previewing).cards()].map(C => new C()): []}/>:
+                            // $FlowFixMe
+                            <h3> {cardSets.get(previewing)? cardSets.get(previewing).description: 'Empty'} </h3>
+                        }
+                    </Col>
+                </Block>
+            </Row>
             <Block>
-                <Col center style={{ width: '1200px', height: '800px' }}>
-                    <h1>New Game</h1>
-                    <h1>Character Selection</h1>
-                    <Row>
-                        <Shim/>
-                        <CharacterPanel index='0' character={character}/>
-                        <CharacterPanel index='1' character={character}/>
-                        <CharacterPanel index='2' character={character}/>
-                        <Shim/>
-                    </Row>
-                    <h2>Seeding</h2>
-                    <input type="text"/>
-                    <Route render={({ history }) => 
-                        <Button onClick={click => {
-                            resolver.processAction(new StartGame({}, {}, {
-                                seed: 100345,
-                                character,
-                            }))
-                            history.push('/game/pathSelection')
-                        }}>Begin</Button>
-                    }/>
-                </Col>
+                <Row>
+                    <Shim/>
+                    <Button onClick={ click => 
+                        dispatch(cancelCharacterSelection())
+                    }>Cancel</Button>
+                    <Button onClick={ click => 
+                        selectCharacter(dispatch)
+                    }>Confirm</Button>
+                </Row>
             </Block>
-        </Modal>
-
-        {
-            isSelecting? <Modal>
-                <Col style={{ width: '86vw', height: '85vh' }}>
-                    <Row>
-                        <Block>
-                            <h2>Card Sets</h2>
-                            <Col>
-                                {selectingIndex!=0? <Button onClick={ click => 
-                                    previewCharacter(dispatch, '')
-                                }>
-                                    <h3>Empty</h3>
-                                </Button>: null}
-                                {[...cardSets.values()].filter(set => set.playable && !character.includes(set.name)).map(set =>
-                                    <Button onClick={ click => 
-                                        previewCharacter(dispatch, set.name)
-                                    }>
-                                        <h3 style={{ color: set.color }}>{set.name == previewing?'!!'+set.name+'!!':set.name}</h3>
-                                    </Button>
-                                )}
-                            </Col>
-                        </Block>
-                        <Block flex='1'>
-                            <Col>
-                                <h1>{previewing}</h1>
-                                <Row>
-                                    <Button onClick={ dispatch(viewDetailPanel('summary')) }>Summary</Button>
-                                    <Button onClick={ dispatch(viewDetailPanel('cards')) }>Cards</Button>
-                                </Row>
-                                {detailPanel == 'cards'?
-                                    <CardPanel height='800px' width='1000px' cards={cardSets.get(previewing)? [...cardSets.get(previewing).cards()].map(C => new C()): []}/>:
-                                    <h1> {cardSets.get(previewing)? cardSets.get(previewing).description: 'Empty'} </h1>
-                                }
-
-                            </Col>
-                        </Block>
-                    </Row>
-                    <Row>
-                        <Shim/>
-                        <Button onClick={ click => 
-                            // TODO: need a way to cancel
-                            dispatch(cancelCharacterSelection())
-                        }>Cancel</Button>
-                        <Button onClick={ click => 
-                            selectCharacter(dispatch)
-                        }>Confirm</Button>
-                    </Row>
-                </Col>
-            </Modal>: null
-        }
-
-    </div>
+        </Col>
+    </Modal>:
+    <Modal>
+        <Col shim>
+            <Block fill><h1>New Game</h1></Block>
+            <Shim/>
+            <Row>
+                <Shim/>
+                <CharacterPanel index='0' character={character}/>
+                <CharacterPanel index='1' character={character}/>
+                <CharacterPanel index='2' character={character}/>
+                <Shim/>
+            </Row>
+            <Shim/>
+            <Row>
+                <Shim/>
+                <Route render={({ history }) => 
+                    <Button primary onClick={click => {
+                        history.push('/menu/main')
+                    }}>Back</Button>
+                }/>
+                <Route render={({ history }) => 
+                    <Button primary onClick={click => {
+                        resolver.processAction(new StartGame({}, {}, {
+                            seed: 100345,
+                            character,
+                        }))
+                        history.push('/game/pathSelection')
+                    }}>Begin</Button>
+                }/>
+            </Row>
+        </Col>
+    </Modal>
 })

@@ -32,6 +32,8 @@ import { Strike } from "../adventurer/strike";
 // reckless charge
 // burst / double tap
 
+// Get the gash thingy running (strike name thing but better thought out)
+
 // heal when taking damage?
 // footwork?
 // nimbleness (metalisize)
@@ -40,24 +42,24 @@ import { Strike } from "../adventurer/strike";
 
 // jab
 
-let brawler = new CardSet('Brawler', true, '#7a190b', 'Offense-oriented combo cards.')
+let eve = new CardSet('Eve', true, '#7a190b', 'Espionage software designed by an intelligence agencies to run with limited system resources on foreign machines. Excels at executing many, simple attacks, but lacks facilities for protecting sensitive data.')
 
-brawler.add('F', Strike)
+eve.add('F', Strike)
 
-brawler.add('D', Anger)
-brawler.add('D', CheapShot)
-brawler.add('D', FightersStance)
-brawler.add('D', PalmStrike)
+eve.add('D', Anger)
+eve.add('D', CheapShot)
+eve.add('D', FightersStance)
+eve.add('D', PalmStrike)
 
-brawler.add('C', DoubleStrike)
-brawler.add('C', Flex)
-brawler.add('C', LegReap)
-brawler.add('C', Rage)
-brawler.add('C', Rampage)
+eve.add('C', DoubleStrike)
+eve.add('C', Flex)
+eve.add('C', LegReap)
+eve.add('C', Rage)
+eve.add('C', Rampage)
 
-brawler.add('B', Adrenaline)
-brawler.add('B', TripleStrike)
+eve.add('B', Adrenaline)
+eve.add('B', TripleStrike)
 
-brawler.add('A', FlashOfSteel)
+eve.add('A', FlashOfSteel)
 
-CardLibrary.register(brawler)
+CardLibrary.register(eve)

@@ -3,7 +3,7 @@ import type { NPC } from '../creatures/npc'
 import type { State } from '../state'
 
 import { Link } from 'react-router-dom'
-import { Modal, Row, Button, Col, Block } from '../utility'
+import { Modal, Row, Button, Col, Block, Shim } from '../utility'
 import { Route } from 'react-router-dom'
 import { StartGame } from '../actions/startGame'
 import { SetupCombat } from '../actions/setupCombat'
@@ -18,8 +18,9 @@ type Props = { state: State }
 export const PathSelection: Component<any> = withState(({ state }: Props) => {
     return <Modal>
         <h1>Select Path</h1>
-        <Row>{
-            state.path.freedoms.map(path => 
+        <Row>
+            <Shim/>
+            { state.path.freedoms.map(path => 
                 <Route render={({ history }) => 
                     <Button onClick={ click => {
                         selectFreedom(dispatch, path)
@@ -37,7 +38,8 @@ export const PathSelection: Component<any> = withState(({ state }: Props) => {
                         </Col>
                     </Button>
                 }/>
-            )
-        }</Row>
+            ) }
+            <Shim/>
+        </Row>
     </Modal>
 })

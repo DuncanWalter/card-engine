@@ -7,9 +7,9 @@ import { Card } from "../cards/card";
 import { Player } from "../creatures/player";
 import { endTurn } from "../actions/action";
 
-export const weakness = Symbol('weakness');
-export const Weakness: Class<Effect> = MetaEffect(weakness, {
-    name: 'Weakness',
+export const latency = Symbol('latency');
+export const Latency: Class<Effect> = MetaEffect(latency, {
+    name: 'Latency',
     innerColor: '#22ee33',
     outerColor: '#119922',
     description: '',
@@ -22,7 +22,7 @@ export const Weakness: Class<Effect> = MetaEffect(weakness, {
     max: 99,
     on: endTurn,
 }, owner => new Listener(
-    weakness,
+    latency,
     {
         filter: action => action.actors.has(owner),
         tags: [blockable],

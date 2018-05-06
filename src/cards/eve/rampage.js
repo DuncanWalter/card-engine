@@ -7,22 +7,25 @@ import { DrawCards } from '../../actions/drawCards'
 import { MetaEffect } from '../../effects/effect'
 import { BindEffect } from '../../actions/bindEffect'
 import { deafListener } from '../../actions/listener'
+import { Default } from '../../effects/default';
 
 // TODO: make number of times played visible using the Rampage stacks effect
 
 type RampageData = { damage: number, energy: number, scaling: number }
 
+// TODO: Upgrades either increase scaling or provide Default
+
 export const rampage = 'rampage'
 export const Rampage: Class<Card<RampageData>> = MetaCard(rampage, playRampage, {
     energy: 1,
-    damage: 8,
-    scaling: 4,
+    damage: 7,
+    scaling: 5,
 }, {
     energyTemplate: '#{energy}',
     color: '#ff9944',
     titleTemplate: 'Rampage',
     textTemplate: 'Deal #{damage} damage to an enemy. Deals #{scaling} more damage for each time this card has been played this combat.',
-})
+}, [Default, 1])
 
 let rampageSymbol = Symbol(rampage)
 let RampageStacks = MetaEffect(rampageSymbol, null, {

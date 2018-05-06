@@ -4,7 +4,7 @@ import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { Discard } from '../../actions/discard';
-import { Exhaust } from '../../effects/exhaust';
+import { Singleton } from '../../effects/singleton';
 
 type JabData = { damage: number, energy: number }
 
@@ -16,8 +16,8 @@ export const Jab: Class<Card<JabData>> = MetaCard(jab, playJab, {
     energyTemplate: '#{energy}',
     color: '#662222',
     titleTemplate: 'Jab',
-    textTemplate: 'Deal #{damage} damage to an enemy. #[Exhaust].',
-}, [Exhaust, 1])
+    textTemplate: 'Deal #{damage} damage to an enemy. #[Singleton].',
+}, [Singleton, 1])
 
 function* playJab({ resolver, actors }: PlayArgs<>): Generator<any, JabData, any>{
     let target = yield queryEnemy(any => true)

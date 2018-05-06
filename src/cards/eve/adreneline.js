@@ -5,7 +5,7 @@ import { Creature } from '../../creatures/creature'
 import { targeted } from '../../actions/damage'
 import { AddToHand } from '../../actions/addToHand'
 import { Jab } from './jab'
-import { Exhaust } from '../../effects/exhaust'
+import { Singleton } from '../../effects/singleton'
 import { DrawCards } from '../../actions/drawCards'
 import { BindEnergy } from '../../actions/bindEnergy'
 
@@ -24,8 +24,8 @@ export const Adrenaline: Class<Card<AdrenalineData>> = MetaCard(adrenaline, play
     energyTemplate: '#{energy}',
     color: '#99aa22',
     titleTemplate: 'Adrenaline',
-    textTemplate: 'Gain #{reEnergize} energy. Draw #{draw} cards. #[Exhaust]',
-}, [Exhaust, 1])
+    textTemplate: 'Gain #{reEnergize} energy. Draw #{draw} cards. #[Singleton].',
+}, [Singleton, 1])
 
 function* playAdrenaline({ actors, resolver, game }: PlayArgs<>): Generator<any, AdrenalineData, any> {
     yield resolver.processAction(new DrawCards(actors, game.player, { count: this.data.draw }))

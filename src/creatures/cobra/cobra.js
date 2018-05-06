@@ -7,7 +7,7 @@ import { startCombat } from "../../actions/startCombat"
 import { Blockade } from "../../effects/blockade"
 import { Listener } from "../../actions/listener"
 import { Poison } from "../../effects/poison"
-import { Weakness } from "../../effects/weakness"
+import { Latency } from "../../effects/latency"
 
 let bite: Behavior, hiss: Behavior
 
@@ -36,7 +36,7 @@ bite = new Behavior('Bite', seed => seed > 0.5 ? bite : hiss, function*({ owner,
 
 hiss = new Behavior('Hiss', seed => seed > 0.5 ? bite : hiss, function*({ owner, resolver, game }){
     yield resolver.processAction(new BindEffect(owner, game.player, {
-        Effect: Weakness,
+        Effect: Latency,
         stacks: 2,
     }))
     return { isDebuffing: true }

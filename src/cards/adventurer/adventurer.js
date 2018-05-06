@@ -4,7 +4,6 @@ import { Strike } from "./strike"
 import { Defend } from "./defend"
 import { Bash } from "./bash"
 import { Acid } from "./acid"
-import { FlashOfSteel } from "../brawler/flashOfSteel"
 import { Cleave } from "./cleave"
 import { CardSet } from "../cardSet";
 

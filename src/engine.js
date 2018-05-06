@@ -13,13 +13,12 @@ import { navigateTo } from './utils/navigation'
 import { CardLibrary } from './cards/cardLibrary'
 import { activateReward, collectReward } from './paths/pathState'
 import { BindMaxHp } from './actions/bindMaxHp'
-import { SSL_OP_LEGACY_SERVER_CONNECT } from 'constants'
 import { BindFamePoints } from './actions/bindFamePoints'
 
 import './cards/adventurer/adventurer'
-import './cards/brawler/brawler'
-import './cards/necromancer/necromancer'
-import './cards/acrobat/acrobat'
+import './cards/eve/eve'
+import './cards/prometheus/prometheus'
+import './cards/jekyll/jekyll'
 
 // how many creatures?
 
@@ -77,7 +76,7 @@ export const engine = new Module('engine', ({ global, next }) => {
         navigateTo('/game/cardDraft')
     }, (self, level, seed) => {
         let cards = CardLibrary.sample(Math.floor(3 + level / 6.5), {
-            Brawler: 1.0,
+            Eve: 1.0,
         }, {
             F: 0.5,
             D: 0.9,

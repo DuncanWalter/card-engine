@@ -2,22 +2,25 @@ import { withState } from "../state";
 import { Row } from "../utility";
 import { Card } from "../cards/component";
 
-export const CardPanel = withState(({ state, cards, width, height }) => <Row style={{ 
-    flexWrap: 'wrap',
-    justifyContent: 'space-evenly',
+export const CardPanel = withState(({ state, cards }) => <div style={{
     overflowY: 'scroll',
-    borderTop: 'solid #eeeeee 4px',
-    borderBottom: 'solid #eeeeee 4px',
-    margin: '25px',
-    padding: '15px',
-    flex: '1',
-    width,
-    height,
+    position: 'relative', 
+    flex: 1,
 }}>
-    {cards.map(card => 
-        <div style={{ flex: '0 0 18%', padding: '15px' }}>
-            <Card card={ card } glow={ true }/>
-        </div>
-    )}
-    <div style={{ flex: '0 0 95%', height: '32vh' }}/>
-</Row>)
+    <Row shim style={{ 
+        flexWrap: 'wrap',
+        padding: '15px',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    }}>
+        {cards.map(card => 
+            <div style={{ flex: '0 0 18%', padding: '15px' }}>
+                <Card card={ card } glow={ true }/>
+            </div>
+        )}
+        <div style={{ flex: '0 0 95%', height: '32vh' }}/>
+    </Row>
+</div>)

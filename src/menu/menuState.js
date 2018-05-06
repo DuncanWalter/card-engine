@@ -19,7 +19,7 @@ export const menuReducer: Reducer<MenuState, any, State> = createReducer({
         return {
             previewing: '',
             seed: Math.floor(Date.now() * Math.random() + 10000),
-            character: ['Brawler'],
+            character: ['Eve'],
             isSelecting: false,
             selectingIndex: -1,
             detailPanel: 'summary',
@@ -58,6 +58,7 @@ export const menuReducer: Reducer<MenuState, any, State> = createReducer({
         }
     },
     viewDetailPanel(slice, { panel }){
+        console.log(panel)
         return {
             ...slice,
             detailPanel: panel,

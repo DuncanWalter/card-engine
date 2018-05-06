@@ -4,7 +4,7 @@ import { Damage, targeted, blockable } from "../../actions/damage"
 import { Block } from "../../effects/block"
 import { BindEffect } from "../../actions/bindEffect"
 import { startCombat } from "../../actions/startCombat"
-import { Weakness } from "../../effects/weakness";
+import { Latency } from "../../effects/latency";
 import { Strength } from "../../effects/strength"
 
 let ribbit: Behavior, lick: Behavior, bite: Behavior
@@ -39,7 +39,7 @@ ribbit = new Behavior('ribbit', next, function*({ owner, resolver, game }){
 
 lick = new Behavior('lick', next, function*({ owner, resolver, game }){
     yield resolver.processAction(new BindEffect(owner, game.player, {
-        Effect: Weakness,
+        Effect: Latency,
         stacks: 1,
     }))
     return { isDebuffing: true }

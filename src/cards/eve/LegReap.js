@@ -4,8 +4,8 @@ import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { DrawCards } from '../../actions/drawCards'
-import { Vulnerability, vulnerability } from '../../effects/vulnerability'
-import { Weakness, weakness } from '../../effects/weakness'
+import { vulnerability } from '../../effects/vulnerability'
+import { latency } from '../../effects/latency'
 import { BindEnergy } from '../../actions/bindEnergy'
 
 type LegReapData = { damage: number, energy: number }
@@ -35,7 +35,7 @@ function* playLegReap({ resolver, actors, game }: PlayArgs<>): Generator<any, Le
                 blockable,
             ),
         )
-        if(target.stacksOf(weakness)){
+        if(target.stacksOf(latency)){
             yield resolver.processAction(new BindEnergy(actors, game.player, { quantity: 1 }))
         }
         if(target.stacksOf(vulnerability)){

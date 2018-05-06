@@ -2,7 +2,7 @@ import { MetaEffect, Effect } from "./effect"
 import { damage } from "../actions/damage"
 import { Listener, ConsumerArgs } from "../actions/listener";
 import { blockable } from "../actions/damage";
-import { weakness } from "./weakness";
+import { latency } from "./latency";
 import { Card } from "../cards/card";
 import { Player } from "../creatures/player";
 
@@ -32,4 +32,4 @@ export const Strength: Class<Effect> = MetaEffect(strength, {
         }
     },  
     false,
-), [], [weakness])
+), [], [latency])

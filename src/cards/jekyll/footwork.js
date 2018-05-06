@@ -3,8 +3,7 @@ import { BindEffect } from '../../actions/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { dexterity, Dexterity } from '../../effects/dexterity'
-import { Exhaust } from '../../effects/exhaust'
-
+import { Singleton } from '../../effects/singleton'
 
 type FootworkData = { dexterity: number, energy: number }
 
@@ -16,11 +15,10 @@ export const Footwork: Class<Card<FootworkData>> = MetaCard(footwork, playFootwo
     energyTemplate:'#{energy}',
     color: '#228866',
     titleTemplate: 'Footwork',
-    textTemplate: 'Gain #{dexterity} dexterity',
-}, [Exhaust, 1])
+    textTemplate: 'Gain #{dexterity} dexterity. #[Singleton]',
+}, [Singleton, 1])
 
 function* playFootwork({ actors, game, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {
-    // if(actor instanceof Creature){
     const action: BindEffect = yield resolver.processAction(
         new BindEffect(
             actors, 
@@ -33,7 +31,4 @@ function* playFootwork({ actors, game, resolver }: PlayArgs<>): Generator<any, F
         ),
     )
     return { dexterity: action.data.stacks, energy: this.data.energy }
-    // } else {
-    //     return this.data
-    // }
 }

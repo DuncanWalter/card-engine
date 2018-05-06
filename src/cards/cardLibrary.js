@@ -33,10 +33,13 @@ export const CardLibrary = {
     } | void {
 
         if(!player){
+            // $FlowFixMe
             return [...sets.values()].reduce((acc, set) => {
+                // $FlowFixMe
                 return set.members.get(card.constructor) || acc
             }, undefined)
         } else {
+            // $FlowFixMe
             return player.sets.reduce((acc, name: string) => {
                 let set = sets.get(name)
                 if(set){

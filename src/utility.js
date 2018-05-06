@@ -7,8 +7,8 @@ export const Col = styled.div`
     align-items: stretch;
     height: '100%';
     min-height: '100%';
-    flex: ${ props => 
-        props.shim? 1: 'auto'
+    ${ props => 
+        props.shim? 'flex: 1': ''
     };
 `
 
@@ -16,9 +16,8 @@ export const Row = styled.div`
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    height: '100%';
-    flex: ${ props => 
-        props.shim? 1: 'auto'
+    ${ props => 
+        props.shim? 'flex: 1': ''
     };
 `
 
@@ -28,13 +27,20 @@ export const Frame = styled.div`
 
 export const Block = styled.div`
     position: relative;
-    display: inline-block;
-    background-color: #262422;
-    border-radius: 4.5px;
-    margin: 4.5px;
-    border: solid #a89888 2px;
+    background-color: ${ props => 
+        props.fill ? '#44444f' : '#22222b'
+    };
+    margin: 4px;
+    border: solid #44444f 2px;
     text-align: center;
-    padding: 4.5px;
+    padding: 4px;
+    ${ props => 
+        props.shim? `
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+        `: ''
+    };
 `
 
 export const ModalWrapper = styled.div`
@@ -43,7 +49,7 @@ export const ModalWrapper = styled.div`
     right: 50%;
     top: 50%;
     bottom: 50%;
-    max-width 0;
+    max-width: 0;
     max-height: 0;
     display: flex;
     padding: -1000px;
@@ -51,13 +57,36 @@ export const ModalWrapper = styled.div`
     justify-content: center;
 `
 
+const ModalBlock = Block.extend`
+    min-width: 84vw;
+    min-height: 72vh;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+`
+
 export const Modal: Component<> = props => <ModalWrapper>
-    <Block {...props}>
+    <ModalBlock {...props}>
         { props.children }
-    </Block>    
+    </ModalBlock>    
 </ModalWrapper>
 
-export const Button: Component<> = props => <Block { ...props } style={{ cursor: 'pointer' }}>{props.children}</Block>
+
+export const Button = styled.div`
+    cursor: pointer;
+    background-color: ${ props => 
+        props.primary ? '#44444f' : '#22222b'
+    };
+    &:hover {
+        background-color: ${ props => 
+            props.primary ? '#22222b' : '#44444f'
+        };
+    };
+    margin: 4px;
+    border: solid #44444f 2px;
+    text-align: center;
+    padding: 8px 12px 8px;
+`
 
     
 export const Shim = styled.div`

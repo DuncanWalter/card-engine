@@ -7,7 +7,7 @@ import { startCombat } from "../../actions/startCombat"
 import { Blockade } from "../../effects/blockade"
 import { Listener } from "../../actions/listener"
 import { Poison } from "../../effects/poison"
-import { Weakness } from "../../effects/weakness"
+import { Latency } from "../../effects/latency"
 
 let scratch: Behavior
 

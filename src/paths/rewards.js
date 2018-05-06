@@ -26,11 +26,11 @@ export const Rewards: Component<*> = withState(({ state, match }) => {
 
 const Reward: Component<{ reward: RewardT, state: * }> = withState(({ reward, state }) => {
     return <Block>
-        <div 
-            style={{ width: '430px', height: '60px', cursor: 'pointer' }}
+        <Button 
+            style={{ width: '430px', height: '60px' }}
             onClick={e => reward.collect(reward, state)}
         >
             <p>{ reward.description }</p>
-        </div>
+        </Button>
     </Block>
 })
