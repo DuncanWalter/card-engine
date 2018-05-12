@@ -1,6 +1,5 @@
 import type { State } from '../state'
 import type { Reducer } from '../utils/state'
-import { NPC } from "../creatures/npc"
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { reducer } from "vitrarius"

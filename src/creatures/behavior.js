@@ -1,12 +1,22 @@
-import type { NPC } from "./npc"
-import type { GameState } from "../game/battle/battleState"
+import type { Monster, MonsterWrapper } from "./monster"
+import type { Game } from "../game/battle/battleState"
 import { Action } from "../actions/action"
 import { ActionResolver } from "../actions/actionResolver"
 import { synchronize } from "../utils/async"
 import type { Component } from "../component"
 
-export interface BehaviorData {
+export type BehaviorType = string
+
+let types = (function*(){
+    let i = 1
+    while(i++){
+        yield i.toString(26)
+    }
+})()
+
+export interface Intent {
     damage?: number,
+    numberOfAttacks?: number,
     isDefending?: boolean,
     isDebuffing?: boolean,
     isMajorDebuffing?: boolean,
@@ -15,59 +25,115 @@ export interface BehaviorData {
 }
 
 export interface BehaviorContext { 
-    owner: NPC, 
+    owner: MonsterWrapper, 
     resolver: ActionResolver, 
-    game: $ReadOnly<GameState> 
+    game: $ReadOnly<Game>,
 }
 
-export class Behavior {
+export interface Behavior {
+    type: BehaviorType,
+    name: string,
+    // TODO:
+    // description: string,
+}
 
+const definedBehaviors: Map<string, BehaviorContext => Promise<Intent>> = new Map()
+
+export function defineBehavior<D>(name: string, behavior: BehaviorContext => Generator<any, Intent, any>): BehaviorType {
+    
+    // TODO: use the name, add a description formatter
+
+    let { value, done } = types.next()
+
+    if(value && !definedBehaviors.get(value)){
+        definedBehaviors.set(value, synchronize(behavior))
+    } else {
+        throw new Error(`BehaviorType collision on ${name}.`)
+    }
+    
+    return value
+
+}
+
+
+const baseIntent: Intent = { isMiscBehavior: true }
+
+export class BehaviorWrapper {
+
+    type: BehaviorType
     name: string
 
-    selectNext: (seed: number) => Behavior
+    // selectNext: (seed: number) => Behavior
+    // perform: (ctx: BehaviorContext) => Promise<Intent>
 
-    perform: (ctx: BehaviorContext) => Promise<BehaviorData>
+    perform(context: BehaviorContext): Promise<Intent> {
+        const behavior = definedBehaviors.get(this.type)
+        if(behavior){
+            return behavior(context)
+        } else {
+            throw new Error(`Unknown behavior type ${this.type}`)
+        }
+    }
 
-    simulate(owner: NPC, resolver: ActionResolver, game: $ReadOnly<GameState>): BehaviorData {
-        let data: BehaviorData = { isMiscBehavior: true }
+    simulate(owner: MonsterWrapper, resolver: ActionResolver, game: $ReadOnly<Game>): Intent {
+        let data: Intent = baseIntent
         resolver.simulate(resolver => {
             this.perform({ owner, resolver, game }).then(val => data = val)
         })
-        return data
+        if(data != baseIntent){
+            return data
+        } else {
+            throw new Error(`Async detected in simulation of the behavior ${this.type}`)
+        }
     }
 
-    next(owner: NPC): Behavior {
-        const next = this.selectNext(owner.seed.value)
-        owner.seed.value = owner.seed.generator.next()
-        return next
+    unwrap(): Behavior {
+        return {
+            name: this.name,
+            type: this.type,
+        }
     }
 
-    constructor(
-        name: string,
-        selectNext: (seed: number) => Behavior,
-        perform: ({ owner: NPC, resolver: ActionResolver, game: $ReadOnly<GameState> }) => BehaviorData | Generator<any, BehaviorData, any>,
-    ){
-        this.name = name
-        this.selectNext = selectNext 
-        this.perform = synchronize(perform, this)
+    constructor(representation: Behavior){
+        this.type = representation.type
+        this.name = representation.name
     }
 
 }
-
-
 
 type Props = {
-    data: BehaviorData
+    data: Intent
 }
 
+export const primeBehavior: BehaviorType = 'PRIME_BEHAVIOR'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// TODO: needs a revamp
 export const renderBehavior: Component<Props> = ({ data }) => {
     return <div style={renderData(data).container}>
         <p>{data.damage || ''}</p>
     </div>
 }
 
-
-function renderData(data: BehaviorData){
+function renderData(data: Intent){
 
     let innerColor = '#00000', outerColor = '#ffffff'
     

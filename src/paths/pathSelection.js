@@ -1,5 +1,4 @@
 import type { Component } from "../component"
-import type { NPC } from '../creatures/npc'
 import type { State } from '../state'
 
 import { Link } from 'react-router-dom'
@@ -13,6 +12,7 @@ import { Cobra } from '../creatures/cobra/cobra'
 import { resolver } from '../actions/actionResolver'
 import { withState, dispatch } from '../state'
 import { selectFreedom, generateFreedoms } from './pathState';
+import { MonsterWrapper } from '../creatures/monster';
 
 type Props = { state: State }
 export const PathSelection: Component<any> = withState(({ state }: Props) => {
@@ -27,7 +27,7 @@ export const PathSelection: Component<any> = withState(({ state }: Props) => {
                         generateFreedoms(dispatch)
                         history.push('/game/battle')
                         resolver.enqueueActions(new SetupCombat({}, {}, {
-                            enemies: path.enemies,
+                            enemies: path.enemies.map(enemy => new MonsterWrapper(enemy)),
                             seed: path.seed.fork(),
                         }))
                         resolver.enqueueActions(new StartCombat({}, {}, {}))

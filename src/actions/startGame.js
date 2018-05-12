@@ -1,6 +1,6 @@
 import type { CustomAction } from "./action"
 import { MetaAction } from "./action"
-import { Player } from "../creatures/player"
+import { PlayerWrapper } from "../creatures/player"
 import { CardLibrary } from "../cards/cardLibrary"
 import { ConsumerArgs } from "./listener"
 import { TrainingDummy } from "../creatures/trainingDummy"
@@ -9,6 +9,8 @@ import { startPath, generateFreedoms } from "../paths/pathState"
 import { Sequence, randomSequence } from "../utils/random"
 import { Strike } from "../cards/adventurer/strike";
 import { Defend } from "../cards/adventurer/defend";
+import { creatureIds } from "../creatures/creature";
+import { MonsterWrapper } from "../creatures/monster";
 
 // <{ loadFile?: string }> // TODO: data for card pool selection etc
 export const startGame: Symbol = Symbol('startGame')
@@ -16,8 +18,20 @@ export const StartGame: CustomAction<{ seed: number, character: string[] }> = Me
     
     let seed = randomSequence(data.seed * Math.random())
 
-    game.dummy = new TrainingDummy(10)
-    game.player = new Player(65, 65, 'Adventurer', ...data.character) /*/, 'fighter', 'acrobat' // Monk /*/
+    // TODO: set up the training dummy
+    game.dummy = new TrainingDummy(randomSequence(1))
+    game.player = new PlayerWrapper({
+        type: '',
+        id: creatureIds.next().value || '',
+        health: 65,
+        maxHealth: 65,
+        effects: [],
+        data: {
+            energy: 3,
+            isActive: true,
+            sets: [...data.character],
+        },
+    })
     game.deck.clear()
     game.drawPile.clear()
     game.hand.clear()
@@ -26,12 +40,7 @@ export const StartGame: CustomAction<{ seed: number, character: string[] }> = Me
     game.enemies = []
     game.allies = []
     game.equipment = []
-    // game.deck.add(new Strike(), new Strike(), new Strike())
-    // game.deck.add(new Defend(), new Defend(), new Defend())
-
-
-
-
+    
 
     let cards = CardLibrary.sample(5, data.character.reduce((acc, set) => {
         acc[set] = 0.6

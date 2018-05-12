@@ -1,6 +1,6 @@
 import type { Action } from "./action"
 import type { ActionResolver } from "./actionResolver"
-import type { GameState } from "../game/battle/battleState"
+import type { Game } from "../game/battle/battleState"
 import { synchronize } from "../utils/async"
 
 export type Header<ActionType=Action<>> = {
@@ -23,7 +23,7 @@ export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
     action: Action<mixed, mixed, mixed>,
     next: () => Promise<void>,
     cancel: () => void,
-    game: $ReadOnly<GameState>,
+    game: $ReadOnly<Game>,
     internal: () => Promise<void>,
 }
 

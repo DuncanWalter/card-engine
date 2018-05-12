@@ -19,6 +19,7 @@ import './cards/adventurer/adventurer'
 import './cards/eve/eve'
 import './cards/prometheus/prometheus'
 import './cards/jekyll/jekyll'
+import { Game, emit, liftState } from './game/battle/battleState';
 
 // how many creatures?
 
@@ -58,14 +59,14 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     registerReward('Heal 5 health points.', 1, function* heal(self, state): * {
         collectReward(dispatch, self)
-        yield resolver.processAction(new Heal({}, state.battle.player, {
+        yield resolver.processAction(new Heal({}, resolver.state.getGame().player, {
             healing: 5,
         }))
     })
 
     registerReward('Gain 1 max hp.', 1, function* heal(self, state): * {
         collectReward(dispatch, self)
-        yield resolver.processAction(new BindMaxHp({}, state.battle.player, {
+        yield resolver.processAction(new BindMaxHp({}, resolver.state.getGame().player, {
             points: 1,
         }))
     })
@@ -103,16 +104,21 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     next()
 
-    // $FlowFixMe
-    resolver.initialize(() => [
-        state.battle.allies,
-        state.battle.player,
-        state.battle.enemies,
-        state.battle.drawPile,
-        state.battle.discardPile,
-        state.battle.hand,
-        state.battle.activeCards,
-    ], { state, emit: () => dispatch({ type: 'emitBattleState' }) })
+    let cachedGameState = state.battle
+    let cachedGame: Game = liftState(cachedGameState)
+
+    resolver.initialize({
+        getGame(): Game {
+            if(state.battle != cachedGameState){
+                cachedGameState = state.battle
+                cachedGame = liftState(cachedGameState)
+            }
+            return cachedGame
+        },
+        setGame(game: Game){
+            dispatch(emit(game))
+        },
+    })
     
 }, [], [])
 

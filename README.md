@@ -3,6 +3,8 @@ This is the nucleus of a deck-building game based heavily on Megacrit's Slay the
 //TODO:
 
 * Switch to another theme/lore for the game (to force originality and get away from STS a bit)
+* Type naming convention change- Foo and Foo Wrapper to FooState and Foo
+* unify all string Id generators!
 
 * Find someone to help out
 * Make some documentation

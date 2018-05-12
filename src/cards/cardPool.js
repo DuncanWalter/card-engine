@@ -2,7 +2,7 @@ import { Card } from "./card"
 import { CardStack } from "./cardStack"
 import { Sequence } from "../utils/random"
 
-export function pickKey(distro: { [string]: number }, seed: Sequence): string {
+export function pickKey(distro: { [string]: number }, seed: Sequence<number>): string {
     let keys = Object.keys(distro)
     let val = keys.reduce((acc, key) => acc + distro[key], 0) * seed.next()
     let sum = 0
@@ -25,7 +25,7 @@ export class CardPool {
 
     
 
-    sample(count: number, distro: { [key: string]: number }, seed: Sequence): Class<Card<>>[] {
+    sample(count: number, distro: { [key: string]: number }, seed: Sequence<number>): Class<Card<>>[] {
         let result = new Set()
         while(result.size < count){
             let stack = this.cards.get(pickKey(distro, seed))
@@ -66,7 +66,7 @@ export class CardPool {
 
 }
 
-function sampleArray<T>(array: T[], seed: Sequence): T | void {
+function sampleArray<T>(array: T[], seed: Sequence<number>): T | void {
     return array[Math.floor(array.length * seed.next())]
 }
 

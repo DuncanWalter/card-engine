@@ -1,18 +1,16 @@
-import { MetaCreature } from "./npc"
-import { Behavior } from "./behavior"
+import type { BehaviorType } from "./behavior"
+import { Behavior, defineBehavior } from "./behavior"
 import { BindEffect } from "../actions/bindEffect"
 import { Imperturbability } from "../effects/inperturbability";
 import { Invulnerability } from "../effects/invulnerability";
+import { defineMonster } from "./monster";
 
-let rest = new Behavior('rest', any => rest, () => ({}))
+let rest: BehaviorType = defineBehavior('Rest', function*(){ return {} })
 
-export const TrainingDummy = MetaCreature('Training Dummy', 10, rest, self => ({ resolver, actor }) => {
-    resolver.enqueueActions(new BindEffect(self, self, {
-        Effect: Invulnerability,
-        stacks: 1,
-    }))
-    resolver.enqueueActions(new BindEffect(self, self, {
-        Effect: Imperturbability,
-        stacks: 1,
-    }))
+export const TrainingDummy = defineMonster('Training Dummy', 10, () => rest, self => {
+    self.effects.push(
+        new Imperturbability(self, 1),
+        new Invulnerability(self, 1),
+    )
+    return self
 })

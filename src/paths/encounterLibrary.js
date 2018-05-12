@@ -1,21 +1,21 @@
 import { Sequence } from "../utils/random"
-import { NPC } from "../creatures/npc"
+import { MonsterWrapper } from "../creatures/monster";
 
 interface Encounter {
     challengeRating: number,
-    enemies: Class<NPC>[],
+    enemies: ((seed: Sequence<number>) => MonsterWrapper)[],
 }
 
 const encounterLibrary: Encounter[] = []
 
-export function registerEncounter(challengeRating: number, ...enemies: Class<NPC>[]){
+export function registerEncounter(challengeRating: number, ...enemies: ((seed: Sequence<number>) => MonsterWrapper)[]){
     encounterLibrary.push({
         challengeRating,
         enemies,
     })
 }
 
-export function getEncounter(level: number, seed: Sequence){
+export function getEncounter(level: number, seed: Sequence<number>){
     let encounters = encounterLibrary.filter(encounter => 
         Math.abs(encounter.challengeRating - level - 10) < (1.95 + level / 7) 
     )

@@ -1,13 +1,13 @@
 import type { CustomAction } from "./action"
 import type { ConsumerArgs } from "./listener"
-import type { NPC } from "../creatures/npc"
+import type { MonsterWrapper } from "../creatures/monster"
 import { MetaAction } from "./action"
 import { EndTurn } from "./turnActions"
 import { Sequence } from "../utils/random";
 
 interface Data {
-    enemies: NPC[],
-    seed: Sequence,
+    enemies: MonsterWrapper[],
+    seed: Sequence<number>,
 }
 
 export const setupCombat: Symbol = Symbol('setupCombat')

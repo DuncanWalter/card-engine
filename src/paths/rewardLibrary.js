@@ -1,6 +1,5 @@
 import type { State } from "../state"
 import { Sequence } from "../utils/random"
-import { NPC } from "../creatures/npc"
 import { synchronize } from "../utils/async";
 
 export interface Reward {
@@ -15,8 +14,7 @@ export interface Reward {
 const rewardLibrary: Reward[] = []
 function any(any: any): any { return any }
 
-
-export function registerReward(description: string, cost: number, collect: (self: Reward, state: State) => any, init?: (reward: Reward, level: number, seed: Sequence) => Reward){
+export function registerReward(description: string, cost: number, collect: (self: Reward, state: State) => any, init?: (reward: Reward, level: number, seed: Sequence<number>) => Reward){
     rewardLibrary.push({
         collected: true,
         cost,
@@ -28,7 +26,7 @@ export function registerReward(description: string, cost: number, collect: (self
     })
 }
 
-export function getRewards(rewardFunds: number, level: number, seed: Sequence){
+export function getRewards(rewardFunds: number, level: number, seed: Sequence<number>){
     let rewards = []
     let available = rewardLibrary
     let funds = rewardFunds

@@ -1,9 +1,9 @@
-import type { Rarity } from "./cardSet";
+import type { Rarity } from "./cardSet"
 import { CardPool, pickKey } from "./cardPool"
-import { CardSet } from "./cardSet";
-import { Sequence } from "../utils/random";
-import { Card } from "./card";
-import { Player } from "../creatures/player";
+import { CardSet } from "./cardSet"
+import { Sequence } from "../utils/random"
+import { Card } from "./card"
+import { PlayerWrapper } from "../creatures/player";
 
 type maybeCardMembership = { rarity: Rarity, color: string }
 
@@ -15,7 +15,7 @@ export const CardLibrary = {
         sets.set(set.name, set)
     },
 
-    sample(count: number, setDistro: { [set: string]: number }, rarityDistro: { [rarity: Rarity]: number }, seed: Sequence): Class<Card<>>[] {
+    sample(count: number, setDistro: { [set: string]: number }, rarityDistro: { [rarity: Rarity]: number }, seed: Sequence<number>): Class<Card<>>[] {
         let result = new Set()
         while(result.size < count){
             let set = sets.get(pickKey(setDistro, seed))
@@ -27,7 +27,7 @@ export const CardLibrary = {
     },
 
 
-    getCardMembership(player?: Player, card: Card<>): { 
+    getCardMembership(player?: PlayerWrapper, card: Card<>): { 
         color: string,
         rarity: Rarity, 
     } | void {

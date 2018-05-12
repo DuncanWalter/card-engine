@@ -14,7 +14,7 @@ export class CardStack implements Iterable<Card<any>> {
         return this.cards.length
     }
 
-    shuffle(seed: Sequence): void {
+    shuffle(seed: Sequence<number>): void {
         let swap = (a, b) => {
             let temp = this.cards[a]
             this.cards[a] = this.cards[b]

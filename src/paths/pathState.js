@@ -1,13 +1,13 @@
 import type { State } from '../state'
 import type { Reducer } from '../utils/state'
-import { NPC } from "../creatures/npc"
+import type { Monster } from "../creatures/monster";
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { getEncounter } from "./encounterLibrary"
 import { getRewards, Reward } from "./rewardLibrary"
 import { reducer } from "vitrarius"
 
-function createPath(level: number, seed: Sequence){
+function createPath(level: number, seed: Sequence<number>){
 
     let { enemies, challengeRating } = getEncounter(level, seed)
 
@@ -25,10 +25,10 @@ function createPath(level: number, seed: Sequence){
 
 interface PathState {
     level: number,
-    enemies: NPC[],
+    enemies: Monster[],
     challengeRating: number, 
     rewards: any[],
-    seed: Sequence,
+    seed: Sequence<number>,
     freedoms: PathState[],
 }
 

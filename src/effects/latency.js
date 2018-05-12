@@ -4,7 +4,7 @@ import { Listener, ConsumerArgs } from "../actions/listener";
 import { blockable } from "../actions/damage";
 import { vulnerability } from "./vulnerability";
 import { Card } from "../cards/card";
-import { Player } from "../creatures/player";
+import { PlayerWrapper } from "../creatures/player";
 import { endTurn } from "../actions/action";
 
 export const latency = Symbol('latency');

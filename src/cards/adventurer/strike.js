@@ -1,8 +1,8 @@
 import { MetaCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
+import { CreatureWrapper } from '../../creatures/creature';
 
 type StrikeData = { damage: number, energy: number }
 
@@ -19,7 +19,7 @@ export const Strike: Class<Card<StrikeData>> = MetaCard(strike, playStrike, {
 
 function* playStrike({ resolver, actors }: PlayArgs<>): Generator<any, StrikeData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof Creature){
+    if(target && target instanceof CreatureWrapper){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,

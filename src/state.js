@@ -1,7 +1,7 @@
 import type { Component } from './component'
 import { combineReducers, createStore } from "./utils/state"
 import { entityReducer, entityInitial } from "./components/entityState"
-import { battleReducer, battleInitial } from "./game/battle/battleState"
+import { battleReducer, battleInitial, emit } from "./game/battle/battleState"
 import { handReducer, handInitial } from "./game/hand/handState"
 import { pathReducer, pathInitial } from "./paths/pathState"
 import { overStream } from "./components/withAnimation"

@@ -1,5 +1,5 @@
-import { MetaCreature } from "../npc"
-import { Behavior } from "../behavior"
+import type { BehaviorType } from "../behavior"
+import { Behavior, defineBehavior, primeBehavior } from "../behavior"
 import { Damage, targeted, blockable, damage } from "../../actions/damage"
 import { Block } from "../../effects/block"
 import { BindEffect } from "../../actions/bindEffect"
@@ -8,10 +8,9 @@ import { Blockade } from "../../effects/blockade"
 import { Listener } from "../../actions/listener"
 import { Poison } from "../../effects/poison"
 import { Latency } from "../../effects/latency"
+import { defineMonster } from "../monster";
 
-let bite: Behavior, hiss: Behavior
-
-bite = new Behavior('Bite', seed => seed > 0.5 ? bite : hiss, function*({ owner, resolver, game }){
+const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, game }){
     let action: Damage = new Damage(owner, game.player, { 
         damage: 9 
     }, targeted, blockable)
@@ -34,7 +33,7 @@ bite = new Behavior('Bite', seed => seed > 0.5 ? bite : hiss, function*({ owner,
     return { damage: action.data.damage, isDebuffing: true }
 })
 
-hiss = new Behavior('Hiss', seed => seed > 0.5 ? bite : hiss, function*({ owner, resolver, game }){
+const hiss: BehaviorType = defineBehavior('Hiss', function*({ owner, resolver, game }){
     yield resolver.processAction(new BindEffect(owner, game.player, {
         Effect: Latency,
         stacks: 2,
@@ -42,4 +41,21 @@ hiss = new Behavior('Hiss', seed => seed > 0.5 ? bite : hiss, function*({ owner,
     return { isDebuffing: true }
 })
 
-export const Cobra = MetaCreature('Cobra', 30, hiss, self => ({}) => {})
+function behaviorSwitch(last, seed){
+    switch(true){
+        case last == primeBehavior:{
+            return seed.next() > 0.35 ? bite : hiss
+        }
+        case last == bite:{
+            return seed.next() > 0.35 ? hiss : bite
+        }
+        case last == hiss:{
+            return bite
+        }
+        default:{
+            return bite
+        }
+    }
+}
+
+export const Cobra = defineMonster('Cobra', 30, behaviorSwitch)

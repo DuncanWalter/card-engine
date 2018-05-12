@@ -8,6 +8,8 @@ import { Vulnerability } from '../../effects/vulnerability';
 import { Taunt } from '../../effects/taunt';
 import { SpawnCreature } from '../../actions/spawnCreature';
 import { Toad } from '../../creatures/toad/toad';
+import { Daemon as DaemonMonster } from '../../creatures/daemon/daemon'
+import { randomSequence } from '../../utils/random';
 
 type DaemonData = { energy: number }
 
@@ -24,7 +26,7 @@ export const Daemon: Class<Card<DaemonData>> = MetaCard(daemon, playDaemon, {
 function* playDaemon({ resolver, actors }: PlayArgs<>): Generator<any, DaemonData, any>{
     // TODO: query creature
     let target = yield queryEnemy(any => true)
-    yield resolver.processAction(new SpawnCreature(actors, new Toad(15), {
+    yield resolver.processAction(new SpawnCreature(actors, new DaemonMonster(randomSequence(1)), {
         isAlly: true,
     }))
     return {

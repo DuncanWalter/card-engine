@@ -5,7 +5,7 @@ import { vulnerability } from "./vulnerability"
 import { BindEffect, bindEffect } from "../actions/bindEffect"
 import { playCard, PlayCard } from "../actions/playCard"
 import { Listener } from "../actions/listener"
-import { Player } from "../creatures/player"
+import { PlayerWrapper } from "../creatures/player"
 import { endTurn } from "../actions/action"
 import { ExhaustCard } from "../actions/exhaustCard"
 import { Card } from "../cards/card";
@@ -26,7 +26,7 @@ export const Volatile: Class<Effect> = MetaEffect(volatile, {
     volatile,
     {
         // TODO: trigger on turn end discards
-        filter: action => action.subject instanceof Player,
+        filter: action => action.subject instanceof PlayerWrapper,
         type: endTurn,
     },
     function*({ actors, game, data, resolver }: ConsumerArgs<>): * {

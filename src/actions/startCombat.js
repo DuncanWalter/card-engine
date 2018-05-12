@@ -1,6 +1,5 @@
 import type { CustomAction } from "./action"
 import type { ConsumerArgs } from "./listener"
-import type { NPC } from "../creatures/npc"
 
 import { MetaAction, startCombat, startTurn } from "./action"
 import { StartTurn } from "./turnActions"

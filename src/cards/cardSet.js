@@ -31,7 +31,7 @@ export class CardSet {
         })
     }
 
-    sample(count: number, distro: { [rarity: Rarity]: number }, seed: Sequence): Class<Card<>>[] {
+    sample(count: number, distro: { [rarity: Rarity]: number }, seed: Sequence<number>): Class<Card<>>[] {
         return this.cardPool.sample(count, any(distro), seed)
     }
 

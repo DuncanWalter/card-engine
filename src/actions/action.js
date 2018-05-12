@@ -2,7 +2,6 @@ import type { ListenerGroup } from './listener'
 import type { Consumer } from './listener'
 import { Listener, reject } from './listener'
 import { ActionResolver, resolver } from './actionResolver'
-import { GameState } from '../game/battle/battleState'
 
 export const startTurn = Symbol('startTurn')
 export const startCombat = Symbol('startCombat')

@@ -1,21 +1,20 @@
-import { MetaCreature } from "../npc"
-import { Behavior } from "../behavior"
+import type { BehaviorType } from "../behavior"
+import { Behavior, defineBehavior, primeBehavior } from "../behavior"
 import { Damage, targeted, blockable } from "../../actions/damage"
 import { Block } from "../../effects/block"
 import { BindEffect } from "../../actions/bindEffect"
 import { startCombat } from "../../actions/startCombat"
 import { Blockade } from "../../effects/blockade"
+import { defineMonster } from "../monster"
 
-let chomp: Behavior, hunker: Behavior
-
-chomp = new Behavior('chomp', seed => hunker, function*({ owner, resolver, game }){
+const chomp: BehaviorType = defineBehavior('Chomp', function*({ owner, resolver, game }){
     const action: Damage = yield resolver.processAction(new Damage(self, game.player, { 
         damage: 7 
     }, targeted, blockable))
     return { damage: action.data.damage }
 })
 
-hunker = new Behavior('hunker', seed => chomp, function*({ owner, resolver, game }){
+const hunker: BehaviorType = defineBehavior('Hunker', function*({ owner, resolver, game }){
     yield resolver.processAction(new BindEffect(owner, owner, {
         Effect: Block,
         stacks: 8,
@@ -23,13 +22,28 @@ hunker = new Behavior('hunker', seed => chomp, function*({ owner, resolver, game
     return { isDefending: true }
 })
 
-export const Turtle = MetaCreature('turtle', 15, chomp, self => ({ resolver, actor }) => {
-    resolver.enqueueActions(new BindEffect(self, self, {
-        Effect: Blockade,
-        stacks: 1,
-    }))
-    resolver.enqueueActions(new BindEffect(self, self, {
-        Effect: Block,
-        stacks: 25,
-    }))
+function behaviorSwitch(last, seed){
+    switch(true){
+        case last == primeBehavior:{
+            return seed.next() > 0.35 ? chomp : hunker
+        }
+        case last == chomp:{
+            return seed.next() > 0.35 ? hunker : chomp
+        }
+        case last == hunker:{
+            return chomp
+        }
+        default:{
+            return chomp
+        }
+    }
+}
+
+// TODO: unify all ids
+export const Turtle = defineMonster('Turtle', 15, behaviorSwitch, (self, seed) => { 
+    self.effects.push(
+        new Blockade(self, 1),
+        new Block(self, 25),
+    )
+    return self
 })

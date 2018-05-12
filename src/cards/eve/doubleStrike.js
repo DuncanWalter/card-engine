@@ -1,7 +1,7 @@
 import { MetaCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { Creature } from '../../creatures/creature'
+import { CreatureWrapper } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 
 type DoubleStrikeData = { damage: number, energy: number }
@@ -19,7 +19,7 @@ export const DoubleStrike: Class<Card<DoubleStrikeData>> = MetaCard(doubleStrike
 
 function* playDoubleStrike({ resolver, actors }: PlayArgs<>): Generator<any, DoubleStrikeData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof Creature){
+    if(target && target instanceof CreatureWrapper){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,

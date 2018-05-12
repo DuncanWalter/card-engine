@@ -3,7 +3,7 @@ import { Damage, damage, targeted, blockable } from './../../actions/damage'
 import { Listener } from '../../actions/listener'
 import { BindEffect } from '../../actions/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
-import { Creature } from '../../creatures/creature'
+import { CreatureWrapper } from '../../creatures/creature'
 import { queryEnemy } from '../utils'
 
 type CheapShotData = { damage: number, energy: number, vulnerability: number }
@@ -22,7 +22,7 @@ export const CheapShot: Class<Card<CheapShotData>> = MetaCard(cheapShot, playChe
 
 function* playCheapShot({ resolver, actors }: PlayArgs<>): Generator<any, CheapShotData, any> {
     let target = yield queryEnemy(any => true)
-    if(target instanceof Creature){
+    if(target instanceof CreatureWrapper){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors, 

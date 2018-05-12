@@ -4,7 +4,7 @@ import type { Action } from './../actions/action'
 import type { Component } from '../component'
 import { PlayCard } from '../actions/playCard'
 import { synchronize } from '../utils/async'
-import { GameState } from "../game/battle/battleState"
+import { Game } from "../game/battle/battleState"
 import { resolver } from "../actions/actionResolver"
 import { Effect } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
@@ -31,7 +31,7 @@ export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
     subject: Card<any>,
     target: T,
     resolver: ActionResolver,
-    game: $ReadOnly<GameState>,
+    game: $ReadOnly<Game>,
 }
 
 // TODO: play args should have data and use another type argument

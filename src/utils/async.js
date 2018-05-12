@@ -55,19 +55,19 @@ function next<R, B>(gen: Generator<Promise<B>, R, B>, resolve: (v: R) => void, p
 
 type Synchronize = ((any[]) => Generator<any, any, any>) => (any[]) => Promise<any>
 
-type Fn<A, R> = ((a: A) => Promise<R>) | ((a: A) => Generator<Promise<any>, R, any>)
+type Fn<A1, A2, R> = ((a: A1, b: A2) => Promise<R>) | ((a: A1, b: A2) => Generator<Promise<any>, R, any>)
 
 
 // TODO: is there a way to make this express the stuff fully?
-export function synchronize<A, R>(fun: Fn<A, R>, self?: any): (a: A) => Promise<R> {    
-    // $FlowFixMe
-    return (...args: A) => {
+export function synchronize<A1, A2, R>(fun: Fn<A1, A2, R>, self?: any): (a: A1, b: A2) => Promise<R> {    
+    // $FlowFixM
+    return (a: A1, b: A2) => {
         // new Promise(resolve => {
         if(fun instanceof GeneratorFunction){
-            return new SyncPromise(resolve => next(fun.call(self, ...args), resolve))
+            return new SyncPromise(resolve => next(fun.call(self, a, b), resolve))
         } else {
             // $FlowFixMe
-            return new SyncPromise(resolve => resolve(fun.call(self, ...args)))
+            return new SyncPromise(resolve => resolve(fun.call(self, a, b)))
         }
     }
 }

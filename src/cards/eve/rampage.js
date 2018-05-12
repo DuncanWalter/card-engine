@@ -1,7 +1,7 @@
 import { MetaCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { Creature } from '../../creatures/creature'
+import { CreatureWrapper } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { DrawCards } from '../../actions/drawCards'
 import { MetaEffect } from '../../effects/effect'
@@ -37,8 +37,7 @@ let RampageStacks = MetaEffect(rampageSymbol, null, {
 
 function* playRampage({ resolver, actors }: PlayArgs<>): Generator<any, RampageData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof Creature){
-        console.log('times played', this.stacksOf(rampageSymbol), this.effects[0] && this.effects[0].id == rampageSymbol)
+    if(target && target instanceof CreatureWrapper){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,

@@ -4,7 +4,7 @@ import { Listener, ConsumerArgs } from '../../actions/listener'
 import { BindEffect } from '../../actions/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
 import { block } from '../../effects/block'
-import { Creature } from '../../creatures/creature'
+import { CreatureWrapper } from '../../creatures/creature'
 import { Poison } from '../../effects/poison'
 import { queryEnemy } from '../utils';
 
@@ -26,7 +26,7 @@ export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
 
 function* playAcid({ resolver, actors }: PlayArgs<>): * {
     let target = yield queryEnemy(any => true)
-    if(target instanceof Creature){
+    if(target instanceof CreatureWrapper){
         const action: Damage = new Damage(
             actors, 
             target,

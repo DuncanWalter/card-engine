@@ -2,8 +2,6 @@ import type { CustomAction } from "./action"
 import type { Card } from "../cards/card";
 import { MetaAction } from "./action"
 import { Creature } from "../creatures/creature"
-import { Player } from "../creatures/player"
-import { NPC } from "../creatures/npc"
 import { ConsumerArgs } from "./listener";
 import { ReclaimDiscardPile } from "./reclaimDiscardPile";
 import { AddToDiscardPile } from "./addToDiscard";

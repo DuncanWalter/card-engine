@@ -1,22 +1,23 @@
 import type { Component } from '../component'
-import type { Creature } from './creature'
+import type { CreatureWrapper } from './creature'
 import type { State } from '../state'
 import { renderEffect as Effect } from '../effects/renderEffect'
 import { renderBehavior as Behavior, Behavior as BehaviorT } from './behavior'
 import { Entity } from '../components/entity'
 import { resolver } from '../actions/actionResolver'
-import { NPC } from './npc';
 import { withState } from '../state';
+import { MonsterWrapper } from './monster';
 
 type Props = { 
-    creature: Creature,
+    creature: CreatureWrapper<>,
     isEnemy: boolean,
     state: State,
 }
 
 export const renderCreature: Component<Props> = withState(({ isEnemy, creature, state }: Props) => {
     
-    const { health, maxHealth, color } = creature
+    const { health, inner } = creature
+    const { maxHealth } = inner
 
     // TODO: put the block indicator back in
     // const maybeBlock = creature.effects.filter(e => e.id == blockSymbol)[0]
@@ -24,8 +25,8 @@ export const renderCreature: Component<Props> = withState(({ isEnemy, creature, 
 
     let behaviors: BehaviorT[] = []
     // TODO: previously used instanceof NPC
-    if(creature instanceof NPC){
-        behaviors.push(creature.behavior)
+    if(creature instanceof MonsterWrapper){
+        behaviors.push(creature.inner.data.behavior)
     }
     
     // TODO: display enemy intent
@@ -37,7 +38,7 @@ export const renderCreature: Component<Props> = withState(({ isEnemy, creature, 
                     <Behavior data={ b.simulate(creature, resolver, state.battle) }/>
                 )
             }</div>
-            <div style={{ backgroundColor: color, ...sty.img }}/>
+            <div style={{ backgroundColor: '#7777cc', ...sty.img }}/>
             <div style={sty.healthBar}>
                 <div style={ sty.healthBarFill (health, block, maxHealth) }/>
                 <div style={ sty.healthBarEmpty(health, block, maxHealth) }/>
