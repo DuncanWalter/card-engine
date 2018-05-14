@@ -107,10 +107,12 @@ export const engine = new Module('engine', ({ global, next }) => {
     let cachedGameState = state.battle
     let cachedGame: Game = liftState(cachedGameState)
 
+
     resolver.initialize({
         getGame(): Game {
             if(state.battle != cachedGameState){
                 cachedGameState = state.battle
+                // TODO: is it better to not lift state?
                 cachedGame = liftState(cachedGameState)
             }
             return cachedGame

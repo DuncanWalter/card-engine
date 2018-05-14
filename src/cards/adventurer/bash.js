@@ -1,15 +1,15 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, damage, targeted, blockable } from './../../actions/damage'
 import { Listener } from '../../actions/listener'
 import { BindEffect } from '../../actions/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
-import { CreatureWrapper } from '../../creatures/creature'
+import { Creature } from '../../creatures/creature'
 import { queryEnemy } from '../utils'
 
 type BashData = { damage: number, energy: number }
 
 export const bash = 'bash'
-export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
+export const Bash: () => Card<BashData> = defineCard(bash, playBash, {
     damage: 8,
     energy: 2,
 }, {
@@ -21,28 +21,28 @@ export const Bash: Class<Card<BashData>> = MetaCard(bash, playBash, {
 
 
 // TODO: the bash vulnerability should be a default listener on the damage action
-function* playBash({ resolver, actors }: PlayArgs<>): Generator<any, BashData, any> {
+function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs<>){
     let target = yield queryEnemy(any => true)
-    if(target instanceof CreatureWrapper){
+    if(target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors, 
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted,
                 blockable,
             ),
         )
         // TODO: should be an on damage listener?
-        yield resolver.processAction(new BindEffect(this, target, {
+        yield resolver.processAction(new BindEffect(self, target, {
             Effect: Vulnerability,
             stacks: 2,
         }, blockable))
-        return { damage: action.data.damage, energy: this.data.energy }
+        return { damage: action.data.damage, energy: self.data.energy }
     } else {
-        return this.data
+        return self.data
     }
 }
 

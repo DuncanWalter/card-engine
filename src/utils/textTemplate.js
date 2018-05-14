@@ -2,8 +2,8 @@
 let syntaxes = [
     [/([^#]+)/, (data, text) => text], 
     [/#{([^}#]*)}/, (data, sub) => data[sub]],
-    [/#\[([^}#]*)]/, (data, sub) => <b>{sub}</b>],
-    [/#<([^}#]*)>/, (data, icon) => <ico class={`fa ${icon}`}></ico>],
+    [/#\[([^\]#]*)]/, (data, sub) => <b>{sub}</b>],
+    [/#<([^>#]*)>/, (data, icon) => <ico class={`fa ${icon}`}></ico>],
     // [/{\[(.*)]}/, data => keyword => <i>{keyword}</i>],
     // [/{(.+)#(.*)#}/, data => (color, text) => <p style={{color}}>{text}</p>],
 ]

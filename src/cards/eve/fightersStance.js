@@ -1,4 +1,4 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../actions/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -7,10 +7,10 @@ import { AddToHand } from '../../actions/addToHand';
 import { Jab } from './jab';
 
 
-type FightersStanceData = { block: number, energy: number }
+type FightersStanceData = { block: number, energy: number, jabs: number }
 
 export const fightersStance = 'fightersStance'
-export const FightersStance: Class<Card<FightersStanceData>> = MetaCard(fightersStance, playFightersStance, {
+export const FightersStance: () => Card<FightersStanceData> = defineCard(fightersStance, playFightersStance, {
     block: 6,
     energy: 1,
     jabs: 1,
@@ -21,22 +21,22 @@ export const FightersStance: Class<Card<FightersStanceData>> = MetaCard(fighters
     textTemplate: 'Gain #{block} block. Add #{jabs} copies of Jab to your hand.',
 })
 
-function* playFightersStance({ actors, game, resolver }: PlayArgs<>): Generator<any, FightersStanceData, any> {
+function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver }: PlayArgs<>): Generator<any, FightersStanceData, any> {
     const action: BindEffect = yield resolver.processAction(
         new BindEffect(
             actors, 
             game.player,
             {
                 Effect: Block,
-                stacks: this.data.block,
+                stacks: self.data.block,
             },
             block,
             targeted,
         ),
     )
-    let i = this.data.jabs
+    let i = self.data.jabs
     while(i-- > 0){
         yield resolver.processAction(new AddToHand(actors, new Jab(), {}))
     }
-    return { block: action.data.stacks, energy: this.data.energy }
+    return { block: action.data.stacks, energy: self.data.energy, jabs: self.data.jabs }
 }

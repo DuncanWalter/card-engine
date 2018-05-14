@@ -1,47 +1,63 @@
 import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
 import type { BehaviorType } from "./behavior"
 import type { Game } from "../game/battle/battleState"
-import { Creature, CreatureWrapper, creatureIds } from "./creature"
-import { Behavior, BehaviorWrapper } from "./behavior"
+import { CreatureState, Creature } from "./creature"
+import { BehaviorState, Behavior, primeBehavior } from "./behavior"
 import { startCombat } from "../actions/action"
 import { Listener } from "../actions/listener"
 import { synchronize, SyncPromise } from "../utils/async"
 import { ActionResolver, resolver } from "../actions/actionResolver"
 import { Sequence, randomSequence } from "../utils/random";
-import { deepMixin } from "../utils/deepMixin"
 
 interface MonsterData {
-    behavior: Behavior<>,
-    seed: number,
+    behavior: BehaviorState,
 }
 
-export type Monster = Creature<MonsterData>
+export type MonsterState = CreatureState<MonsterData>
 
-export class MonsterWrapper extends CreatureWrapper {
+const definedMonsters: Map<string, (last: BehaviorType, seed: Sequence<number>, owner: Monster) => BehaviorType> = new Map()
+
+
+export class Monster extends Creature<MonsterData> {
+
+    get behavior(): Behavior {
+        return new Behavior(this.inner.data.behavior)
+    }
+    set behavior(behavior: Behavior){
+        this.inner.data.behavior = behavior.unwrap()
+    }
+
+    seed: Sequence<number>
 
     takeTurn(resolver: ActionResolver, game: $ReadOnly<Game>): Promise<void> {
         
-        let self = this.inner
+        let self = this
         
-        // TODO: this kw is evil for types...
         return synchronize(function*(): * {
-            yield self.data.behavior.perform({ owner: self, resolver, game })
-            self.data.behavior = self.data.behavior.next(self)
+            yield self.behavior.perform({ owner: self, resolver, game })
+            const getBehavior = definedMonsters.get(self.behavior.type)
+            if(getBehavior){
+                self.behavior = new Behavior({
+                    type: getBehavior(self.behavior.type, self.seed, self),
+                    name: 'CURRENTlY NAMELESS', // TODO:  
+                    
+                })
+            }
         })()
     }
 
-    constructor(representation: Monster){
-        super(representation)
+    constructor(state: MonsterState){
+        super(state)
     }
+    
 }
 
-const definedMonsters: Map<string, (last: BehaviorType, seed: Sequence<number>, owner: MonsterWrapper) => BehaviorType> = new Map()
 
 export function defineMonster(
     name: string,
     health: number, 
-    behavior: (last: BehaviorType, seed: Sequence<number>, owner: MonsterWrapper) => BehaviorType, 
-    onCreate?: (self: MonsterWrapper, seed: Sequence<number>) => MonsterWrapper,
+    behavior: (last: BehaviorType, seed: Sequence<number>, owner: Monster) => BehaviorType, 
+    onCreate?: (self: Monster, seed: Sequence<number>) => Monster,
 ){
 
     if(!definedMonsters.get(name)){
@@ -50,21 +66,23 @@ export function defineMonster(
         throw new Error(`MonsterType collision on ${name}.`)
     }
 
-    return (seed: Sequence<number>) => {
-        const base: Creature<> = { 
-            id: creatureIds.next().value || '',
+    return function(seed: Sequence<number>){
+        const base: CreatureState<> = { 
             type: name, 
             health,
             maxHealth: health,
             effects: [],
+            seed: seed.next(),
             data: {
                 behavior: {
-                    type: 'PRIME_BEHAVIOR',
+                    type: primeBehavior,
+                    name: 'NAN',
                 },
-                seed: 0,
             },
         }
-        return onCreate? onCreate(new MonsterWrapper(base), seed): new MonsterWrapper(base)
+        let self = onCreate? onCreate(new Monster(base), seed): new Monster(base)
+        self.takeTurn(resolver, resolver.state.getGame())
+        return self
     }
 }
 

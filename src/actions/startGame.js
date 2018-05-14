@@ -1,6 +1,6 @@
 import type { CustomAction } from "./action"
 import { MetaAction } from "./action"
-import { PlayerWrapper } from "../creatures/player"
+import { Player } from "../creatures/player"
 import { CardLibrary } from "../cards/cardLibrary"
 import { ConsumerArgs } from "./listener"
 import { TrainingDummy } from "../creatures/trainingDummy"
@@ -9,23 +9,21 @@ import { startPath, generateFreedoms } from "../paths/pathState"
 import { Sequence, randomSequence } from "../utils/random"
 import { Strike } from "../cards/adventurer/strike";
 import { Defend } from "../cards/adventurer/defend";
-import { creatureIds } from "../creatures/creature";
-import { MonsterWrapper } from "../creatures/monster";
+import { Monster } from "../creatures/monster";
+import { Card } from "../cards/card";
 
-// <{ loadFile?: string }> // TODO: data for card pool selection etc
 export const startGame: Symbol = Symbol('startGame')
 export const StartGame: CustomAction<{ seed: number, character: string[] }> = MetaAction(startGame, ({ resolver, game, data }: ConsumerArgs<{ seed: number, character: string[] }>): void => {
     
     let seed = randomSequence(data.seed * Math.random())
 
-    // TODO: set up the training dummy
     game.dummy = new TrainingDummy(randomSequence(1))
-    game.player = new PlayerWrapper({
-        type: '',
-        id: creatureIds.next().value || '',
+    game.player = new Player({
+        type: 'Player',
         health: 65,
         maxHealth: 65,
         effects: [],
+        seed: data.seed,
         data: {
             energy: 3,
             isActive: true,
@@ -57,9 +55,7 @@ export const StartGame: CustomAction<{ seed: number, character: string[] }> = Me
     cards = CardLibrary.sample(5, data.character.reduce((acc, set) => {
         acc[set] = 1.0
         return acc
-    }, {
-        Adventurer: 0.5,
-    }), {
+    }, { Adventurer: 0.5 }), {
         F: 0.9,
         D: 0.5,
         C: 0.3,
@@ -70,5 +66,7 @@ export const StartGame: CustomAction<{ seed: number, character: string[] }> = Me
 
     startPath(dispatch, data.seed)
     generateFreedoms(dispatch)
+
+    console.log(game)
 
 })

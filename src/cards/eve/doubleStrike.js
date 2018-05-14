@@ -1,13 +1,13 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { CreatureWrapper } from '../../creatures/creature'
+import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 
 type DoubleStrikeData = { damage: number, energy: number }
 
 export const doubleStrike = 'doubleStrike'
-export const DoubleStrike: Class<Card<DoubleStrikeData>> = MetaCard(doubleStrike, playDoubleStrike, {
+export const DoubleStrike: () => Card<DoubleStrikeData> = defineCard(doubleStrike, playDoubleStrike, {
     energy: 1,
     damage: 5,
 }, {
@@ -17,15 +17,15 @@ export const DoubleStrike: Class<Card<DoubleStrikeData>> = MetaCard(doubleStrike
     textTemplate: 'Deal #{damage} damage to an enemy twice.',
 })
 
-function* playDoubleStrike({ resolver, actors }: PlayArgs<>): Generator<any, DoubleStrikeData, any>{
+function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors }: PlayArgs<>): Generator<any, DoubleStrikeData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof CreatureWrapper){
+    if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted, 
                 blockable,
@@ -36,14 +36,14 @@ function* playDoubleStrike({ resolver, actors }: PlayArgs<>): Generator<any, Dou
                 actors,
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted, 
                 blockable,
             ),
         )
-        return { damage: action.data.damage, energy: this.data.energy }
+        return { damage: action.data.damage, energy: self.data.energy }
     } else {
-        return this.data
+        return self.data
     }
 }

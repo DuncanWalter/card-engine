@@ -1,4 +1,5 @@
-import { Creature, CreatureWrapper } from "./creature"
+import { CreatureState, Creature } from "./creature"
+import { Sequence, randomSequence } from "../utils/random";
 
 interface PlayerData {
     energy: number,
@@ -6,9 +7,9 @@ interface PlayerData {
     sets: string[],
 }
 
-export type Player = Creature<PlayerData>
+export type PlayerState = CreatureState<PlayerData>
 
-export class PlayerWrapper extends CreatureWrapper<PlayerData> {
+export class Player extends Creature<PlayerData> {
 
     set energy(value: number){
         this.inner.data.energy = Math.floor(Math.max(0, Math.min(999, value)))
@@ -18,9 +19,10 @@ export class PlayerWrapper extends CreatureWrapper<PlayerData> {
         return this.inner.data.energy
     }
 
-    constructor(representation: Player){
-        super(representation)
+    constructor(state: PlayerState){
+        super(state)
     }
+
 }
 
 

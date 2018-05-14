@@ -1,10 +1,10 @@
 import type { Card } from '../cards/card'
 import type { CustomAction } from './action'
+import type { CardStack } from '../cards/cardStack';
 import { Creature } from '../creatures/creature'
 import { Action, MetaAction } from './action'
-import { PlayerWrapper } from '../creatures/player'
+import { Player } from '../creatures/player'
 import { ConsumerArgs } from './listener';
-import { CardStack } from '../cards/cardStack';
 import { BindEnergy } from './bindEnergy';
 import { AddToDiscardPile } from './addToDiscard';
 
@@ -13,7 +13,7 @@ type Data = {
 }
 
 export const playCard: Symbol = Symbol('playCard')
-export const PlayCard: CustomAction<Data, Card<>, PlayerWrapper> = MetaAction(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Data>): * { 
+export const PlayCard: CustomAction<Data, Card<>, Player> = MetaAction(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Data>): * { 
 
     if(game.player.energy < subject.data.energy){
         return cancel()

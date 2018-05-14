@@ -3,7 +3,7 @@ import { CardPool, pickKey } from "./cardPool"
 import { CardSet } from "./cardSet"
 import { Sequence } from "../utils/random"
 import { Card } from "./card"
-import { PlayerWrapper } from "../creatures/player";
+import { Player } from "../creatures/player";
 
 type maybeCardMembership = { rarity: Rarity, color: string }
 
@@ -15,7 +15,7 @@ export const CardLibrary = {
         sets.set(set.name, set)
     },
 
-    sample(count: number, setDistro: { [set: string]: number }, rarityDistro: { [rarity: Rarity]: number }, seed: Sequence<number>): Class<Card<>>[] {
+    sample(count: number, setDistro: { [set: string]: number }, rarityDistro: { [rarity: Rarity]: number }, seed: Sequence<number>): (() => Card<>)[] {
         let result = new Set()
         while(result.size < count){
             let set = sets.get(pickKey(setDistro, seed))
@@ -27,31 +27,29 @@ export const CardLibrary = {
     },
 
 
-    getCardMembership(player?: PlayerWrapper, card: Card<>): { 
-        color: string,
-        rarity: Rarity, 
-    } | void {
+    // getCardMembership(player?: Player, card: Card<>): { 
+    //     color: string,
+    //     rarity: Rarity, 
+    // } | void {
 
-        if(!player){
-            // $FlowFixMe
-            return [...sets.values()].reduce((acc, set) => {
-                // $FlowFixMe
-                return set.members.get(card.constructor) || acc
-            }, undefined)
-        } else {
-            // $FlowFixMe
-            return player.sets.reduce((acc, name: string) => {
-                let set = sets.get(name)
-                if(set){
-                    return set.members.get(card.constructor) || acc
-                } else {
-                    return acc
-                }
-            }, undefined)
-        }
-
-        
-    }
+    //     if(!player){
+    //         // $FlowFixMe
+    //         return [...sets.values()].reduce((acc, set) => {
+    //             // $FlowFixMe
+    //             return set.members.get(card.constructor) || acc
+    //         }, undefined)
+    //     } else {
+    //         // $FlowFixMe
+    //         return player.inner.data.sets.reduce((acc, name: string) => {
+    //             let set = sets.get(name)
+    //             if(set){
+    //                 return set.members.get(card.constructor) || acc
+    //             } else {
+    //                 return acc
+    //             }
+    //         }, undefined)
+    //     }
+    // }
 
 
 }

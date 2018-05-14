@@ -195,7 +195,6 @@ function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
 const processAction = synchronize(function* processAction(self: ActionResolver, action: Action<>): Generator<any, Action<>, any> {
     let game = self.state.getGame()    
     
-    
     let activeListeners: LL<Listener<>> = aggregate([
         game.player,
         game.enemies,
@@ -212,7 +211,7 @@ const processAction = synchronize(function* processAction(self: ActionResolver, 
     })
 
     if(!self.simulating){ 
-        console.log(action.id, action.data, activeListeners.toArray().length, self.actionQueue.toArray()) 
+        console.log(action.id, action, game) 
     }
 
     activeListeners = applyInternals(activeListeners)

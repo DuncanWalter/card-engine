@@ -4,7 +4,7 @@ import { renderCreature as Creature } from '../../creatures/renderCreature'
 import { EndTurn } from '../../actions/turnActions'
 import { Card } from '../../cards/card'
 import { resolver } from '../../actions/actionResolver'
-import { Button, Row, Col, Block, Frame } from '../../utility'
+import { Button, Row, Col, Block, Frame, Shim } from '../../utility'
 import { stream, withState } from '../../state';
 import { withAnimation, overStream } from '../../components/withAnimation';
 
@@ -12,7 +12,7 @@ const unit = <div style={{ flex: 1 }}/>
 
 export const Battle = withState(({ state }) => {
 
-    let battle = state.battle
+    let battle = resolver.state.getGame()
     
     return <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch' }}>        
 
@@ -29,7 +29,7 @@ export const Battle = withState(({ state }) => {
 
         <Row shim>
             <div class='col' style={{ flex: 2, textAlign: 'center' }}>
-                <div>Energy: {battle.player.energy}/{battle.player.maxEnergy}</div>
+                <div>Energy: {battle.player.energy}</div>
                 <div>Draw Pile: {battle.drawPile.size}</div>
                 <div>Hand Size: {battle.hand.size}/10</div>
             </div>
@@ -42,9 +42,9 @@ export const Battle = withState(({ state }) => {
         </Row>
 
         <div style={{ height: 0, display: 'flex', flexDirection: 'row' }}>
-            <div style={{ flex: 1 }}/>
+            <Shim/>            
             <Hand/>
-            <div style={{ flex: 1 }}/>
+            <Shim/>        
         </div>
     </div>
 })
@@ -59,8 +59,8 @@ const sty = {
 }
 
 function tryEndTurn(battle){
-    if(battle.player.isActive){
-        battle.player.isActive = false
+    if(battle.player.inner.data.isActive){
+        battle.player.inner.data.isActive = false
         resolver.enqueueActions(new EndTurn({}, battle.player, {}))
     }
 }

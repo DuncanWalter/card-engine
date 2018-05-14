@@ -22,7 +22,7 @@ export const Hand: Component<*> = withState(withAnimation(({ state, delta, isNew
                     style={{ zIndex: isFocus? 3: 'auto' }}
                 >
                     <CenterPoint content={
-                        <Card glow={ isFocus } card={ slot.card }/>
+                        <Card glow={ isFocus } card={ new CardObject(slot.card) }/>
                     }/>
                 </Transform>
             }),

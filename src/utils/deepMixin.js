@@ -1,4 +1,4 @@
-export function deepMixin(a: mixed, b: mixed){
+/* export function deepMixin(a: mixed, b: mixed){
     switch(true){
         case Array.isArray(a) && Array.isArray(b):{
             return [...new Set(...a, ...b)]
@@ -13,4 +13,4 @@ export function deepMixin(a: mixed, b: mixed){
             return b
         }
     }
-}
+} */

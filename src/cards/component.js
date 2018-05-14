@@ -162,6 +162,7 @@ import type { Component } from '../component'
 import type { Rarity } from './cardSet';
 import type { Card as CardObject } from './card'
 import type { State } from '../state';
+import type { Game } from '../game/battle/battleState'
 import { Entity } from '../components/entity'
 import { resolver } from '../actions/actionResolver'
 import { PlayCard } from '../actions/playCard'
@@ -169,7 +170,6 @@ import { renderEffect as EffectComponent } from '../effects/renderEffect'
 import { withState } from '../state';
 import { CardLibrary } from './cardLibrary';
 import styled from 'styled-components';
-import { systemPreferences } from 'electron';
 
 interface Props {
     card: CardObject<>,
@@ -308,36 +308,36 @@ const CardRarity = styled.div`
     border-radius: 10px;
 `
 
-
-
 export const Card: Component<Props> = withState(({ card, state, glow }) => {
 
+    const game: Game = resolver.state.getGame()
+ 
     const actors = new Set()
-    actors.add(state.battle.player)
+    actors.add(game.player)
     actors.add(card)
 
     // TODO: need to rework the energy part to check for price and playability 
     let { energy, color, text, title } = card.simulate({
         actors,
         subject: card,
-        target: state.battle.dummy, 
-        resolver: resolver,
+        target: game.dummy, 
+        resolver,
         data: card.data,
-        game: state.battle,
+        game,
     })
 
     // TODO: get the color fade for multiple ownerships
-    let cardMembership = CardLibrary.getCardMembership(state.battle.player, card)
+    let cardMembership = undefined // CardLibrary.getCardMembership(game.player, card)
     let membership = cardMembership || { rarity: 'F', color: '#353542' }
 
     const clicked = e => {
         // use a dispatch and a display state TODO:
         resolver.enqueueActions(
             new PlayCard(
-                state.battle.player, 
+                game.player, 
                 card,
                 {
-                    from: state.battle.hand,
+                    from: game.hand,
                 }
             )
         )

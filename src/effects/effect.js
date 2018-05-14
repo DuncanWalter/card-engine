@@ -1,5 +1,5 @@
 import type { ListenerGroup } from "../actions/listener"
-import type { CreatureWrapper } from "../creatures/creature"
+import type { Creature } from "../creatures/creature"
 import type { Component } from "../component"
 import type { Card } from "../cards/card"
 import { Listener, ConsumerArgs } from "../actions/listener"
@@ -34,10 +34,10 @@ export class Effect {
     id: Symbol
     turnDelta: number
     listener: ListenerGroup
-    owner: CreatureWrapper<> | Card<>
+    owner: Creature<> | Card<>
     appearance: Appearance | void | null
 
-    constructor(owner: CreatureWrapper<> | Card<>, stacks: number){
+    constructor(owner: Creature<> | Card<>, stacks: number){
         /*/ NO OP /*/
     }
 }
@@ -50,7 +50,7 @@ export const MetaEffect = function MetaEffect(
     id: Symbol,
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
-    listener: (owner: CreatureWrapper<> | Card<>, self: Effect) => Listener<>,
+    listener: (owner: Creature<> | Card<>, self: Effect) => Listener<>,
     parents: Symbol[],
     children: Symbol[],
 
@@ -83,7 +83,7 @@ export const MetaEffect = function MetaEffect(
         id: Symbol = id
         stacked: boolean = stackBehavior.stacked
 
-        constructor(owner: CreatureWrapper<> | Card<any>, stacks: number){
+        constructor(owner: Creature<> | Card<any>, stacks: number){
             super(owner, stacks)
             this.listener = [ 
                 turnListener(CustomEffect, owner, this), 

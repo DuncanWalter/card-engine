@@ -1,14 +1,14 @@
 import { Sequence } from "../utils/random"
-import { MonsterWrapper } from "../creatures/monster";
+import { Monster } from "../creatures/monster"
 
 interface Encounter {
     challengeRating: number,
-    enemies: ((seed: Sequence<number>) => MonsterWrapper)[],
+    enemies: ((seed: Sequence<number>) => Monster)[],
 }
 
 const encounterLibrary: Encounter[] = []
 
-export function registerEncounter(challengeRating: number, ...enemies: ((seed: Sequence<number>) => MonsterWrapper)[]){
+export function registerEncounter(challengeRating: number, ...enemies: ((seed: Sequence<number>) => Monster)[]){
     encounterLibrary.push({
         challengeRating,
         enemies,
@@ -22,6 +22,6 @@ export function getEncounter(level: number, seed: Sequence<number>){
     let encounter = encounters[Math.floor(seed.next() * encounters.length)]
     return {
         challengeRating: encounter.challengeRating,
-        enemies: encounter.enemies.map(NPC => new NPC(500)),
+        enemies: encounter.enemies.map(Monster => new Monster(seed)),
     }
 }

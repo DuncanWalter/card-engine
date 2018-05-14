@@ -2,6 +2,7 @@ import type { Action } from "./action"
 import type { ActionResolver } from "./actionResolver"
 import type { Game } from "../game/battle/battleState"
 import { synchronize } from "../utils/async"
+import { Entity } from "../utils/entity";
 
 export type Header<ActionType=Action<>> = {
     actors?: any[],
@@ -15,7 +16,7 @@ export type ListenerGroup = Listener<>
                           | Iterable<ListenerGroup> 
                           | { listener: ListenerGroup }
 
-export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
+export interface ConsumerArgs<Data=any, Subject:Entity<any>=any, Actor:Set<Entity<any>>=any> {
     data: Data,
     subject: Subject,
     actors: Set<Actor>,
@@ -27,13 +28,13 @@ export interface ConsumerArgs<Data=any, Subject=any, Actor=any> {
     internal: () => Promise<void>,
 }
 
-export type Consumer<Data=any, Subject=any, Actor=any> = (
+export type Consumer<Data=any, Subject:Entity<any>=any, Actor:Set<Entity<any>>=any> = (
     (args: ConsumerArgs<Data, Subject, Actor>) => void
 )|(
     (args: ConsumerArgs<Data, Subject, Actor>) => Generator<Promise<any>, void, any>
 )
 
-export class Listener<Data=any, Subject=any, Actor=any>{
+export class Listener<Data=any, Subject:Entity<any>=any, Actor:Set<Entity<any>>=any>{
 
     id: Symbol
     internal: Symbol

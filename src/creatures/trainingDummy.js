@@ -1,5 +1,5 @@
 import type { BehaviorType } from "./behavior"
-import { Behavior, defineBehavior } from "./behavior"
+import { defineBehavior } from "./behavior"
 import { BindEffect } from "../actions/bindEffect"
 import { Imperturbability } from "../effects/inperturbability";
 import { Invulnerability } from "../effects/invulnerability";

@@ -19,18 +19,16 @@ export function pickKey(distro: { [string]: number }, seed: Sequence<number>): s
 export class CardPool {
     
     name: string
-    cards: Map<string, Class<Card<>>[]>
+    cards: Map<string, (() => Card<>)[]>
     color: string
     pairings: { [key: string]: string }
 
-    
-
-    sample(count: number, distro: { [key: string]: number }, seed: Sequence<number>): Class<Card<>>[] {
+    sample(count: number, distro: { [key: string]: number }, seed: Sequence<number>): (() => Card<>)[] {
         let result = new Set()
         while(result.size < count){
             let stack = this.cards.get(pickKey(distro, seed))
             if(stack){
-                let card = sampleArray(stack,seed)
+                let card = sampleArray(stack, seed)
                 if(card){
                     result.add(card)
                 }
@@ -39,7 +37,7 @@ export class CardPool {
         return [...result]
     }
 
-    add(catagory: string, card: Class<Card<>>){
+    add(catagory: string, card: () => Card<>){
         let cardCategory = this.cards.get(catagory)
         if(cardCategory){
             cardCategory.push(card)
@@ -48,7 +46,7 @@ export class CardPool {
         }
     }
 
-    members(): Iterable<Class<Card<>>>{
+    members(): Iterable< () => Card<> >{
         let cards = this.cards
         return (function*(){
             for(let cardList of cards.values()){

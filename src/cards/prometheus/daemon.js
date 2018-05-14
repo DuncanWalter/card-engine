@@ -1,4 +1,4 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
@@ -14,7 +14,7 @@ import { randomSequence } from '../../utils/random';
 type DaemonData = { energy: number }
 
 export const daemon = 'daemon'
-export const Daemon: Class<Card<DaemonData>> = MetaCard(daemon, playDaemon, {
+export const Daemon: () => Card<DaemonData> = defineCard(daemon, playDaemon, {
     energy: 0,
 }, {
     energyTemplate: '#{energy}',
@@ -23,13 +23,13 @@ export const Daemon: Class<Card<DaemonData>> = MetaCard(daemon, playDaemon, {
     textTemplate: 'Spawn a Daemon.',
 })
 
-function* playDaemon({ resolver, actors }: PlayArgs<>): Generator<any, DaemonData, any>{
+function* playDaemon(self: Card<DaemonData>, { resolver, actors }: PlayArgs<>): Generator<any, DaemonData, any>{
     // TODO: query creature
     let target = yield queryEnemy(any => true)
     yield resolver.processAction(new SpawnCreature(actors, new DaemonMonster(randomSequence(1)), {
         isAlly: true,
     }))
     return {
-        energy: this.data.energy,
+        energy: self.data.energy,
     }
 }

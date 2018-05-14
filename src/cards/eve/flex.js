@@ -1,4 +1,4 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../actions/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -14,7 +14,7 @@ import { Strength } from '../../effects/strength'
 type FlexData = { flex: number, energy: number }
 
 export const flex = 'flex'
-export const Flex: Class<Card<FlexData>> = MetaCard(flex, playFlex, {
+export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
     flex: 3,
     energy: 0,
 }, {
@@ -24,14 +24,14 @@ export const Flex: Class<Card<FlexData>> = MetaCard(flex, playFlex, {
     textTemplate: 'Gain #{flex} strength. Lose #{flex} strength at the end of your turn.',
 })
 
-function* playFlex({ actors, resolver, game }: PlayArgs<>): Generator<any, FlexData, any> {
+function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs<>): Generator<any, FlexData, any> {
     const action: BindEffect = yield resolver.processAction(
         new BindEffect(
             actors, 
             game.player,
             {
                 Effect: FlexEffect,
-                stacks: this.data.flex,
+                stacks: self.data.flex,
             },
         ),
     )
@@ -41,11 +41,11 @@ function* playFlex({ actors, resolver, game }: PlayArgs<>): Generator<any, FlexD
             game.player,
             {
                 Effect: Strength,
-                stacks: this.data.flex,
+                stacks: self.data.flex,
             },
         ),
     )
-    return { flex: action.data.stacks, energy: this.data.energy }
+    return { flex: action.data.stacks, energy: self.data.energy }
 }
 
 

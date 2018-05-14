@@ -1,14 +1,14 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { CreatureWrapper } from '../../creatures/creature'
+import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { DrawCards } from '../../actions/drawCards'
 
 type FlashOfSteelData = { damage: number, energy: number }
 
 export const flashOfSteel = 'flashOfSteel'
-export const FlashOfSteel: Class<Card<FlashOfSteelData>> = MetaCard(flashOfSteel, playFlashOfSteel, {
+export const FlashOfSteel: () => Card<FlashOfSteelData> = defineCard(flashOfSteel, playFlashOfSteel, {
     energy: 0,
     damage: 4,
 }, {
@@ -18,24 +18,24 @@ export const FlashOfSteel: Class<Card<FlashOfSteelData>> = MetaCard(flashOfSteel
     textTemplate: 'Deal #{damage} damage to a target. Draw a card.',
 })
 
-function* playFlashOfSteel({ resolver, actors }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{
+function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof CreatureWrapper){
+    if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted, 
                 blockable,
             ),
         )
         yield resolver.processAction(new DrawCards({}, {}, { count: 1 }))
-        return { damage: action.data.damage, energy: this.data.energy }
+        return { damage: action.data.damage, energy: self.data.energy }
     } else {
-        return this.data
+        return self.data
     }
 }
 

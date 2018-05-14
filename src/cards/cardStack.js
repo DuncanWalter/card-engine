@@ -1,17 +1,22 @@
-import type { Card } from "./card"
+import { Card } from "./card"
+import type { CardState } from "./card";
 import { Sequence } from "../utils/random"
 
 // $FlowFixMe
 export class CardStack implements Iterable<Card<any>> {
 
-    cards: Card<any>[]
+    cards: CardState<any>[]
 
-    constructor(...cards: Card<any>[]){
+    constructor(cards: CardState<any>[]){
         this.cards = cards
     }
 
     get size(): number {
         return this.cards.length
+    }
+
+    unwrap(): CardState<>[] {
+        return this.cards
     }
 
     shuffle(seed: Sequence<number>): void {
@@ -30,57 +35,58 @@ export class CardStack implements Iterable<Card<any>> {
     take(count?: number): Card<any>[] {
         let rr: Card<any>[] = []
         while(rr.length < (count || 1) && this.cards.length){
-            rr.push(this.cards.pop())
+            rr.push(new Card(this.cards.pop()))
         }
         return rr
     }
 
-    takeAll(): Card<any>[] {
-        let rr = this.cards
-        this.cards = []
-        return rr
-    }
-
-    // shuffleIn(...cards: Iterable<Card<any>>): void {
-    //     this.cards.push(...cards)
-    //     this.shuffle()
+    // takeAll(): Card<any>[] {
+    //     let rr = this.cards
+    //     this.cards = []
+    //     return rr
     // }
 
+    shuffleIn(card: Card<>, seed: Sequence<number>): void {
+        this.cards.splice(Math.floor(this.cards.length * seed.next()), 0, card.unwrap())
+    }
+
     addToTop(card: Card<any>): void {
-        this.cards.push(card)
+        this.cards.push(card.unwrap())
     }
 
     addToBottom(card: Card<any>): void {
-        this.cards.splice(0, 0, card)
+        this.cards.splice(0, 0, card.unwrap())
     }
 
     add(...cards: Iterable<Card<any>>){
-        this.cards.push(...cards)
+        this.cards.push(...[...cards].map(card => card.unwrap()))
     }
 
     clone(): CardStack {
-        return new CardStack(...this.cards.map(cc => new cc.constructor()))
+        return new CardStack([...this.cards.map(card => (new Card(card)).clone().unwrap())])
     }
 
     clear(): void {
-        this.cards = []
+        this.cards.splice(0, this.cards.length)
     }
 
     has(card: Card<any>): boolean {
-        return this.cards.includes(card)
+        let id = card.unwrap().id
+        return !!this.cards.filter(card => card.id == id).length
     }
 
     remove(card: Card<any>){
-        if(this.cards.includes(card)){
+        let id = card.unwrap().id
+        this.cards.filter(card => card.id == id).forEach(card => {
             this.cards.splice(this.cards.indexOf(card), 1)
-        }
+        })
     }
 
     // $FlowFixMe
     [Symbol.iterator](){
         let self = this
         return (function*(): Generator<Card<any>, any, any> {
-            yield* self.cards
+            yield* self.cards.map(card => new Card(card))
         })()
     } 
 }

@@ -1,9 +1,11 @@
-import type { Monster, MonsterWrapper } from "./monster"
+import type { MonsterState, Monster } from "./monster"
 import type { Game } from "../game/battle/battleState"
+import type { Component } from "../component"
 import { Action } from "../actions/action"
 import { ActionResolver } from "../actions/actionResolver"
 import { synchronize } from "../utils/async"
-import type { Component } from "../component"
+import { Entity } from "../utils/entity";
+
 
 export type BehaviorType = string
 
@@ -25,12 +27,12 @@ export interface Intent {
 }
 
 export interface BehaviorContext { 
-    owner: MonsterWrapper, 
+    owner: Monster, 
     resolver: ActionResolver, 
     game: $ReadOnly<Game>,
 }
 
-export interface Behavior {
+export interface BehaviorState {
     type: BehaviorType,
     name: string,
     // TODO:
@@ -58,10 +60,10 @@ export function defineBehavior<D>(name: string, behavior: BehaviorContext => Gen
 
 const baseIntent: Intent = { isMiscBehavior: true }
 
-export class BehaviorWrapper {
+export class Behavior extends Entity<BehaviorState> {
 
-    type: BehaviorType
-    name: string
+    +type: BehaviorType
+    +name: string
 
     // selectNext: (seed: number) => Behavior
     // perform: (ctx: BehaviorContext) => Promise<Intent>
@@ -75,7 +77,7 @@ export class BehaviorWrapper {
         }
     }
 
-    simulate(owner: MonsterWrapper, resolver: ActionResolver, game: $ReadOnly<Game>): Intent {
+    simulate(owner: Monster, resolver: ActionResolver, game: $ReadOnly<Game>): Intent {
         let data: Intent = baseIntent
         resolver.simulate(resolver => {
             this.perform({ owner, resolver, game }).then(val => data = val)
@@ -87,16 +89,14 @@ export class BehaviorWrapper {
         }
     }
 
-    unwrap(): Behavior {
-        return {
-            name: this.name,
-            type: this.type,
-        }
+    unwrap(): BehaviorState {
+        return this.inner
     }
 
-    constructor(representation: Behavior){
-        this.type = representation.type
-        this.name = representation.name
+    constructor(state: BehaviorState){
+        super(state)
+        this.type = state.type
+        this.name = state.name
     }
 
 }
@@ -105,7 +105,7 @@ type Props = {
     data: Intent
 }
 
-export const primeBehavior: BehaviorType = 'PRIME_BEHAVIOR'
+export const primeBehavior: BehaviorType = defineBehavior('PRIME_BEHAVIOR', function*(){ return {} })
 
 
 

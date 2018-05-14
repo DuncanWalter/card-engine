@@ -4,7 +4,6 @@ import { Listener, ConsumerArgs } from "../actions/listener";
 import { blockable } from "../actions/damage";
 import { latency } from "./latency";
 import { Card } from "../cards/card";
-import { PlayerWrapper } from "../creatures/player";
 
 export const strength = Symbol('strength');
 export const Strength: Class<Effect> = MetaEffect(strength, {

@@ -1,15 +1,15 @@
-import type { Card } from "../../cards/card"
-import type { Player } from "../../creatures/player"
+import type { PlayerState } from "../../creatures/player"
 import type { State } from "../../state"
 import type { Reducer } from "../../utils/state"
-import type { Monster } from '../../creatures/monster';
+import type { MonsterState } from '../../creatures/monster';
 
 import { randomSequence, Sequence } from '../../utils/random'
 
+import { Card, CardState } from "../../cards/card"
 import { CardStack } from "../../cards/cardStack"
 import { createReducer } from "../../utils/state"
-import { MonsterWrapper } from '../../creatures/monster';
-import { PlayerWrapper } from '../../creatures/player';
+import { Monster } from '../../creatures/monster';
+import { Player } from '../../creatures/player';
 
 
 function any(any: any): any { return any }
@@ -20,21 +20,6 @@ function any(any: any): any { return any }
 // inspiration points
 
 export interface Game {
-    dummy: MonsterWrapper,
-    hand: CardStack,
-    drawPile: CardStack,
-    discardPile: CardStack,
-    enemies: MonsterWrapper[],
-    allies: MonsterWrapper[],
-    player: PlayerWrapper,
-    equipment: Array<any>,
-    deck: CardStack,
-    exhaustPile: CardStack,
-    activeCards: CardStack,
-    famePoints: number,    
-}
-
-interface GameState {
     dummy: Monster,
     hand: CardStack,
     drawPile: CardStack,
@@ -46,64 +31,100 @@ interface GameState {
     deck: CardStack,
     exhaustPile: CardStack,
     activeCards: CardStack,
+    famePoints: number,    
+}
+
+interface GameState {
+    dummy: MonsterState,
+    hand: CardState<>[],
+    drawPile: CardState<>[],
+    discardPile: CardState<>[],
+    enemies: MonsterState[],
+    allies: MonsterState[],
+    player: PlayerState,
+    equipment: Array<any>,
+    deck: CardState<>[],
+    exhaustPile: CardState<>[],
+    activeCards: CardState<>[],
     famePoints: number, 
 }
 
 export function liftState(state: GameState): Game {
+    console.log(state)
     return {
-        dummy: new MonsterWrapper(state.dummy),
-        hand: state.hand,
-        enemies: state.enemies.map(enemy => new MonsterWrapper(enemy)),
-        allies: state.enemies.map(ally => new MonsterWrapper(ally)),
-        player: new PlayerWrapper(state.player),
+        dummy: new Monster(state.dummy),
+        hand: new CardStack(state.hand),
+        enemies: state.enemies.map(enemy => new Monster(enemy)),
+        allies: state.allies.map(ally => new Monster(ally)),
+        player: new Player(state.player),
         equipment: state.equipment,
-        activeCards: state.activeCards,
-        exhaustPile: state.exhaustPile,
-        discardPile: state.discardPile,
-        drawPile: state.drawPile,
-        deck: state.deck,
+        activeCards: new CardStack(state.activeCards),
+        exhaustPile: new CardStack(state.exhaustPile),
+        discardPile: new CardStack(state.discardPile),
+        drawPile: new CardStack(state.drawPile),
+        deck: new CardStack(state.deck),
         famePoints: state.famePoints,
     }
 }
 
 function serializeGame(game: Game): GameState {
-    return {
-        dummy: game.dummy.unWrap(),
-        hand: game.hand,
-        enemies: game.enemies.map(enemy => enemy.unWrap()),
-        allies: game.enemies.map(ally => ally.unWrap()),
-        player: game.player.unWrap(),
+
+    let state = {
+        dummy: game.dummy.unwrap(),
+        hand: game.hand.unwrap(),
+        enemies: game.enemies.map(enemy => enemy.unwrap()),
+        allies: game.allies.map(ally => ally.unwrap()),
+        player: game.player.unwrap(),
         equipment: game.equipment,
-        activeCards: game.activeCards,
-        exhaustPile: game.exhaustPile,
-        discardPile: game.discardPile,
-        drawPile: game.drawPile,
-        deck: game.deck,
+        activeCards: game.activeCards.unwrap(),
+        exhaustPile: game.exhaustPile.unwrap(),
+        discardPile: game.discardPile.unwrap(),
+        drawPile: game.drawPile.unwrap(),
+        deck: game.deck.unwrap(),
         famePoints: game.famePoints,
     }
+
+    console.log('game', game)
+    console.log('state', state)
+
+
+    return state
 }
 
 export const battleInitial: GameState = {
-    hand: new CardStack(),
-    drawPile: new CardStack(),
-    discardPile: new CardStack(),
-    deck: new CardStack(),
-    exhaustPile: new CardStack(),
+    hand: [],
+    drawPile: [],
+    discardPile: [],
+    deck: [],
+    exhaustPile: [],
     equipment: [],
     player: {
         health: 65,
         maxHealth: 65,
+        type: 'Player',
         effects: [],
+        seed: 0,
         data: {
             sets: [],
             energy: 3,
+            isActive: true,
         },
-    }, 
+    },
     allies: [],
     enemies: [],
-    activeCards: new CardStack(),
+    activeCards: [],
     dummy: {
-    
+        health: 10,
+        maxHealth: 10,
+        type: 'TrainingDummy',
+        effects: [],
+        data: {
+            behavior: {
+                name: 'Blue',
+                type: 'PRIME_BEHAVIOR',
+            },
+        },
+        seed: 1234125151,
     },
     famePoints: 0,
 }

@@ -1,7 +1,7 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { CreatureWrapper } from '../../creatures/creature'
+import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { DrawCards } from '../../actions/drawCards'
 import { MetaEffect } from '../../effects/effect'
@@ -16,7 +16,7 @@ type RampageData = { damage: number, energy: number, scaling: number }
 // TODO: Upgrades either increase scaling or provide Default
 
 export const rampage = 'rampage'
-export const Rampage: Class<Card<RampageData>> = MetaCard(rampage, playRampage, {
+export const Rampage: () => Card<RampageData> = defineCard(rampage, playRampage, {
     energy: 1,
     damage: 7,
     scaling: 5,
@@ -35,30 +35,30 @@ let RampageStacks = MetaEffect(rampageSymbol, null, {
     min: 0,
 }, (owner, self) => deafListener,  [], [])
 
-function* playRampage({ resolver, actors }: PlayArgs<>): Generator<any, RampageData, any>{
+function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs<>): Generator<any, RampageData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof CreatureWrapper){
+    if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,
                 target,
                 {
-                    damage: this.data.damage + this.stacksOf(rampageSymbol) * this.data.scaling,
+                    damage: self.data.damage + self.stacksOf(rampageSymbol) * self.data.scaling,
                 },
                 targeted,
                 blockable,
             ),
         )
-        yield resolver.processAction(new BindEffect(actors, this, { 
+        yield resolver.processAction(new BindEffect(actors, self, { 
             Effect: RampageStacks,
             stacks: 1,
         }))
         return { 
             damage: action.data.damage, 
-            energy: this.data.energy, 
-            scaling: this.data.scaling, 
+            energy: self.data.energy, 
+            scaling: self.data.scaling, 
         }
     } else {
-        return this.data
+        return self.data
     }
 }

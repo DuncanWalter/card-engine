@@ -1,4 +1,4 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../actions/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -15,8 +15,7 @@ type AdrenalineData = {
     reEnergize: number, 
 }
 
-export const adrenaline = 'adrenaline'
-export const Adrenaline: Class<Card<AdrenalineData>> = MetaCard(adrenaline, playAdrenaline, {
+export const Adrenaline: () => Card<AdrenalineData> = defineCard('Adrenaline', playAdrenaline, {
     draw: 2,
     energy: 0,
     reEnergize: 1,
@@ -27,8 +26,8 @@ export const Adrenaline: Class<Card<AdrenalineData>> = MetaCard(adrenaline, play
     textTemplate: 'Gain #{reEnergize} energy. Draw #{draw} cards. #[Singleton].',
 }, [Singleton, 1])
 
-function* playAdrenaline({ actors, resolver, game }: PlayArgs<>): Generator<any, AdrenalineData, any> {
-    yield resolver.processAction(new DrawCards(actors, game.player, { count: this.data.draw }))
-    yield resolver.processAction(new BindEnergy(actors, game.player, { quantity: this.data.reEnergize }))
-    return this.data
+function* playAdrenaline(self: Card<AdrenalineData>, { actors, resolver, game }: PlayArgs<>){
+    yield resolver.processAction(new DrawCards(actors, game.player, { count: self.data.draw }))
+    yield resolver.processAction(new BindEnergy(actors, game.player, { quantity: self.data.reEnergize }))
+    return self.data
 }

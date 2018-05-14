@@ -1,13 +1,13 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
-import { CreatureWrapper } from '../../creatures/creature'
+import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 
 type TripleStrikeData = { damage: number, energy: number }
 
 export const tripleStrike = 'tripleStrike'
-export const TripleStrike: Class<Card<TripleStrikeData>> = MetaCard(tripleStrike, playTripleStrike, {
+export const TripleStrike: () => Card<TripleStrikeData> = defineCard(tripleStrike, playTripleStrike, {
     energy: 1,
     damage: 4,
 }, {
@@ -17,15 +17,15 @@ export const TripleStrike: Class<Card<TripleStrikeData>> = MetaCard(tripleStrike
     textTemplate: 'Deal #{damage} damage to an enemy thrice.',
 })
 
-function* playTripleStrike({ resolver, actors }: PlayArgs<>): Generator<any, TripleStrikeData, any>{
+function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors }: PlayArgs<>): Generator<any, TripleStrikeData, any>{
     let target = yield queryEnemy(any => true)
-    if(target && target instanceof CreatureWrapper){
+    if(target && target instanceof Creature){
         const action: Damage = yield resolver.processAction(
             new Damage(
                 actors,
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted, 
                 blockable,
@@ -36,7 +36,7 @@ function* playTripleStrike({ resolver, actors }: PlayArgs<>): Generator<any, Tri
                 actors,
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted, 
                 blockable,
@@ -47,14 +47,14 @@ function* playTripleStrike({ resolver, actors }: PlayArgs<>): Generator<any, Tri
                 actors,
                 target,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 },
                 targeted, 
                 blockable,
             ),
         )
-        return { damage: action.data.damage, energy: this.data.energy }
+        return { damage: action.data.damage, energy: self.data.energy }
     } else {
-        return this.data
+        return self.data
     }
 }

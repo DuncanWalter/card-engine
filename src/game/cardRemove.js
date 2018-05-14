@@ -11,6 +11,7 @@ import { CardLibrary } from '../cards/cardLibrary'
 import { dispatch, withState } from '../state'
 import { RemoveCard } from '../actions/removeCard';
 import { collectReward, deactivateReward } from '../paths/pathState';
+import { Card as CardObject } from '../cards/card';
 
 type Props = { state: State }
 
@@ -37,7 +38,7 @@ export const CardRemove: Component<any> = withState(({ state }: Props) => {
                     onClick={ click => {
                         collectReward(dispatch, reward)
                         deactivateReward(dispatch, reward)
-                        resolver.processAction(new RemoveCard({}, card, {}))
+                        resolver.processAction(new RemoveCard({}, new CardObject(card), {}))
                         navigateTo('/game/rewards')
                     }} 
                     style={{ cursor: 'pointer' }}

@@ -2,7 +2,7 @@ import type { Effect } from "../effects/effect"
 import type { Card } from "../cards/card";
 import type { CustomAction } from "./action"
 import { MetaAction } from "./action"
-import { CreatureWrapper } from "../creatures/creature"
+import { Creature } from "../creatures/creature"
 import { ConsumerArgs } from "./listener";
 
 type Data = {
@@ -10,7 +10,7 @@ type Data = {
     stacks: number,
 }
 
-type Effected = Card<> | CreatureWrapper<>
+type Effected = Card<> | Creature<>
 
 export const bindEffect: Symbol = Symbol('bindEffect')
 export const BindEffect: CustomAction<Data, Effected> = MetaAction(bindEffect, ({ subject, data }: ConsumerArgs<Data, Effected>) => {

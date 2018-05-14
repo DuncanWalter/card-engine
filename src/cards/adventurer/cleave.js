@@ -1,4 +1,4 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
@@ -6,8 +6,7 @@ import { queryEnemy } from './../utils'
 
 type CleaveData = { damage: number, energy: number }
 
-export const cleave = 'cleave'
-export const Cleave: Class<Card<CleaveData>> = MetaCard(cleave, playCleave, {
+export const Cleave: () => Card<CleaveData> = defineCard('Cleave', playCleave, {
     energy: 1,
     damage: 7,
 }, {
@@ -17,17 +16,15 @@ export const Cleave: Class<Card<CleaveData>> = MetaCard(cleave, playCleave, {
     textTemplate: 'Deal #{damage} damage to all enemies.',
 })
 
-function* playCleave({ resolver, game, actors }: PlayArgs<>): Generator<any, CleaveData, any>{
-
+function* playCleave(self: Card<CleaveData>, { resolver, game, actors }: PlayArgs<>){
     // TODO: get nested simulations up so that aoe can list damages correctly
-
     for(let promise of [...game.enemies].map(enemy =>
         resolver.processAction(
             new Damage(
                 actors,
                 enemy,
                 {
-                    damage: this.data.damage,
+                    damage: self.data.damage,
                 }, 
                 blockable,
             ),
@@ -35,5 +32,5 @@ function* playCleave({ resolver, game, actors }: PlayArgs<>): Generator<any, Cle
     )){
         yield promise
     }
-    return this.data
+    return self.data
 }

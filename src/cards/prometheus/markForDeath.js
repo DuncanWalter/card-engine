@@ -1,4 +1,4 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, targeted } from './../../actions/damage'
 import { blockable } from '../../actions/damage'
 import { Creature } from '../../creatures/creature'
@@ -10,7 +10,7 @@ import { Taunt } from '../../effects/taunt';
 type MarkForDeathData = { taunt: number, energy: number, vulnerability: number }
 
 export const markForDeath = 'markForDeath'
-export const MarkForDeath: Class<Card<MarkForDeathData>> = MetaCard(markForDeath, playMarkForDeath, {
+export const MarkForDeath: () => Card<MarkForDeathData> = defineCard(markForDeath, playMarkForDeath, {
     taunt: 1,
     vulnerability: 1,
     energy: 0,
@@ -21,20 +21,20 @@ export const MarkForDeath: Class<Card<MarkForDeathData>> = MetaCard(markForDeath
     textTemplate: 'Apply #{taunt} #[taunt] and #{vulnerability} #[vulnerability].',
 })
 
-function* playMarkForDeath({ resolver, actors }: PlayArgs<>): Generator<any, MarkForDeathData, any>{
+function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors }: PlayArgs<>): Generator<any, MarkForDeathData, any>{
     // TODO: query creature
     let target = yield queryEnemy(any => true)
     yield resolver.processAction(new BindEffect(actors, target, {
         Effect: Taunt,
-        stacks: this.data.taunt,
+        stacks: self.data.taunt,
     }))
     yield resolver.processAction(new BindEffect(actors, target, {
         Effect: Vulnerability,
-        stacks: this.data.vulnerability,
+        stacks: self.data.vulnerability,
     }))
     return {
-        taunt: this.data.taunt, 
-        vulnerability: this.data.vulnerability, 
-        energy: this.data.energy,
+        taunt: self.data.taunt, 
+        vulnerability: self.data.vulnerability, 
+        energy: self.data.energy,
     }
 }

@@ -4,6 +4,8 @@ import { damage } from "../actions/damage"
 import { RemoveCreature } from "../actions/removeCreature"
 import { Listener } from "../actions/listener"
 import { resolver } from "../actions/actionResolver";
+import { Entity } from "../utils/entity";
+import { randomSequence, Sequence } from "../utils/random";
 
 const death = Symbol('death')
 resolver.registerListenerType(death, [damage])
@@ -37,40 +39,35 @@ resolver.registerListenerType(death, [damage])
 
 // }   
 
-export const creatureIds = (function*(): Generator<string, void, any, > {
-    let i = 1
-    while(i++){
-        yield i.toString(26)
-    }
-})()
-
-export type CreatureId = string
 export type CreatureType = string
 
-export interface Creature<D=any> {
-    id: CreatureId,
+export interface CreatureState<D=any> {
     type: CreatureType,
     health: number,
     maxHealth: number,
     effects: Effect[],
+    seed: number,
     data: D,
 }
 
-export class CreatureWrapper<D=any> {
+export class Creature<D=any> extends Entity<CreatureState<D>> {
 
-    // TODO: wont quite work because lifting needs to lift specific children. data will be this way, the  rest will be directly copied.
-    inner: Creature<D>
-    effects: Effect[] // TODO:
-
-    // TODO: consider making this a shallow clone
-    unWrap(){ return this.inner }
+    get effects(): Effect[] {
+        return this.inner.effects
+    }
     
     set health(value: number){
-        this.inner.health = Math.floor(Math.max(0, Math.min(this.inner.health, value)))
+        this.inner.health = Math.floor(Math.max(0, Math.min(this.inner.maxHealth, value)))
     }
-
     get health(): number {
         return this.inner.health
+    }
+
+    set maxHealth(value: number){
+        this.inner.maxHealth = Math.floor(Math.max(0, value))
+    }
+    get maxHealth(): number {
+        return this.inner.maxHealth
     }
 
     get listener(): ListenerGroup {
@@ -78,12 +75,26 @@ export class CreatureWrapper<D=any> {
         return [this.inner.effects] // TODO: add the death listener
     }
 
-    is(other: Creature<> | CreatureWrapper<>): boolean {
-        if(other instanceof CreatureWrapper){
-            return other.inner.id == this.inner.id
-        } else {
-            return other.id == this.inner.id
+    get seed(): Sequence<number> {
+        const self = this
+        return {
+            next(): number {
+                let rand = randomSequence(self.inner.seed)
+                let ret = rand.next()
+                self.inner.seed = rand.last()
+                return ret
+            },
+            fork(){
+                return randomSequence(self.inner.seed)
+            },
+            last(){
+                return self.inner.seed
+            },
         }
+    }
+
+    set seed(seed: Sequence<number>){
+        this.inner.seed = seed.last()
     }
 
     stacksOf(effectType: Symbol): number {
@@ -95,9 +106,8 @@ export class CreatureWrapper<D=any> {
         }
     }
 
-    constructor(representation: Creature<D>){
-        this.inner = representation
-        this.effects = representation.effects
+    constructor(state: CreatureState<D>){
+        super(state)
     }
 
 }

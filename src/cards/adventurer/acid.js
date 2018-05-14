@@ -1,10 +1,10 @@
-import { MetaCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs } from './../card'
 import { Damage, damage, targeted, blockable } from './../../actions/damage'
 import { Listener, ConsumerArgs } from '../../actions/listener'
 import { BindEffect } from '../../actions/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
 import { block } from '../../effects/block'
-import { CreatureWrapper } from '../../creatures/creature'
+import { Creature } from '../../creatures/creature'
 import { Poison } from '../../effects/poison'
 import { queryEnemy } from '../utils';
 
@@ -14,7 +14,7 @@ type AcidData = {
 }
 
 export const acid = 'acid'
-export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
+export const Acid: () => Card<AcidData> = defineCard(acid, playAcid, {
     damage: 4,
     energy: 1,
 }, {
@@ -24,14 +24,14 @@ export const Acid: Class<Card<AcidData>> = MetaCard(acid, playAcid, {
     textTemplate: 'Deal #{damage} damage to a target. Convert blocked damage to poison.',
 })
 
-function* playAcid({ resolver, actors }: PlayArgs<>): * {
+function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs<>){
     let target = yield queryEnemy(any => true)
-    if(target instanceof CreatureWrapper){
+    if(target instanceof Creature){
         const action: Damage = new Damage(
             actors, 
             target,
             {
-                damage: this.data.damage,
+                damage: self.data.damage,
             },
             targeted,
             blockable,
@@ -52,8 +52,8 @@ function* playAcid({ resolver, actors }: PlayArgs<>): * {
             true,
         ))
         yield resolver.processAction(action)
-        return { damage: action.data.damage, energy: this.data.energy }
+        return { damage: action.data.damage, energy: self.data.energy }
     } else {
-        return this.data
+        return self.data
     }
 }

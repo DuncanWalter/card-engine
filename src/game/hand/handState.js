@@ -3,6 +3,7 @@ import type { Reducer } from "../../utils/state"
 import type { Card } from "../../cards/card"
 import { createReducer } from "../../utils/state"
 import { view } from "vitrarius"
+import { CardState } from "../../cards/card";
 
 interface HandState {
     cursor: {
@@ -92,19 +93,18 @@ export const handReducer: Reducer<HandState, any, State> = createReducer({
         if (state.focus != data) return state
         return view('focus', () => null, state)
     },
-    updateHand: (state, data, { battle, entity }) => {
+    updateHand: (state, data, { battle, entity }: State) => {
         // TODO: tick it over a frame
-        let visibleCards = [...battle.hand, ...battle.activeCards]
+        let visibleCards: (CardState<> | void)[] = [...battle.hand, ...battle.activeCards]
 
         let preservedSlots = state.cardSlots.filter(slot => {
             return visibleCards.indexOf(slot.card) >= 0
         }).map((slot, index) => {
 
             let subIndex = visibleCards.indexOf(slot.card)
-            let card = visibleCards.splice(subIndex, 1, null)[0]
+            let card = visibleCards.splice(subIndex, 1, undefined)[0]
 
-            // $FlowFixMe
-            let isActive = battle.activeCards.has(card)
+            let isActive = !!battle.activeCards.filter(ac => ac.id == card.id).length
             let isDragging = false
             let isFocussed = entity.cursorFocus == card
 
@@ -127,8 +127,7 @@ export const handReducer: Reducer<HandState, any, State> = createReducer({
 
             let index = preservedSlots.length + subIndex
 
-            // $FlowFixMe
-            let isActive = battle.activeCards.has(card)
+            let isActive = !!battle.activeCards.filter(ac => ac.id == card.id).length
             let isDragging = false
             let isFocussed = entity.cursorFocus == card
 
@@ -167,7 +166,6 @@ export const handReducer: Reducer<HandState, any, State> = createReducer({
         }).filter(sprite => sprite.pos != sprite.trg)
 
         // if(cardSprites.length)console.log(cardSprites.length, cardSprites[0].pos)
-
 
         return {
             cursor: { x: Math.random(), y: 3 },

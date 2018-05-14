@@ -1,18 +1,20 @@
 import type { Component } from '../component'
-import type { CreatureWrapper } from './creature'
 import type { State } from '../state'
 import { renderEffect as Effect } from '../effects/renderEffect'
-import { renderBehavior as Behavior, Behavior as BehaviorT } from './behavior'
+import { renderBehavior as Behavior, Behavior as BehaviorWrapper } from './behavior'
 import { Entity } from '../components/entity'
 import { resolver } from '../actions/actionResolver'
 import { withState } from '../state';
-import { MonsterWrapper } from './monster';
+import { Monster } from './monster';
+import { Creature } from './creature';
 
 type Props = { 
-    creature: CreatureWrapper<>,
+    creature: Creature<>,
     isEnemy: boolean,
     state: State,
 }
+
+function any(any: any): any { return any }
 
 export const renderCreature: Component<Props> = withState(({ isEnemy, creature, state }: Props) => {
     
@@ -23,10 +25,10 @@ export const renderCreature: Component<Props> = withState(({ isEnemy, creature, 
     // const maybeBlock = creature.effects.filter(e => e.id == blockSymbol)[0]
     const block: number = 0 // maybeBlock ? maybeBlock.stacks : 0
 
-    let behaviors: BehaviorT[] = []
+    let behaviors: BehaviorWrapper[] = []
     // TODO: previously used instanceof NPC
-    if(creature instanceof MonsterWrapper){
-        behaviors.push(creature.inner.data.behavior)
+    if(creature instanceof Monster){
+        behaviors.push(creature.behavior)
     }
     
     // TODO: display enemy intent
@@ -34,8 +36,7 @@ export const renderCreature: Component<Props> = withState(({ isEnemy, creature, 
         <div style={sty.creature}>
             <div style={sty.effectBar}>{
                 behaviors.map(b => 
-                    // $FlowFixMe
-                    <Behavior data={ b.simulate(creature, resolver, state.battle) }/>
+                    <Behavior data={ b.simulate(any(creature), resolver, resolver.state.getGame()) }/>
                 )
             }</div>
             <div style={{ backgroundColor: '#7777cc', ...sty.img }}/>
@@ -47,7 +48,7 @@ export const renderCreature: Component<Props> = withState(({ isEnemy, creature, 
             <div style={sty.effectBar}>
                 {creature.effects.map(e => <Effect effect={e}/>)}
             </div>
-            <div>{creature.constructor.name}</div>
+            <div>{creature.inner.type}</div>
             <div>{health}/{maxHealth}</div>
         </div>
     </Entity>
