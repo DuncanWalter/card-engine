@@ -1,8 +1,8 @@
 import { MetaEffect, Effect, tick } from "./effect"
-import { damage, Damage } from "../actions/damage"
+import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
-import { bindEffect } from "../actions/bindEffect"
-import { Listener, ConsumerArgs } from "../actions/listener";
+import { bindEffect } from '../events/bindEffect'
+import { Listener, ConsumerArgs } from '../events/listener';
 
 export const corruption = Symbol('corruption')
 export const Corruption: Class<Effect> = MetaEffect(corruption, {
@@ -24,9 +24,9 @@ export const Corruption: Class<Effect> = MetaEffect(corruption, {
         type: bindEffect,
     },
     function*({ resolver, subject, cancel }: ConsumerArgs<>): * {
-        yield resolver.processAction(new Damage({}, subject, {
+        yield resolver.processEvent(new Damage(self, subject, {
             damage: self.stacks,
-        }, Corruption))
+        }, corruption))
     }, 
     false, 
 ), [tick], [])

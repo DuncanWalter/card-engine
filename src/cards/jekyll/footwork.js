@@ -1,5 +1,5 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { BindEffect } from '../../actions/bindEffect'
+import { BindEffect } from '../../events/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { dexterity, Dexterity } from '../../effects/dexterity'
@@ -19,7 +19,7 @@ export const Footwork: () => Card<FootworkData> = defineCard(footwork, playFootw
 }, [Singleton, 1])
 
 function* playFootwork(self: Card<FootworkData>, { actors, game, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {
-    const action: BindEffect = yield resolver.processAction(
+    const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,

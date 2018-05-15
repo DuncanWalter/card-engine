@@ -1,9 +1,9 @@
 import type { Component } from '../../component'
 import { Hand } from '../hand/hand'
 import { renderCreature as Creature } from '../../creatures/renderCreature'
-import { EndTurn } from '../../actions/turnActions'
+import { EndTurn } from '../../events/turnActions'
 import { Card } from '../../cards/card'
-import { resolver } from '../../actions/actionResolver'
+import { resolver } from '../../events/eventResolver'
 import { Button, Row, Col, Block, Frame, Shim } from '../../utility'
 import { stream, withState } from '../../state';
 import { withAnimation, overStream } from '../../components/withAnimation';
@@ -61,7 +61,7 @@ const sty = {
 function tryEndTurn(battle){
     if(battle.player.inner.data.isActive){
         battle.player.inner.data.isActive = false
-        resolver.enqueueActions(new EndTurn({}, battle.player, {}))
+        resolver.enqueueEvents(new EndTurn(battle.player, battle.player, {}))
     }
 }
 

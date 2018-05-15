@@ -1,11 +1,11 @@
-import type { ListenerGroup } from '../actions/listener'
-import type { ActionResolver } from './../actions/actionResolver'
-import type { Action } from './../actions/action'
+import type { ListenerGroup } from '../events/listener'
+import type { EventResolver } from './../events/eventResolver'
+import type { Event } from './../events/event'
 import type { Component } from '../component'
 import type { Game } from "../game/battle/battleState"
-import { PlayCard } from '../actions/playCard'
+import { PlayCard } from '../events/playCard'
 import { synchronize } from '../utils/async'
-import { resolver } from "../actions/actionResolver"
+import { resolver } from '../events/eventResolver'
 import { Effect } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
@@ -14,11 +14,11 @@ import { Entity } from '../utils/entity';
 export type cardFactory = () => Card<> 
 
 // TODO: add data generics? will it ever help?
-export interface PlayArgs<A: Object={}, T: Object|void = {}|void> {
-    actors: Set<A>,
+export interface PlayArgs<T: Object|void = {}|void> {
+    actors: Set<Entity<any>> | Entity<any>,
     subject: Card<any>,
     target: T,
-    resolver: ActionResolver,
+    resolver: EventResolver,
     game: $ReadOnly<Game>,
 }
 

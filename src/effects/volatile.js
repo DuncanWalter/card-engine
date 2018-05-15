@@ -1,13 +1,13 @@
-import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
+import type { ListenerGroup, ConsumerArgs } from '../events/listener'
 import { MetaEffect, Effect, tick } from "./effect"
-import { damage, Damage } from "../actions/damage"
+import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
-import { BindEffect, bindEffect } from "../actions/bindEffect"
-import { playCard, PlayCard } from "../actions/playCard"
-import { Listener } from "../actions/listener"
+import { BindEffect, bindEffect } from '../events/bindEffect'
+import { playCard, PlayCard } from '../events/playCard'
+import { Listener } from '../events/listener'
 import { Player } from "../creatures/player"
-import { endTurn } from "../actions/action"
-import { ExhaustCard } from "../actions/exhaustCard"
+import { endTurn } from '../events/event'
+import { ExhaustCard } from '../events/exhaustCard'
 import { Card } from "../cards/card";
 
 export const volatile = Symbol('volatile')
@@ -31,7 +31,7 @@ export const Volatile: Class<Effect> = MetaEffect(volatile, {
     },
     function*({ actors, game, data, resolver }: ConsumerArgs<>): * {
         if(owner instanceof Card && game.hand.has(owner)){
-            yield resolver.processAction(new ExhaustCard(actors, owner, { 
+            yield resolver.processEvent(new ExhaustCard(actors, owner, { 
                 from: game.hand,
             }))
         }

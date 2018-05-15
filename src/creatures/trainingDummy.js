@@ -1,6 +1,6 @@
 import type { BehaviorType } from "./behavior"
 import { defineBehavior } from "./behavior"
-import { BindEffect } from "../actions/bindEffect"
+import { BindEffect } from '../events/bindEffect'
 import { Imperturbability } from "../effects/inperturbability";
 import { Invulnerability } from "../effects/invulnerability";
 import { defineMonster } from "./monster";

@@ -1,11 +1,11 @@
-import type { ListenerGroup } from "../actions/listener"
+import type { ListenerGroup } from '../events/listener'
 import type { Creature } from "../creatures/creature"
 import type { Component } from "../component"
 import type { Card } from "../cards/card"
-import { Listener, ConsumerArgs } from "../actions/listener"
-import { startTurn } from "../actions/turnActions"
-import { BindEffect } from "../actions/bindEffect"
-import { resolver } from "../actions/actionResolver"
+import { Listener, ConsumerArgs } from '../events/listener'
+import { startTurn } from '../events/turnActions'
+import { BindEffect } from '../events/bindEffect'
+import { resolver } from '../events/eventResolver'
 
 // TODO: put setters on stacks
 
@@ -25,7 +25,6 @@ interface Appearance {
     sides: number,
     rotation?: number,
 }
-
 
 export class Effect {
 
@@ -65,10 +64,10 @@ export const MetaEffect = function MetaEffect(
                 subjects: [owner],
                 tags: [stackBehavior.on || startTurn],
             },
-            ({ subject, resolver }: ConsumerArgs<>): * => {
+            function*({ subject, resolver }){
                 const change = stackBehavior.delta(self.stacks) - self.stacks
                 if(change){
-                    resolver.pushActions(new BindEffect(owner, owner, {
+                    resolver.pushEvents(new BindEffect(owner, owner, {
                         Effect: cons,
                         stacks: change,
                     }, id, tick))

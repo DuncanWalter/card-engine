@@ -3,15 +3,16 @@ import type { Card } from '../cards/card'
 import type { State } from '../state'
 import { Modal, Row, Col, Block, Frame, Button } from '../utility'
 import { Route } from 'react-router-dom'
-import { resolver } from '../actions/actionResolver'
+import { resolver } from '../events/eventResolver'
 import { Card as CardComponent } from '../cards/component'
 import { queryEntity } from '../components/entityState'
 import { navigateTo } from '../utils/navigation'
 import { CardLibrary } from '../cards/cardLibrary'
 import { dispatch, withState } from '../state'
-import { RemoveCard } from '../actions/removeCard';
+import { RemoveCard } from '../events/removeCard';
 import { collectReward, deactivateReward } from '../paths/pathState';
 import { Card as CardObject } from '../cards/card';
+import { Player } from '../creatures/player';
 
 type Props = { state: State }
 
@@ -38,7 +39,7 @@ export const CardRemove: Component<any> = withState(({ state }: Props) => {
                     onClick={ click => {
                         collectReward(dispatch, reward)
                         deactivateReward(dispatch, reward)
-                        resolver.processAction(new RemoveCard({}, new CardObject(card), {}))
+                        resolver.processEvent(new RemoveCard(new Player(state.battle.player), new CardObject(card), {}))
                         navigateTo('/game/rewards')
                     }} 
                     style={{ cursor: 'pointer' }}

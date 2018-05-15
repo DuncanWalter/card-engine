@@ -1,6 +1,6 @@
 import { defineCard, Card, PlayArgs, CardState } from './../card'
-import { Damage, targeted } from './../../actions/damage'
-import { blockable } from '../../actions/damage'
+import { Damage, targeted } from './../../events/damage'
+import { blockable } from '../../events/damage'
 import { queryEnemy } from './../utils'
 import { Creature } from '../../creatures/creature'
 
@@ -19,7 +19,7 @@ export const Strike: () => Card<StrikeData> = defineCard('Strike', playStrike, {
 function* playStrike(self: Card<StrikeData>, { resolver, actors }: PlayArgs<>) {
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processAction(
+        const action: Damage = yield resolver.processEvent(
             new Damage(
                 actors,
                 target,

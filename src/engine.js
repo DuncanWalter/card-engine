@@ -1,6 +1,6 @@
 import { Module } from './utils/module'
-import { resolver } from './actions/actionResolver'
-import { StartGame } from './actions/startGame'
+import { resolver } from './events/eventResolver'
+import { StartGame } from './events/startGame'
 
 import { stream, state, dispatch } from './state'
 import { registerEncounter } from './paths/encounterLibrary'
@@ -8,12 +8,11 @@ import { Turtle } from './creatures/turtle/turtle'
 import { Cobra } from './creatures/cobra/cobra'
 import { Toad } from './creatures/toad/toad'
 import { registerReward } from './paths/rewardLibrary'
-import { Heal } from './actions/heal'
+import { Heal } from './events/heal'
 import { navigateTo } from './utils/navigation'
 import { CardLibrary } from './cards/cardLibrary'
 import { activateReward, collectReward } from './paths/pathState'
-import { BindMaxHp } from './actions/bindMaxHp'
-import { BindFamePoints } from './actions/bindFamePoints'
+import { BindMaxHp } from './events/bindMaxHp'
 
 import './cards/adventurer/adventurer'
 import './cards/eve/eve'
@@ -59,14 +58,14 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     registerReward('Heal 5 health points.', 1, function* heal(self, state): * {
         collectReward(dispatch, self)
-        yield resolver.processAction(new Heal({}, resolver.state.getGame().player, {
+        yield resolver.processEvent(new Heal(resolver.state.getGame().player, resolver.state.getGame().player, {
             healing: 5,
         }))
     })
 
     registerReward('Gain 1 max hp.', 1, function* heal(self, state): * {
         collectReward(dispatch, self)
-        yield resolver.processAction(new BindMaxHp({}, resolver.state.getGame().player, {
+        yield resolver.processEvent(new BindMaxHp(resolver.state.getGame().player, resolver.state.getGame().player, {
             points: 1,
         }))
     })
@@ -97,7 +96,7 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     // registerReward('Gain 1 fame point.', 2, function* remove(self, state): * {
     //     collectReward(dispatch, self)
-    //     yield resolver.processAction(new BindFamePoints({}, state.battle.player, {
+    //     yield resolver.processEvent(new BindFamePoints({}, state.battle.player, {
     //         points: 1,
     //     }))
     // })

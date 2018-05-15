@@ -1,8 +1,8 @@
 import type { Component } from '../component'
 import { Link, Route } from 'react-router-dom'
 import { Button, Block, Frame, Modal, Col, Shim } from "../utility"
-import { resolver } from '../actions/actionResolver'
-import { StartGame } from '../actions/startGame'
+import { resolver } from '../events/eventResolver'
+import { StartGame } from '../events/startGame'
 import { reset } from './menuState';
 import { dispatch } from '../state';
 import styled from 'styled-components';

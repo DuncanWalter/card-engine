@@ -1,13 +1,13 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { BindEffect } from '../../actions/bindEffect'
+import { BindEffect } from '../../events/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted, damage } from '../../actions/damage';
-import { AddToHand } from '../../actions/addToHand';
+import { targeted, damage } from '../../events/damage';
+import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
 import { MetaEffect } from '../../effects/effect';
-import { endTurn } from '../../actions/action';
-import { Listener } from '../../actions/listener';
+import { endTurn } from '../../events/event';
+import { Listener } from '../../events/listener';
 import { Strength } from '../../effects/strength'
 
 
@@ -25,7 +25,7 @@ export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
 })
 
 function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs<>): Generator<any, FlexData, any> {
-    const action: BindEffect = yield resolver.processAction(
+    const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,
@@ -35,7 +35,7 @@ function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs<>)
             },
         ),
     )
-    yield resolver.processAction(
+    yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,
@@ -70,7 +70,7 @@ const FlexEffect = MetaEffect(flexSymbol, {
     let actors = new Set()
     actors.add(owner)
     actors.add(self)
-    yield resolver.processAction(new BindEffect(actors, owner, {
+    yield resolver.processEvent(new BindEffect(actors, owner, {
         stacks: -self.stacks,
         Effect: Strength,
     }, block, flexSymbol))

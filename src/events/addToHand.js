@@ -1,20 +1,23 @@
-import type { CustomAction } from "./action"
+import type { Event } from "./event"
 import type { Card } from "../cards/card";
-import { MetaAction } from "./action"
+import { defineEvent } from "./event"
 import { Creature } from "../creatures/creature"
 import { ConsumerArgs } from "./listener";
 import { ReclaimDiscardPile } from "./reclaimDiscardPile";
 import { AddToDiscardPile } from "./addToDiscard";
 
-type Data = {}
+type Type = {
+    data: {},
+    subject: Card<>,
+}
 
 
 export const addToHand = Symbol('addToHand')
-export const AddToHand: CustomAction<Data, Card<>> = MetaAction(addToHand, function* addToHand({ actors, subject, resolver, data, game }: ConsumerArgs<Data, Card<>>): * { 
+export const AddToHand = defineEvent(addToHand, function* addToHand({ actors, subject, resolver, data, game }: ConsumerArgs<Type>){ 
     // TODO: is this how I want to do max hand size?
     if(game.hand.size < 10){
         game.hand.addToTop(subject)
     } else {
-        yield resolver.processAction(new AddToDiscardPile(actors, subject, data))
+        yield resolver.processEvent(new AddToDiscardPile(actors, subject, data))
     }
 })

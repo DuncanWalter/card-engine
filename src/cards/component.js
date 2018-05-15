@@ -3,8 +3,8 @@
 // import type { Card as CardObject } from './card'
 // import type { State } from '../state';
 // import { Entity } from '../components/entity'
-// import { resolver } from '../actions/actionResolver'
-// import { PlayCard } from '../actions/playCard'
+// import { resolver } from '../events/eventResolver'
+// import { PlayCard } from '../events/playCard'
 // import { renderEffect as EffectComponent } from '../effects/renderEffect'
 // import { withState } from '../state';
 // import { CardLibrary } from './cardLibrary';
@@ -124,7 +124,7 @@
 
 //     const clicked = e => {
 //         // use a dispatch and a display state TODO:
-//         resolver.enqueueActions(
+//         resolver.enqueueEvents(
 //             new PlayCard(
 //                 state.battle.player, 
 //                 card,
@@ -164,8 +164,8 @@ import type { Card as CardObject } from './card'
 import type { State } from '../state';
 import type { Game } from '../game/battle/battleState'
 import { Entity } from '../components/entity'
-import { resolver } from '../actions/actionResolver'
-import { PlayCard } from '../actions/playCard'
+import { resolver } from '../events/eventResolver'
+import { PlayCard } from '../events/playCard'
 import { renderEffect as EffectComponent } from '../effects/renderEffect'
 import { withState } from '../state';
 import { CardLibrary } from './cardLibrary';
@@ -332,7 +332,7 @@ export const Card: Component<Props> = withState(({ card, state, glow }) => {
 
     const clicked = e => {
         // use a dispatch and a display state TODO:
-        resolver.enqueueActions(
+        resolver.enqueueEvents(
             new PlayCard(
                 game.player, 
                 card,

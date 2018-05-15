@@ -13,16 +13,25 @@ interface HasId { id: string }
 export class Entity<State: Object> {
 
     get id(): string {
-        return this.id
+        return this.inner.id
     }
+    
     +inner: State
 
     unwrap(): State {
         return this.inner
     }
 
+    valueOf(){
+        return this.inner.id
+    }
+
     is(other: State | Entity<any>): boolean {
         return other.id == this.id
+    }
+    
+    isIn(others: State[]): number {
+        return others.map(other => other.id).indexOf(this.inner.id)
     }
 
     constructor(state: State){
@@ -32,7 +41,8 @@ export class Entity<State: Object> {
         } else {
             const { value, done } = entityIds.next()
             if(value){
-                this.inner = { ...state, id: value }
+                state.id = value
+                this.inner = state
             } else {
                 throw new Error('Id generation failed.')
             }

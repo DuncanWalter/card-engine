@@ -1,8 +1,8 @@
 import type { Component } from '../component'
 import { Link, Route } from 'react-router-dom'
 import { Button, Block, Frame, Modal, Col, Row, Shim } from "../utility"
-import { resolver } from '../actions/actionResolver'
-import { StartGame } from '../actions/startGame'
+import { resolver } from '../events/eventResolver'
+import { StartGame } from '../events/startGame'
 import styled from 'styled-components'
 import { withState, dispatch } from '../state'
 import { beginSelectingCharacter, previewCharacter, selectCharacter, cancelCharacterSelection, viewDetailPanel } from './menuState';
@@ -103,7 +103,7 @@ export const CreateGame: Component<> = withState(({ state }) => {
                 }/>
                 <Route render={({ history }) => 
                     <Button primary onClick={click => {
-                        resolver.processAction(new StartGame({}, {}, {
+                        resolver.processEvent(new StartGame({}, {}, {
                             seed: 100345,
                             character,
                         }))

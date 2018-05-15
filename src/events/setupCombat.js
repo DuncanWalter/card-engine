@@ -1,17 +1,21 @@
-import type { CustomAction } from "./action"
+import type { Event } from "./event"
 import type { ConsumerArgs } from "./listener"
 import type { Monster } from "../creatures/monster"
-import { MetaAction } from "./action"
+import { defineEvent } from "./event"
 import { EndTurn } from "./turnActions"
 import { Sequence } from "../utils/random";
+import { Player } from "../creatures/player";
 
-interface Data {
-    enemies: Monster[],
-    seed: Sequence<number>,
+interface Type {
+    data: {
+        enemies: Monster[],
+        seed: Sequence<number>,
+    },
+    subject: Player,
 }
 
 export const setupCombat: Symbol = Symbol('setupCombat')
-export const SetupCombat: CustomAction<Data> = MetaAction(setupCombat, function({ game, resolver, data }: ConsumerArgs<Data>): void { 
+export const SetupCombat = defineEvent(setupCombat, function*({ game, resolver, data }: ConsumerArgs<Type>){ 
     
     game.drawPile.clear()
     game.hand.clear()

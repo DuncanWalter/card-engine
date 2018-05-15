@@ -1,6 +1,6 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, targeted } from './../../actions/damage'
-import { blockable } from '../../actions/damage'
+import { Damage, targeted } from './../../events/damage'
+import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 
@@ -20,7 +20,7 @@ export const TripleStrike: () => Card<TripleStrikeData> = defineCard(tripleStrik
 function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors }: PlayArgs<>): Generator<any, TripleStrikeData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processAction(
+        const action: Damage = yield resolver.processEvent(
             new Damage(
                 actors,
                 target,
@@ -31,7 +31,7 @@ function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors }: P
                 blockable,
             ),
         )
-        yield resolver.processAction(
+        yield resolver.processEvent(
             new Damage(
                 actors,
                 target,
@@ -42,7 +42,7 @@ function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors }: P
                 blockable,
             ),
         )
-        yield resolver.processAction(
+        yield resolver.processEvent(
             new Damage(
                 actors,
                 target,

@@ -1,9 +1,9 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, targeted } from './../../actions/damage'
-import { blockable } from '../../actions/damage'
+import { Damage, targeted } from './../../events/damage'
+import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
-import { DrawCards } from '../../actions/drawCards'
+import { DrawCards } from '../../events/drawCards'
 
 type FlashOfSteelData = { damage: number, energy: number }
 
@@ -18,10 +18,10 @@ export const FlashOfSteel: () => Card<FlashOfSteelData> = defineCard(flashOfStee
     textTemplate: 'Deal #{damage} damage to a target. Draw a card.',
 })
 
-function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{
+function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors, game }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processAction(
+        const action: Damage = yield resolver.processEvent(
             new Damage(
                 actors,
                 target,
@@ -32,7 +32,7 @@ function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors }: P
                 blockable,
             ),
         )
-        yield resolver.processAction(new DrawCards({}, {}, { count: 1 }))
+        yield resolver.processEvent(new DrawCards(actors, game.player, { count: 1 }))
         return { damage: action.data.damage, energy: self.data.energy }
     } else {
         return self.data

@@ -1,12 +1,12 @@
-import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
+import type { ListenerGroup, ConsumerArgs } from '../events/listener'
 import type { BehaviorType } from "./behavior"
 import type { Game } from "../game/battle/battleState"
 import { CreatureState, Creature } from "./creature"
 import { BehaviorState, Behavior, primeBehavior } from "./behavior"
-import { startCombat } from "../actions/action"
-import { Listener } from "../actions/listener"
+import { startCombat } from '../events/event'
+import { Listener } from '../events/listener'
 import { synchronize, SyncPromise } from "../utils/async"
-import { ActionResolver, resolver } from "../actions/actionResolver"
+import { EventResolver, resolver } from '../events/eventResolver'
 import { Sequence, randomSequence } from "../utils/random";
 
 interface MonsterData {
@@ -29,7 +29,7 @@ export class Monster extends Creature<MonsterData> {
 
     seed: Sequence<number>
 
-    takeTurn(resolver: ActionResolver, game: $ReadOnly<Game>): Promise<void> {
+    takeTurn(resolver: EventResolver, game: $ReadOnly<Game>): Promise<void> {
         
         let self = this
         

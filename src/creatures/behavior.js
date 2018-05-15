@@ -1,8 +1,8 @@
 import type { MonsterState, Monster } from "./monster"
 import type { Game } from "../game/battle/battleState"
 import type { Component } from "../component"
-import { Action } from "../actions/action"
-import { ActionResolver } from "../actions/actionResolver"
+import { Event } from '../events/event'
+import { EventResolver } from '../events/eventResolver'
 import { synchronize } from "../utils/async"
 import { Entity } from "../utils/entity";
 
@@ -28,7 +28,7 @@ export interface Intent {
 
 export interface BehaviorContext { 
     owner: Monster, 
-    resolver: ActionResolver, 
+    resolver: EventResolver, 
     game: $ReadOnly<Game>,
 }
 
@@ -77,7 +77,7 @@ export class Behavior extends Entity<BehaviorState> {
         }
     }
 
-    simulate(owner: Monster, resolver: ActionResolver, game: $ReadOnly<Game>): Intent {
+    simulate(owner: Monster, resolver: EventResolver, game: $ReadOnly<Game>): Intent {
         let data: Intent = baseIntent
         resolver.simulate(resolver => {
             this.perform({ owner, resolver, game }).then(val => data = val)

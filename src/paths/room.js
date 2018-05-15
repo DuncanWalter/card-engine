@@ -1,4 +1,4 @@
-import { Listener } from '../actions/listener'
+import { Listener } from '../events/listener'
 
 export class Room {
 

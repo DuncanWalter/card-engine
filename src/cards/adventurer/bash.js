@@ -1,7 +1,7 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, damage, targeted, blockable } from './../../actions/damage'
-import { Listener } from '../../actions/listener'
-import { BindEffect } from '../../actions/bindEffect'
+import { Damage, damage, targeted, blockable } from './../../events/damage'
+import { Listener } from '../../events/listener'
+import { BindEffect } from '../../events/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from '../utils'
@@ -24,7 +24,7 @@ export const Bash: () => Card<BashData> = defineCard(bash, playBash, {
 function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs<>){
     let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
-        const action: Damage = yield resolver.processAction(
+        const action: Damage = yield resolver.processEvent(
             new Damage(
                 actors, 
                 target,
@@ -36,7 +36,7 @@ function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs<>){
             ),
         )
         // TODO: should be an on damage listener?
-        yield resolver.processAction(new BindEffect(self, target, {
+        yield resolver.processEvent(new BindEffect(self, target, {
             Effect: Vulnerability,
             stacks: 2,
         }, blockable))

@@ -50,7 +50,6 @@ interface GameState {
 }
 
 export function liftState(state: GameState): Game {
-    console.log(state)
     return {
         dummy: new Monster(state.dummy),
         hand: new CardStack(state.hand),
@@ -83,9 +82,6 @@ function serializeGame(game: Game): GameState {
         deck: game.deck.unwrap(),
         famePoints: game.famePoints,
     }
-
-    console.log('game', game)
-    console.log('state', state)
 
 
     return state

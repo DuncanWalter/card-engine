@@ -1,10 +1,10 @@
-import type { CustomAction } from '../actions/action'
+import type { Event } from '../events/event'
 import type { Creature } from '../creatures/creature'
-import { MetaAction, Action } from './action'
+import { defineEvent } from './event'
 import { EndCombat } from './endCombat'
 
 export const spawnCreature = Symbol('spawnCreature')
-export const SpawnCreature: CustomAction<{ isAlly: boolean }, Creature<>> = MetaAction(spawnCreature, ({ data, game, subject, resolver }: *): void => { 
+export const SpawnCreature = defineEvent(spawnCreature, function*({ data, game, subject, resolver }){ 
     let index
     if(data.isAlly){
         game.allies.push(subject)

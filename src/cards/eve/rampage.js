@@ -1,12 +1,12 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, targeted } from './../../actions/damage'
-import { blockable } from '../../actions/damage'
+import { Damage, targeted } from './../../events/damage'
+import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
-import { DrawCards } from '../../actions/drawCards'
+import { DrawCards } from '../../events/drawCards'
 import { MetaEffect } from '../../effects/effect'
-import { BindEffect } from '../../actions/bindEffect'
-import { deafListener } from '../../actions/listener'
+import { BindEffect } from '../../events/bindEffect'
+import { deafListener } from '../../events/listener'
 import { Default } from '../../effects/default';
 
 // TODO: make number of times played visible using the Rampage stacks effect
@@ -38,7 +38,7 @@ let RampageStacks = MetaEffect(rampageSymbol, null, {
 function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs<>): Generator<any, RampageData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processAction(
+        const action: Damage = yield resolver.processEvent(
             new Damage(
                 actors,
                 target,
@@ -49,7 +49,7 @@ function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs<>)
                 blockable,
             ),
         )
-        yield resolver.processAction(new BindEffect(actors, self, { 
+        yield resolver.processEvent(new BindEffect(actors, self, { 
             Effect: RampageStacks,
             stacks: 1,
         }))

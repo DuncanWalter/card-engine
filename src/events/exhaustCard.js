@@ -1,16 +1,19 @@
-import type { CustomAction } from '../actions/action'
+import type { Event } from '../events/event'
 import type { Creature } from '../creatures/creature'
 import type { Card } from '../cards/card'
-import { MetaAction, Action } from './action'
+import { defineEvent } from './event'
 import { ConsumerArgs } from './listener'
 import { CardStack } from '../cards/cardStack'
 
-type Data = {
-    from?: CardStack,
+type Type = {
+    data: {
+        from?: CardStack,
+    },
+    subject: Card<>,
 }
 
 export const exhaustCard: Symbol = Symbol('exhaustCard')
-export const ExhaustCard: CustomAction<Data, Card<>> = MetaAction(exhaustCard, ({ data, game, subject, cancel }: ConsumerArgs<Data, Card<>>): void => { 
+export const ExhaustCard = defineEvent(exhaustCard, function*({ data, game, subject, cancel }: ConsumerArgs<Type>){ 
     
     if(data.from){
         data.from.remove(subject)

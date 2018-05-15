@@ -58,8 +58,8 @@ export class CardStack implements Iterable<Card<any>> {
         this.cards.splice(0, 0, card.unwrap())
     }
 
-    add(...cards: Iterable<Card<any>>){
-        this.cards.push(...[...cards].map(card => card.unwrap()))
+    add(...cards: Card<any>[]){
+        this.cards.push(...cards.map(card => card.unwrap()))
     }
 
     clone(): CardStack {

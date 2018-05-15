@@ -1,12 +1,17 @@
-import type { CustomAction } from '../actions/action'
+import type { Event } from '../events/event'
 import type { Creature } from '../creatures/creature'
-import { MetaAction, Action } from './action'
+import { defineEvent } from './event'
 import { ConsumerArgs } from './listener';
 
-type Data = { healing: number }
+type Type = { 
+    data: {
+        healing: number,
+    },
+    subject: Creature<>,
+}
 
 export const heal: Symbol = Symbol('heal')
-export const Heal: CustomAction<Data, Creature<>> = MetaAction(heal, ({ data, subject, cancel }: ConsumerArgs<Data, Creature<>>): * => { 
+export const Heal = defineEvent(heal, function*({ data, subject, cancel }: ConsumerArgs<Type>){ 
     data.healing = Math.floor(data.healing)
     if(data.healing <= 0){
         cancel()

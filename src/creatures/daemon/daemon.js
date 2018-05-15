@@ -1,10 +1,10 @@
 import type { BehaviorType } from "../behavior"
-import { Damage, targeted, blockable, damage } from "../../actions/damage"
+import { Damage, targeted, blockable, damage } from '../../events/damage'
 import { Block } from "../../effects/block"
-import { BindEffect } from "../../actions/bindEffect"
-import { startCombat } from "../../actions/startCombat"
+import { BindEffect } from '../../events/bindEffect'
+import { startCombat } from '../../events/startCombat'
 import { Blockade } from "../../effects/blockade"
-import { Listener } from "../../actions/listener"
+import { Listener } from '../../events/listener'
 import { Poison } from "../../effects/poison"
 import { Latency } from "../../effects/latency"
 import { defineBehavior } from "../behavior"
@@ -15,7 +15,7 @@ const scratch: BehaviorType = defineBehavior('Swipe', function*({ owner, resolve
         damage: 5
     }, targeted, blockable)
     
-    yield resolver.processAction(action)
+    yield resolver.processEvent(action)
     return { damage: action.data.damage }
 })
 

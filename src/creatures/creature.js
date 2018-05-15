@@ -1,9 +1,9 @@
 import type { Effect } from "../effects/effect"
-import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
-import { damage } from "../actions/damage"
-import { RemoveCreature } from "../actions/removeCreature"
-import { Listener } from "../actions/listener"
-import { resolver } from "../actions/actionResolver";
+import type { ListenerGroup, ConsumerArgs } from '../events/listener'
+import { damage } from '../events/damage'
+import { RemoveCreature } from '../events/removeCreature'
+import { Listener } from '../events/listener'
+import { resolver } from '../events/eventResolver';
 import { Entity } from "../utils/entity";
 import { randomSequence, Sequence } from "../utils/random";
 

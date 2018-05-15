@@ -1,9 +1,9 @@
-import type { ListenerGroup } from "../actions/listener"
+import type { ListenerGroup } from '../events/listener'
 import { MetaEffect, Effect } from "./effect"
-import { damage, blockable } from "../actions/damage"
+import { damage, blockable } from '../events/damage'
 import { vulnerability } from "./vulnerability"
-import { BindEffect } from "../actions/bindEffect"
-import { Listener, ConsumerArgs } from "../actions/listener"
+import { BindEffect } from '../events/bindEffect'
+import { Listener, ConsumerArgs } from '../events/listener'
 
 export const block = Symbol('block')
 export const Block: Class<Effect> = MetaEffect(block, {
@@ -23,12 +23,13 @@ export const Block: Class<Effect> = MetaEffect(block, {
     {
         subjects: [owner],
         tags: [blockable],
+        type: damage,
     },
-    function({ data, resolver, actors, cancel }: ConsumerArgs<>): void {
+    function*({ data, resolver, actors, cancel }){
         if (resolver.simulating) return
         if(typeof data.damage == 'number'){
             if(data.damage <= self.stacks){
-                resolver.processAction(new BindEffect(actors, owner, {
+                resolver.processEvent(new BindEffect(actors, owner, {
                     Effect: Block,
                     stacks: -data.damage,
                 }))
@@ -36,7 +37,7 @@ export const Block: Class<Effect> = MetaEffect(block, {
                 cancel()
             } else {
                 data.damage -= self.stacks
-                resolver.processAction(new BindEffect(actors, owner, {
+                resolver.processEvent(new BindEffect(actors, owner, {
                     Effect: Block,
                     stacks: -self.stacks,
                 }))

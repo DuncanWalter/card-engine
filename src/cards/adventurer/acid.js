@@ -1,7 +1,7 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, damage, targeted, blockable } from './../../actions/damage'
-import { Listener, ConsumerArgs } from '../../actions/listener'
-import { BindEffect } from '../../actions/bindEffect'
+import { Damage, damage, targeted, blockable } from './../../events/damage'
+import { Listener, ConsumerArgs } from '../../events/listener'
+import { BindEffect } from '../../events/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
 import { block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -44,14 +44,14 @@ function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs<>){
                 yield internal()
                 const poison = (damage - data.damage)
                 yield next()
-                yield resolver.processAction(new BindEffect(actors, subject, {
+                yield resolver.processEvent(new BindEffect(actors, subject, {
                     Effect: Poison,
                     stacks: poison,
-                }, acid))
+                }))
             },
             true,
         ))
-        yield resolver.processAction(action)
+        yield resolver.processEvent(action)
         return { damage: action.data.damage, energy: self.data.energy }
     } else {
         return self.data

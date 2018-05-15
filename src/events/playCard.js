@@ -1,19 +1,22 @@
 import type { Card } from '../cards/card'
-import type { CustomAction } from './action'
+import type { Event } from './event'
 import type { CardStack } from '../cards/cardStack';
 import { Creature } from '../creatures/creature'
-import { Action, MetaAction } from './action'
+import { defineEvent } from './event'
 import { Player } from '../creatures/player'
 import { ConsumerArgs } from './listener';
 import { BindEnergy } from './bindEnergy';
 import { AddToDiscardPile } from './addToDiscard';
 
-type Data = {
-    from?: CardStack,
+type Type = {
+    data: {
+        from?: CardStack,
+    },
+    subject: Card<>,
 }
 
 export const playCard: Symbol = Symbol('playCard')
-export const PlayCard: CustomAction<Data, Card<>, Player> = MetaAction(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Data>): * { 
+export const PlayCard = defineEvent(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Type>): * { 
 
     if(game.player.energy < subject.data.energy){
         return cancel()
@@ -21,7 +24,7 @@ export const PlayCard: CustomAction<Data, Card<>, Player> = MetaAction(playCard,
         data.from.remove(subject)
     }
 
-    yield resolver.processAction(new BindEnergy({}, {}, {
+    yield resolver.processEvent(new BindEnergy(actors, game.player, {
         quantity: -subject.data.energy
     }, playCard))
     
@@ -40,11 +43,11 @@ export const PlayCard: CustomAction<Data, Card<>, Player> = MetaAction(playCard,
 
     
 
-    let action = yield resolver.processAction(new AddToDiscardPile(actors, subject, {}, playCard))
+    let event = yield resolver.processEvent(new AddToDiscardPile(actors, subject, {}, playCard))
     
     game.activeCards.take()
 
-    console.log("Play Card:", action)
+    console.log("Play Card:", event)
 
 })
 

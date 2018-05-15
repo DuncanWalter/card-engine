@@ -1,10 +1,10 @@
 import { MetaEffect, Effect, tick } from "./effect"
-import { damage } from "../actions/damage"
-import type { ListenerGroup } from "../actions/listener"
+import { damage } from '../events/damage'
+import type { ListenerGroup } from '../events/listener'
 import { Block, block } from "./block"
-import { bindEffect } from "../actions/bindEffect"
+import { bindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
-import { Listener, ConsumerArgs } from "../actions/listener";
+import { Listener, ConsumerArgs } from '../events/listener';
 
 export const blockade = Symbol('blockade');
 export const Blockade: Class<Effect> = MetaEffect(blockade, {
@@ -26,7 +26,7 @@ export const Blockade: Class<Effect> = MetaEffect(blockade, {
         tags: [tick, block],
         type: bindEffect,
     },
-    function({ data, actor, cancel }: ConsumerArgs<>): void{
+    function*({ data, actor, cancel }){
         if(data.stacks < 0){
             cancel()
         }

@@ -1,7 +1,7 @@
 import type { State } from "../state";
 import type { Reducer, Dispatch } from "../utils/state"
 import { Component } from "preact"
-import { resolver } from "../actions/actionResolver"
+import { resolver } from '../events/eventResolver'
 import { createReducer } from "../utils/state"
 import { reducer, each } from "vitrarius"
 

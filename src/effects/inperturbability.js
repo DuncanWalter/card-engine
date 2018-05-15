@@ -1,8 +1,8 @@
 import { MetaEffect, Effect } from "./effect"
-import { damage } from "../actions/damage"
-import { Listener, ConsumerArgs } from "../actions/listener"
+import { damage } from '../events/damage'
+import { Listener, ConsumerArgs } from '../events/listener'
 import { vulnerability } from "./vulnerability"
-import { bindEffect } from "../actions/bindEffect";
+import { bindEffect } from '../events/bindEffect';
 
 export const imperturbability = Symbol('imperturbability')
 export const Imperturbability: Class<Effect> = MetaEffect(imperturbability, null, {
@@ -16,7 +16,7 @@ export const Imperturbability: Class<Effect> = MetaEffect(imperturbability, null
         subjects: [owner],
         type: bindEffect,
     },
-    function({ cancel }: ConsumerArgs<>): void {
+    function*({ cancel }){
         cancel()
     },  
     false,

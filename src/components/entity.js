@@ -1,5 +1,5 @@
 import { Component } from 'preact'
-import { resolver } from '../actions/actionResolver'
+import { resolver } from '../events/eventResolver'
 import { dispatch } from '../state';
 
 

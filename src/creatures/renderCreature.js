@@ -3,7 +3,7 @@ import type { State } from '../state'
 import { renderEffect as Effect } from '../effects/renderEffect'
 import { renderBehavior as Behavior, Behavior as BehaviorWrapper } from './behavior'
 import { Entity } from '../components/entity'
-import { resolver } from '../actions/actionResolver'
+import { resolver } from '../events/eventResolver'
 import { withState } from '../state';
 import { Monster } from './monster';
 import { Creature } from './creature';

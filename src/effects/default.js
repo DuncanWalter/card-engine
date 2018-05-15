@@ -1,13 +1,13 @@
-import type { ListenerGroup, ConsumerArgs } from "../actions/listener"
+import type { ListenerGroup, ConsumerArgs } from '../events/listener'
 import { MetaEffect, Effect, tick } from "./effect"
-import { damage, Damage } from "../actions/damage"
+import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
-import { BindEffect, bindEffect } from "../actions/bindEffect"
-import { playCard, PlayCard } from "../actions/playCard"
-import { Listener } from "../actions/listener"
-import { addToDiscardPile } from "../actions/addToDiscard";
+import { BindEffect, bindEffect } from '../events/bindEffect'
+import { playCard, PlayCard } from '../events/playCard'
+import { Listener } from '../events/listener'
+import { addToDiscardPile } from '../events/addToDiscard';
 import { Card } from "../cards/card";
-import { AddToDrawPile } from "../actions/addToDrawPile";
+import { AddToDrawPile } from '../events/addToDrawPile';
 
 export const default$ = Symbol('default$')
 export const Default: Class<Effect> = MetaEffect(default$, {
@@ -30,7 +30,7 @@ export const Default: Class<Effect> = MetaEffect(default$, {
     },
     function*({ game, data, resolver, cancel }: ConsumerArgs<>): * {
         if(owner instanceof Card){
-            yield resolver.processAction(new AddToDrawPile(self, owner, {}))
+            yield resolver.processEvent(new AddToDrawPile(self, owner, {}))
             return cancel()
         }
     },

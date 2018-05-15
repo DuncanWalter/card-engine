@@ -1,11 +1,11 @@
 import type { BehaviorType } from "../behavior"
 import { Behavior, defineBehavior, primeBehavior } from "../behavior"
-import { Damage, targeted, blockable, damage } from "../../actions/damage"
+import { Damage, targeted, blockable, damage } from '../../events/damage'
 import { Block } from "../../effects/block"
-import { BindEffect } from "../../actions/bindEffect"
-import { startCombat } from "../../actions/startCombat"
+import { BindEffect } from '../../events/bindEffect'
+import { startCombat } from '../../events/startCombat'
 import { Blockade } from "../../effects/blockade"
-import { Listener } from "../../actions/listener"
+import { Listener } from '../../events/listener'
 import { Poison } from "../../effects/poison"
 import { Latency } from "../../effects/latency"
 import { defineMonster } from "../monster";
@@ -21,7 +21,7 @@ const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, g
         function*({ data, resolver, actors, subject, internal }): * {
             yield internal()
             if(data.damage > 0){
-                yield resolver.processAction(new BindEffect(actors, subject, {
+                yield resolver.processEvent(new BindEffect(actors, subject, {
                     Effect: Poison,
                     stacks: 3,
                 }))
@@ -29,12 +29,12 @@ const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, g
         },
         true,
     ))
-    yield resolver.processAction(action)
+    yield resolver.processEvent(action)
     return { damage: action.data.damage, isDebuffing: true }
 })
 
 const hiss: BehaviorType = defineBehavior('Hiss', function*({ owner, resolver, game }){
-    yield resolver.processAction(new BindEffect(owner, game.player, {
+    yield resolver.processEvent(new BindEffect(owner, game.player, {
         Effect: Latency,
         stacks: 2,
     }))

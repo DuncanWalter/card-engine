@@ -1,5 +1,5 @@
-import type { CustomAction } from './action'
-import { MetaAction, startTurn, endTurn } from "./action"
+import type { Event } from './event'
+import { defineEvent, startTurn, endTurn } from "./event"
 import { Creature } from "../creatures/creature"
 import { Player } from "../creatures/player"
 // import { NPC } from "../creatures/npc"
@@ -11,24 +11,24 @@ import { BindEnergy } from "./bindEnergy"
 export const drain = Symbol('drain')
 export const fill  = Symbol('fill')
 export { startTurn }
-export const StartTurn: CustomAction<> = MetaAction(startTurn, function*({ game, subject, resolver }):*{ 
+export const StartTurn = defineEvent(startTurn, function*({ game, subject, resolver }){ 
     if(subject instanceof Player){
-        yield resolver.processAction(new BindEnergy(game.player, game.player, { 
+        yield resolver.processEvent(new BindEnergy(game.player, game.player, { 
             quantity: -game.player.energy 
-        }), startTurn, drain)
-        yield resolver.processAction(new BindEnergy(game.player, game.player, { 
+        }, startTurn, drain))
+        yield resolver.processEvent(new BindEnergy(game.player, game.player, { 
             quantity: 3 // TODO: is it important to track max energy? // game.player.maxEnergy
-        }), startTurn, fill)
-        yield resolver.processAction(new DrawCards(game.player, game.player, { count: 5 }, startTurn))
+        }, startTurn, fill))
+        yield resolver.processEvent(new DrawCards(game.player, game.player, { count: 5 }, startTurn))
         for(let ally of [...game.allies]){
-            yield resolver.processAction(new StartTurn({}, ally, {}))
+            yield resolver.processEvent(new StartTurn(ally, ally, {}))
         }
         game.player.inner.data.isActive = true
     }
 })
 
 export { endTurn }
-export const EndTurn: CustomAction<any, Creature<>> = MetaAction(endTurn, ({ subject, resolver, game }: ConsumerArgs<>) => {
+export const EndTurn = defineEvent(endTurn, function*({ subject, resolver, game }){
     if(subject instanceof Player){
         // gameState.allies.reduce((acc, ally) => {
         //     acc.appendList(new LL(ally.takeTurn({ resolver, game: gameState })))
@@ -41,12 +41,12 @@ export const EndTurn: CustomAction<any, Creature<>> = MetaAction(endTurn, ({ sub
             game.discardPile.addToTop(game.hand.take()[0])
         }
 
-        resolver.enqueueActions(...game.allies.map(ally => new TakeTurn({}, ally, {})))
-        resolver.enqueueActions(...game.allies.map(ally => new EndTurn({}, ally, {})))
-        resolver.enqueueActions(...game.enemies.map(enemy => new StartTurn({}, enemy, {})))
-        resolver.enqueueActions(...game.enemies.map(enemy => new TakeTurn({}, enemy, {})))
-        resolver.enqueueActions(...game.enemies.map(enemy => new EndTurn({}, enemy, {})))
-        resolver.enqueueActions(new StartTurn({}, game.player, {}))
+        resolver.enqueueEvents(...game.allies.map(ally => new TakeTurn(ally, ally, {})))
+        resolver.enqueueEvents(...game.allies.map(ally => new EndTurn(ally, ally, {})))
+        resolver.enqueueEvents(...game.enemies.map(enemy => new StartTurn(enemy, enemy, {})))
+        resolver.enqueueEvents(...game.enemies.map(enemy => new TakeTurn(enemy, enemy, {})))
+        resolver.enqueueEvents(...game.enemies.map(enemy => new EndTurn(enemy, enemy, {})))
+        resolver.enqueueEvents(new StartTurn(game.player, game.player, {}))
 
     } 
     // else if(subject instanceof NPC){
@@ -56,7 +56,7 @@ export const EndTurn: CustomAction<any, Creature<>> = MetaAction(endTurn, ({ sub
     //     // // check to see if all enemies have gone and the subject is an enemy
     //     // // if so, start a player turn
     //     // if(isEnemy && noActiveEnemies){
-    //     //     resolver.enqueueActions(new StartTurn({}, game.player, {}))
+    //     //     resolver.enqueueEvents(new StartTurn({}, game.player, {}))
     //     // }        
     // }
 })

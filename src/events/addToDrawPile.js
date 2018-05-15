@@ -1,13 +1,16 @@
-import type { CustomAction } from "./action"
+import type { Event } from "./event"
 import type { Card } from "../cards/card";
-import { MetaAction } from "./action"
+import { defineEvent } from "./event"
 import { Creature } from "../creatures/creature"
 import { ConsumerArgs } from "./listener";
 
-type Data = {}
+type Type = {
+    data: {},
+    subject: Card<>,
+}
 
 export const addToDrawPile = Symbol('addToDrawPile')
-export const AddToDrawPile: CustomAction<Data, Card<>> = MetaAction(addToDrawPile, ({ actor, subject, resolver, data, game }: ConsumerArgs<Data, Card<>>): void => { 
+export const AddToDrawPile = defineEvent(addToDrawPile, function*({ actor, subject, resolver, data, game }: ConsumerArgs<Type>){ 
     game.drawPile.addToTop(subject)
     // TODO: don't want to shuffle the whole thing
     game.drawPile.shuffle()

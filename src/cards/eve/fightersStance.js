@@ -1,9 +1,9 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { BindEffect } from '../../actions/bindEffect'
+import { BindEffect } from '../../events/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted } from '../../actions/damage';
-import { AddToHand } from '../../actions/addToHand';
+import { targeted } from '../../events/damage';
+import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
 
 
@@ -22,7 +22,7 @@ export const FightersStance: () => Card<FightersStanceData> = defineCard(fighter
 })
 
 function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver }: PlayArgs<>): Generator<any, FightersStanceData, any> {
-    const action: BindEffect = yield resolver.processAction(
+    const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,
@@ -36,7 +36,7 @@ function* playFightersStance(self: Card<FightersStanceData>, { actors, game, res
     )
     let i = self.data.jabs
     while(i-- > 0){
-        yield resolver.processAction(new AddToHand(actors, new Jab(), {}))
+        yield resolver.processEvent(new AddToHand(actors, new Jab(), {}))
     }
     return { block: action.data.stacks, energy: self.data.energy, jabs: self.data.jabs }
 }

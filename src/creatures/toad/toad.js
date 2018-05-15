@@ -1,20 +1,20 @@
 import type { BehaviorType } from "../behavior"
 import { Behavior, defineBehavior } from "../behavior"
-import { Damage, targeted, blockable } from "../../actions/damage"
+import { Damage, targeted, blockable } from '../../events/damage'
 import { Block } from "../../effects/block"
-import { BindEffect } from "../../actions/bindEffect"
-import { startCombat } from "../../actions/startCombat"
+import { BindEffect } from '../../events/bindEffect'
+import { startCombat } from '../../events/startCombat'
 import { Latency } from "../../effects/latency";
 import { Strength } from "../../effects/strength"
 import { defineMonster } from "../monster";
 import { Sequence } from "../../utils/random";
 
 const ribbit: BehaviorType = defineBehavior('Ribbit', function*({ owner, resolver, game }){
-    yield resolver.processAction(new BindEffect(owner, owner, { 
+    yield resolver.processEvent(new BindEffect(owner, owner, { 
         stacks: 5,
         Effect: Block,
     }, targeted))
-    yield resolver.processAction(new BindEffect(owner, owner, { 
+    yield resolver.processEvent(new BindEffect(owner, owner, { 
         stacks: 1,
         Effect: Strength,
     }, targeted))
@@ -22,7 +22,7 @@ const ribbit: BehaviorType = defineBehavior('Ribbit', function*({ owner, resolve
 })
 
 const lick: BehaviorType = defineBehavior('Lick', function*({ owner, resolver, game }){
-    yield resolver.processAction(new BindEffect(owner, game.player, {
+    yield resolver.processEvent(new BindEffect(owner, game.player, {
         Effect: Latency,
         stacks: 1,
     }))
@@ -30,7 +30,7 @@ const lick: BehaviorType = defineBehavior('Lick', function*({ owner, resolver, g
 })
 
 const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, game }){
-    const action: Damage = yield resolver.processAction(new Damage(owner, game.player, { 
+    const action: Damage = yield resolver.processEvent(new Damage(owner, game.player, { 
         damage: 6 
     }, targeted, blockable))
     return { damage: action.data.damage }

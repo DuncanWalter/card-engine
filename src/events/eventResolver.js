@@ -1,4 +1,4 @@
-import type { Action } from './../actions/action'
+import type { Event } from './../events/event'
 import type { ListenerGroup } from './listener'
 import type { Slice } from '../utils/state'
 import type { State } from '../state'
@@ -16,39 +16,41 @@ interface GameTransducer {
 
 function any(self: any): any { return self }
 
-function testListener(action: Action<>, listener: Listener<>){
+function testListener(event: Event<>, listener: Listener<>){
     let matched = false
     const h = listener.header
     if(h.actors){
-        if(h.actors.reduce((acc, actor) => acc || action.actors.has(actor), false)){
+        const headerIds = [...h.actors].map(actor => actor.id)
+        const actorIds = [...event.actors].map(actor => actor.id)
+        if(headerIds.reduce((acc, actor) => acc || actorIds.includes(actor), false)){
             matched = true
         } else {
             return false
         }
     }
     if(h.subjects){
-        if(h.subjects.indexOf(action.subject) >= 0){
+        if(event.subject.isIn(h.subjects) >= 0){
             matched = true
         } else {
             return false
         }
     }
     if(h.tags){
-        if(h.tags.reduce((a, t) => action.tags.indexOf(t) >= 0 && a, true)){
+        if(h.tags.reduce((a, t) => event.tags.indexOf(t) >= 0 && a, true)){
             matched = true
         } else {
             return false
         }
     }
     if(h.filter){
-        if(h.filter(action)){
+        if(h.filter(event)){
             matched = true
         } else {
             return false
         }
     }
     if(h.type){
-        if(h.type == action.id){
+        if(h.type == event.id){
             matched = true
         } else {
             return false
@@ -57,13 +59,13 @@ function testListener(action: Action<>, listener: Listener<>){
     return matched
 }
 
-export class ActionResolver {
+export class EventResolver {
 
     state: GameTransducer
     initialized: boolean
     processing: boolean
     simulating: boolean
-    actionQueue: LL<Action<>>
+    eventQueue: LL<Event<>>
     animations: Map<any, Set<Animation>>
     listenerOrder: Map<Symbol, {
         parents: Symbol[],
@@ -76,33 +78,33 @@ export class ActionResolver {
     constructor(){
         this.processing = false
         this.simulating = false
-        this.actionQueue = new LL()
+        this.eventQueue = new LL()
         this.initialized = false
         this.listenerOrder = new Map()
         this.animations = new Map()
     }
 
-    processAction<A: Action<>>(action: A): Promise<A> {
-        return processAction(this, action)
+    processEvent<A: Event<>>(event: A): Promise<A> {
+        return processEvent(this, event)
     }
     
     processQueue(): Promise<void> {
         return processQueue(this)
     }
 
-    enqueueActions(...actions: Action<>[]): void {
+    enqueueEvents(...events: Event<>[]): void {
         if (this.simulating) return
-        actions.forEach(action => this.actionQueue.append(action))
+        events.forEach(event => this.eventQueue.append(event))
         if (!this.processing) this.processQueue()
     }
 
-    pushActions(...actions: Action<>[]): void {
+    pushEvents(...events: Event<>[]): void {
         if (this.simulating) return
-        actions.reverse().forEach(action => this.actionQueue.push(action))
+        events.reverse().forEach(event => this.eventQueue.push(event))
         if (!this.processing) this.processQueue()
     }
 
-    simulate<R>(use: (trap: ActionResolver) => R): R {
+    simulate<R>(use: (trap: EventResolver) => R): R {
         this.simulating = true
         const r: R = use(this)
         this.simulating = false
@@ -111,7 +113,7 @@ export class ActionResolver {
 
     registerListenerType(id: Symbol, parents?: Symbol[], children?: Symbol[]){
         if(this.initialized){
-            throw new Error(`Cannot register id ${id.toString()} with action resolver after the resolver is initialized.`)
+            throw new Error(`Cannot register id ${id.toString()} with event resolver after the resolver is initialized.`)
         } else {
             this.listenerOrder.set(id, {
                 parents: parents || [],
@@ -128,7 +130,7 @@ export class ActionResolver {
     // TODO: take a state context from hell
     initialize(game: GameTransducer){
         if(this.initialized){
-            throw new Error('Action Resolver initialized twice. Action Resolvers may only be initialized once.')
+            throw new Error('Event Resolver initialized twice. Event Resolvers may only be initialized once.')
         }
         const order = topologicalSort(
             [...this.listenerOrder.values()]
@@ -170,7 +172,7 @@ function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
 }
 
 
-function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
+function aggregate(ls: ListenerGroup, event: Event<>): LL<Listener<>> {
     if(!ls){
         return new LL() // TODO: maybe not a silent fail?
     } else
@@ -178,21 +180,21 @@ function aggregate(ls: ListenerGroup, action: Action<>): LL<Listener<>> {
     if(ls[Symbol.iterator]){
         // $FlowFixMe
         return [...ls].reduce((a: LL<Listener<>>, ls: ListenerGroup) => {
-            a.appendList(aggregate(ls, action))
+            a.appendList(aggregate(ls, event))
             return a
         }, new LL())
     } else if(ls instanceof Listener){
-        let ret = testListener(action, ls) ? new LL(ls) : new LL()
+        let ret = testListener(event, ls) ? new LL(ls) : new LL()
         return ret
     } else {
         // $FlowFixMe
-        return aggregate(ls.listener, action)
+        return aggregate(ls.listener, event)
     } 
 }
 
 
 
-const processAction = synchronize(function* processAction(self: ActionResolver, action: Action<>): Generator<any, Action<>, any> {
+const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<>): Generator<any, Event<>, any> {
     let game = self.state.getGame()    
     
     let activeListeners: LL<Listener<>> = aggregate([
@@ -203,15 +205,15 @@ const processAction = synchronize(function* processAction(self: ActionResolver, 
         game.drawPile,
         game.hand,
         game.discardPile,
-    ], action)
+    ], event)
     
-    activeListeners.append(action)
-    action.defaultListeners.forEach((listener: *) => {
+    activeListeners.append(event)
+    event.defaultListeners.forEach((listener: *) => {
         activeListeners.append(listener)
     })
 
     if(!self.simulating){ 
-        console.log(action.id, action, game) 
+        console.log(event.id, event, game) 
     }
 
     activeListeners = applyInternals(activeListeners)
@@ -230,7 +232,7 @@ const processAction = synchronize(function* processAction(self: ActionResolver, 
 
     const continuing = (): boolean => {
         let a = ++index < executionQueue.length
-        // TODO: action check can break w/ internals and sync converts...
+        // TODO: event check can break w/ internals and sync converts...
         let b = a && !(self.simulating && executionQueue[index].header == reject)
         
         return active = a && b && active
@@ -239,13 +241,13 @@ const processAction = synchronize(function* processAction(self: ActionResolver, 
     const next: () => Promise<void> = synchronize(function*(): Generator<any, any, any> {
         while(continuing()){
             yield executionQueue[index].consumer({ 
-                data: action.data,
+                data: event.data,
                 next,
                 cancel,
                 resolver: self,
-                subject: action.subject,
-                actors: action.actors,
-                action,
+                subject: event.subject,
+                actors: event.actors,
+                event,
                 game,
                 internal: () => { 
                     throw new Error('Internal listener envoked by non-wrapper listener') 
@@ -258,16 +260,16 @@ const processAction = synchronize(function* processAction(self: ActionResolver, 
         // TODO: figure out what to do here
         self.state.setGame(game)
     }
-    return action
+    return event
 })
 
-const processQueue = synchronize(function* processQueue(self: ActionResolver): Generator<any, void, any> {
+const processQueue = synchronize(function* processQueue(self: EventResolver): Generator<any, void, any> {
     if (self.processing) return
     self.processing = true
-    let next: Action<>
+    let next: Event<>
     // $FlowFixMe
-    while(next = self.actionQueue.next()){
-        yield self.processAction(next)
+    while(next = self.eventQueue.next()){
+        yield self.processEvent(next)
         if(!self.simulating){
             // yield new Promise(resolve => setTimeout(resolve, 300))
             // for(let aniSet of self.animations){
@@ -280,4 +282,4 @@ const processQueue = synchronize(function* processQueue(self: ActionResolver): G
     self.processing = false
 })
 
-export const resolver = new ActionResolver()
+export const resolver = new EventResolver()

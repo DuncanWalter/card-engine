@@ -1,7 +1,7 @@
 import { MetaEffect, Effect } from "./effect"
-import { damage } from "../actions/damage"
-import { Listener, ConsumerArgs } from "../actions/listener";
-import { blockable } from "../actions/damage";
+import { damage } from '../events/damage'
+import { Listener, ConsumerArgs } from '../events/listener';
+import { blockable } from '../events/damage';
 import { latency } from "./latency";
 import { Card } from "../cards/card";
 
@@ -21,11 +21,11 @@ export const Strength: Class<Effect> = MetaEffect(strength, {
 }, (owner, self) => new Listener(
     strength,
     {
-        filter: action => action.actors.has(owner),
+        actors: [owner],
         tags: [blockable],
         type: damage,
     },
-    function({ data }: ConsumerArgs<>): void {
+    function*({ data }){
         if(typeof data.damage == 'number'){
             data.damage += self.stacks
         }

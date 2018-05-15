@@ -1,13 +1,13 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { BindEffect } from '../../actions/bindEffect'
+import { BindEffect } from '../../events/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted, damage } from '../../actions/damage';
-import { AddToHand } from '../../actions/addToHand';
+import { targeted, damage } from '../../events/damage';
+import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
 import { MetaEffect } from '../../effects/effect';
-import { endTurn } from '../../actions/action';
-import { Listener } from '../../actions/listener';
+import { endTurn } from '../../events/event';
+import { Listener } from '../../events/listener';
 
 
 type RageData = { rage: number, energy: number }
@@ -24,7 +24,7 @@ export const Rage: () => Card<RageData> = defineCard(rage, playRage, {
 })
 
 function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs<>): Generator<any, RageData, any> {
-    const action: BindEffect = yield resolver.processAction(
+    const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,
@@ -56,13 +56,13 @@ const RageEffect = MetaEffect(rageSymbol, {
     max: 99,
     on: endTurn,
 }, (owner, self) => new Listener(rageSymbol, { 
-    filter: action => action.actors.has(owner) && action.hasActorOfType(Card),
+    actors: [owner],
     type: damage,
 }, function*({ resolver }): * {
     let actors = new Set()
     actors.add(owner)
     actors.add(self)
-    yield resolver.processAction(new BindEffect(actors, owner, {
+    yield resolver.processEvent(new BindEffect(actors, owner, {
         stacks: self.stacks,
         Effect: Block,
     }, block, rageSymbol))

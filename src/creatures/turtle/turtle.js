@@ -1,21 +1,21 @@
 import type { BehaviorType } from "../behavior"
 import { Behavior, defineBehavior, primeBehavior } from "../behavior"
-import { Damage, targeted, blockable } from "../../actions/damage"
+import { Damage, targeted, blockable } from '../../events/damage'
 import { Block } from "../../effects/block"
-import { BindEffect } from "../../actions/bindEffect"
-import { startCombat } from "../../actions/startCombat"
+import { BindEffect } from '../../events/bindEffect'
+import { startCombat } from '../../events/startCombat'
 import { Blockade } from "../../effects/blockade"
 import { defineMonster } from "../monster"
 
 const chomp: BehaviorType = defineBehavior('Chomp', function*({ owner, resolver, game }){
-    const action: Damage = yield resolver.processAction(new Damage(self, game.player, { 
+    const action: Damage = yield resolver.processEvent(new Damage(self, game.player, { 
         damage: 7 
     }, targeted, blockable))
     return { damage: action.data.damage }
 })
 
 const hunker: BehaviorType = defineBehavior('Hunker', function*({ owner, resolver, game }){
-    yield resolver.processAction(new BindEffect(owner, owner, {
+    yield resolver.processEvent(new BindEffect(owner, owner, {
         Effect: Block,
         stacks: 8,
     }))

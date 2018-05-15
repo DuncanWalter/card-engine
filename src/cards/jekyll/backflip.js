@@ -1,9 +1,9 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { BindEffect } from '../../actions/bindEffect'
+import { BindEffect } from '../../events/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted } from '../../actions/damage';
-import { DrawCards } from '../../actions/drawCards';
+import { targeted } from '../../events/damage';
+import { DrawCards } from '../../events/drawCards';
 
 
 type BackflipData = { block: number, energy: number, draw: number }
@@ -21,7 +21,7 @@ export const Backflip: () => Card<BackflipData> = defineCard(backflip, playBackf
 })
 
 function* playBackflip(self: Card<BackflipData>, { actors, game, resolver }: PlayArgs<>): Generator<any, BackflipData, any> {
-    const action: BindEffect = yield resolver.processAction(
+    const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,
@@ -33,7 +33,7 @@ function* playBackflip(self: Card<BackflipData>, { actors, game, resolver }: Pla
             targeted,
         ),
     )
-    yield resolver.processAction(new DrawCards(actors, game.player, {
+    yield resolver.processEvent(new DrawCards(actors, game.player, {
         count: self.data.draw,
     }))
     return { block: action.data.stacks, energy: self.data.energy, draw: self.data.draw }

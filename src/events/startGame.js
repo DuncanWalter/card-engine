@@ -1,5 +1,5 @@
-import type { CustomAction } from "./action"
-import { MetaAction } from "./action"
+import type { Event } from "./event"
+import { defineEvent } from "./event"
 import { Player } from "../creatures/player"
 import { CardLibrary } from "../cards/cardLibrary"
 import { ConsumerArgs } from "./listener"
@@ -13,7 +13,7 @@ import { Monster } from "../creatures/monster";
 import { Card } from "../cards/card";
 
 export const startGame: Symbol = Symbol('startGame')
-export const StartGame: CustomAction<{ seed: number, character: string[] }> = MetaAction(startGame, ({ resolver, game, data }: ConsumerArgs<{ seed: number, character: string[] }>): void => {
+export const StartGame = defineEvent(startGame, function*({ resolver, game, data }){
     
     let seed = randomSequence(data.seed * Math.random())
 
@@ -66,7 +66,5 @@ export const StartGame: CustomAction<{ seed: number, character: string[] }> = Me
 
     startPath(dispatch, data.seed)
     generateFreedoms(dispatch)
-
-    console.log(game)
 
 })

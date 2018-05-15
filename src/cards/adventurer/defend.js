@@ -1,8 +1,8 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { BindEffect } from '../../actions/bindEffect'
+import { BindEffect } from '../../events/bindEffect'
 import { block, Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted } from '../../actions/damage';
+import { targeted } from '../../events/damage';
 
 type DefendData = { block: number, energy: number }
 
@@ -17,7 +17,7 @@ export const Defend: () => Card<DefendData> = defineCard('Defend', playDefend, {
 })
 
 function* playDefend(self: Card<DefendData>, { actors, game, resolver }: PlayArgs<>) {
-    const action: BindEffect = yield resolver.processAction(
+    const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,

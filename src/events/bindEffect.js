@@ -1,19 +1,20 @@
 import type { Effect } from "../effects/effect"
 import type { Card } from "../cards/card";
-import type { CustomAction } from "./action"
-import { MetaAction } from "./action"
+import type { Event } from "./event"
+import { defineEvent } from "./event"
 import { Creature } from "../creatures/creature"
 import { ConsumerArgs } from "./listener";
 
-type Data = {
-    Effect: Class<Effect>,
-    stacks: number,
+type Type = {
+    data: {
+        Effect: Class<Effect>,
+        stacks: number,
+    },
+    subject: Card<> | Creature<>,
 }
 
-type Effected = Card<> | Creature<>
-
 export const bindEffect: Symbol = Symbol('bindEffect')
-export const BindEffect: CustomAction<Data, Effected> = MetaAction(bindEffect, ({ subject, data }: ConsumerArgs<Data, Effected>) => {
+export const BindEffect = defineEvent(bindEffect, function*({ subject, data }: ConsumerArgs<Type>){
     let effect: Effect, current = subject.effects.filter(e => e.constructor == data.Effect)
     let stacks = Math.floor(data.stacks)
     if(current.length){

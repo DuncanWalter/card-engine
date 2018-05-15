@@ -1,10 +1,10 @@
 import { MetaEffect, Effect } from "./effect"
-import { damage } from "../actions/damage"
-import { Listener, ConsumerArgs } from "../actions/listener";
-import { blockable } from "../actions/damage";
+import { damage } from '../events/damage'
+import { Listener, ConsumerArgs } from '../events/listener';
+import { blockable } from '../events/damage';
 import { vulnerability } from "./vulnerability";
 import { Card } from "../cards/card";
-import { endTurn } from "../actions/action";
+import { endTurn } from '../events/event';
 
 export const latency = Symbol('latency');
 export const Latency: Class<Effect> = MetaEffect(latency, {
@@ -27,7 +27,7 @@ export const Latency: Class<Effect> = MetaEffect(latency, {
         tags: [blockable],
         type: damage,
     },
-    function({ data }: ConsumerArgs<>): void {
+    function*({ data }){
         if(typeof data.damage == 'number'){
             data.damage *= 0.75
         }

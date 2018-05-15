@@ -4,15 +4,16 @@ import type { State } from '../state'
 import { Link } from 'react-router-dom'
 import { Modal, Row, Button, Col, Block, Shim } from '../utility'
 import { Route } from 'react-router-dom'
-import { StartGame } from '../actions/startGame'
-import { SetupCombat } from '../actions/setupCombat'
-import { StartCombat } from '../actions/startCombat'
+import { StartGame } from '../events/startGame'
+import { SetupCombat } from '../events/setupCombat'
+import { StartCombat } from '../events/startCombat'
 import { Turtle } from '../creatures/turtle/turtle'
 import { Cobra } from '../creatures/cobra/cobra'
-import { resolver } from '../actions/actionResolver'
+import { resolver } from '../events/eventResolver'
 import { withState, dispatch } from '../state'
 import { selectFreedom, generateFreedoms } from './pathState';
 import { Monster } from '../creatures/monster';
+import { Entity } from '../components/entity';
 
 type Props = { state: State }
 export const PathSelection: Component<any> = withState(({ state }: Props) => {
@@ -26,11 +27,12 @@ export const PathSelection: Component<any> = withState(({ state }: Props) => {
                         selectFreedom(dispatch, path)
                         generateFreedoms(dispatch)
                         history.push('/game/battle')
-                        resolver.enqueueActions(new SetupCombat({}, {}, {
+                        // TODO: Remove new Entity hacj
+                        resolver.enqueueEvents(new SetupCombat(new Entity({}), new Entity({}), {
                             enemies: path.enemies.map(enemy => new Monster(enemy)),
                             seed: path.seed.fork(),
                         }))
-                        resolver.enqueueActions(new StartCombat({}, {}, {}))
+                        resolver.enqueueEvents(new StartCombat(new Entity({}), new Entity({}), {}))
                     }}>
                         <Col style={{ width: '500px', height: '700px' }}>
                             <h1>{path.challengeRating - state.path.level - 10}</h1>
