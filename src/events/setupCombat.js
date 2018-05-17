@@ -17,16 +17,16 @@ interface Type {
 export const setupCombat: Symbol = Symbol('setupCombat')
 export const SetupCombat = defineEvent(setupCombat, function*({ game, resolver, data }: ConsumerArgs<Type>){ 
     
+
     game.drawPile.clear()
     game.hand.clear()
     game.discardPile.clear()
     game.exhaustPile.clear()
     game.activeCards.clear()
-    game.player.effects.splice(0,  game.player.effects.length)
+    game.player.effects.clear()
     game.player.seed = data.seed
     game.enemies = data.enemies
-    game.seed = data.seed.fork()
+    game.player.seed = data.seed.fork()
 
-    return game
 
 })

@@ -7,9 +7,9 @@ export const endCombat = Symbol('endCombat')
 export const EndCombat = defineEvent(endCombat, function*({ game, subject, resolver }){ 
     if(game.player.health > 0){
 
-        game.player.isActive = false
+        game.player.inner.data.isActive = false
 
-        game.player.effects.splice(0,  game.player.effects.length)
+        game.player.effects.clear()
 
         navigateTo('/game/rewards')
     } else {

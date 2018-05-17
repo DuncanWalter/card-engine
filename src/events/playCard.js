@@ -1,12 +1,12 @@
 import type { Card } from '../cards/card'
 import type { Event } from './event'
-import type { CardStack } from '../cards/cardStack';
+import type { CardStack } from '../cards/cardStack'
 import { Creature } from '../creatures/creature'
 import { defineEvent } from './event'
 import { Player } from '../creatures/player'
-import { ConsumerArgs } from './listener';
-import { BindEnergy } from './bindEnergy';
-import { AddToDiscardPile } from './addToDiscard';
+import { ConsumerArgs } from './listener'
+import { BindEnergy } from './bindEnergy'
+import { AddToDiscardPile } from './addToDiscardPile'
 
 type Type = {
     data: {
@@ -16,7 +16,7 @@ type Type = {
 }
 
 export const playCard: Symbol = Symbol('playCard')
-export const PlayCard = defineEvent(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Type>): * { 
+export const PlayCard = defineEvent(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Type>){ 
 
     if(game.player.energy < subject.data.energy){
         return cancel()
@@ -33,7 +33,6 @@ export const PlayCard = defineEvent(playCard, function*({ game, data, subject, a
     actors.add(subject)
 
     yield subject.play({ 
-        // target: data.target,
         resolver,
         actors,
         subject,
@@ -41,9 +40,8 @@ export const PlayCard = defineEvent(playCard, function*({ game, data, subject, a
         game,
     })
 
-    
-
-    let event = yield resolver.processEvent(new AddToDiscardPile(actors, subject, {}, playCard))
+    let card: Card<> = subject
+    let event = yield resolver.processEvent(new AddToDiscardPile(actors, card, playCard))
     
     game.activeCards.take()
 

@@ -35,7 +35,7 @@ export interface ConsumerArgs<T=any> {
     event: Event<T>,
     next: () => Promise<void>,
     cancel: () => void,
-    game: $ReadOnly<Game>,
+    game: Game,
     internal: () => Promise<void>,
 }
 

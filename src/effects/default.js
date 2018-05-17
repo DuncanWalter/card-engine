@@ -1,16 +1,16 @@
 import type { ListenerGroup, ConsumerArgs } from '../events/listener'
-import { MetaEffect, Effect, tick } from "./effect"
+import { defineEffect, Effect, tick } from "./effect"
 import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
 import { BindEffect, bindEffect } from '../events/bindEffect'
 import { playCard, PlayCard } from '../events/playCard'
 import { Listener } from '../events/listener'
-import { addToDiscardPile } from '../events/addToDiscard';
+import { addToDiscardPile } from '../events/addToDiscardPile';
 import { Card } from "../cards/card";
 import { AddToDrawPile } from '../events/addToDrawPile';
 
 export const default$ = Symbol('default$')
-export const Default: Class<Effect> = MetaEffect(default$, {
+export const Default = defineEffect(default$, {
     name: 'Default',
     innerColor: '#343434',
     outerColor: '#565656',

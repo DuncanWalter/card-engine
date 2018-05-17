@@ -41,9 +41,9 @@ function behaviorSwitch(last, seed){
 
 // TODO: unify all ids
 export const Turtle = defineMonster('Turtle', 15, behaviorSwitch, (self, seed) => { 
-    self.effects.push(
-        new Blockade(self, 1),
-        new Block(self, 25),
+    self.effects.add(
+        new Blockade(1),
+        new Block(25),
     )
     return self
 })

@@ -16,16 +16,15 @@ export class CardSet {
     name: string
     playable: boolean
     cardPool: CardPool
-    members: Map<() => Card<>, { 
+    members: Map<string, { 
         rarity: Rarity,
         color: string,
     }>
     description: string
-    // parings: Map<CardSet, string>
 
-    add(rarity: Rarity, card: () => Card<>){
-        this.cardPool.add(rarity, card)
-        this.members.set(card, {
+    add(rarity: Rarity, CC: () => Card<>){
+        this.cardPool.add(rarity, CC)
+        this.members.set(new CC().type, {
             rarity,
             color: this.color,
         })

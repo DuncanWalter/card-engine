@@ -19,6 +19,10 @@ export class Player extends Creature<PlayerData> {
         return this.inner.data.energy
     }
 
+    get sets(): string[] {
+        return this.inner.data.sets
+    }
+
     constructor(state: PlayerState){
         super(state)
     }

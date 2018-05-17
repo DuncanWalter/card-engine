@@ -6,14 +6,14 @@ import type { Game } from "../game/battle/battleState"
 import { PlayCard } from '../events/playCard'
 import { synchronize } from '../utils/async'
 import { resolver } from '../events/eventResolver'
-import { Effect } from '../effects/effect'
+import { Effect, EffectState } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
 import { Entity } from '../utils/entity';
+import { EffectGroup } from '../effects/effectGroup';
 
 export type cardFactory = () => Card<> 
 
-// TODO: add data generics? will it ever help?
 export interface PlayArgs<T: Object|void = {}|void> {
     actors: Set<Entity<any>> | Entity<any>,
     subject: Card<any>,
@@ -28,15 +28,6 @@ function registerCard(type: string, play: (self: Card<>, args: PlayArgs<>) => Pr
     cards.set(type, play)
 }
 
-// function create(id: string): Card<any> {
-//     let Cons = this.cards.get(id)
-//     if(Cons){
-//         return new Cons()
-//     } else {
-//         throw new Error(`no registered card type with id ${id}`)
-//     }
-// }
-
 export interface CardState<Data: Object = any> {
     type: string,
     appearance: {
@@ -46,13 +37,13 @@ export interface CardState<Data: Object = any> {
         energyTemplate: string,
     },
     data: Data,
-    effects: Effect[],
+    effects: EffectState[],
+    id?: string,
 }
 
 // TODO: play args should have data and use another type argument
-export class Card<Data: Object = any> extends Entity<CardState<Data>> {
+export class Card<Data:Object=any> extends Entity<CardState<Data>> {
 
-    // TODO: type this out
     get appearance(): * {
         return this.inner.appearance
     }
@@ -61,8 +52,8 @@ export class Card<Data: Object = any> extends Entity<CardState<Data>> {
         return this.inner.data
     }
 
-    get effects(): Effect[] {
-        return this.inner.effects
+    get effects(): EffectGroup {
+        return new EffectGroup(this.inner.effects)
     }
 
     get type(): string {
@@ -70,7 +61,7 @@ export class Card<Data: Object = any> extends Entity<CardState<Data>> {
     }
 
     get listener(): ListenerGroup {
-        return this.effects
+        return this.effects.asListener(this)
     }
 
     play(ctx: PlayArgs<>){
@@ -125,7 +116,7 @@ export class Card<Data: Object = any> extends Entity<CardState<Data>> {
     }
 
     stacksOf(effectType: Symbol): number {
-        let effects: Effect[] = this.effects.filter(effect => effect.id == effectType)
+        let effects: EffectState[] = this.inner.effects.filter(effect => effect.type == effectType.toString())
         if(effects.length === 0){
             return 0
         } else {
@@ -149,7 +140,7 @@ export function defineCard<Meta: {}>(
         titleTemplate: string,
         energyTemplate: string,
     },
-    ...effects: [Class<Effect>, number][]
+    ...effects: [(stacks: number) => Effect, number][]
 ): () => Card<Meta> {
 
     registerCard(type, synchronize(play))
@@ -157,7 +148,7 @@ export function defineCard<Meta: {}>(
     return function(){
         return new Card({
             appearance,
-            effects: effects.map(([E, s]) => new E(this, s)),
+            effects: effects.map(([E, s]) => new E(s).unwrap()),
             type,
             data: { ...data },
         })

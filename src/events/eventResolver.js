@@ -237,7 +237,12 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
         
         return active = a && b && active
     }
-    const cancel: () => void = () => { active = false; console.log('cancelling') }
+    const cancel: () => void = () => { 
+        active = false 
+        if(!self.simulating){
+            console.log('Cancelled event', event)
+        }
+    }
     const next: () => Promise<void> = synchronize(function*(): Generator<any, any, any> {
         while(continuing()){
             yield executionQueue[index].consumer({ 

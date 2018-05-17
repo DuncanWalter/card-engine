@@ -62,8 +62,13 @@ const baseIntent: Intent = { isMiscBehavior: true }
 
 export class Behavior extends Entity<BehaviorState> {
 
-    +type: BehaviorType
-    +name: string
+    get type(): BehaviorType {
+        return this.inner.type
+    }
+    
+    get name(): string {
+        return this.inner.name
+    }
 
     // selectNext: (seed: number) => Behavior
     // perform: (ctx: BehaviorContext) => Promise<Intent>
@@ -87,16 +92,6 @@ export class Behavior extends Entity<BehaviorState> {
         } else {
             throw new Error(`Async detected in simulation of the behavior ${this.type}`)
         }
-    }
-
-    unwrap(): BehaviorState {
-        return this.inner
-    }
-
-    constructor(state: BehaviorState){
-        super(state)
-        this.type = state.type
-        this.name = state.name
     }
 
 }

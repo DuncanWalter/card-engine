@@ -6,7 +6,7 @@ export const renderEffect: Component<Props> = ({ effect }: Props) => {
     let styles = renderData(effect)
     return styles ? <div style={styles.border}>
         <div style={styles.base}>
-            <p>{effect.stacked ? effect.stacks : ''}</p>
+            <p>{effect.stacks  /* TODO: is Stacked check*/ }</p>
         </div>
     </div> : null
 }

@@ -18,7 +18,7 @@ export class Entity<State: Object> {
     
     +inner: State
 
-    unwrap(): State {
+    unwrap(): State & HasId {
         return this.inner
     }
 

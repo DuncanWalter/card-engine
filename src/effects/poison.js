@@ -1,4 +1,4 @@
-import { MetaEffect, Effect, tick } from "./effect"
+import { defineEffect, Effect, tick } from "./effect"
 import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
 import { bindEffect } from '../events/bindEffect'
@@ -7,7 +7,7 @@ import { Listener, ConsumerArgs } from '../events/listener';
 
 // TODO: verify that this works correctly on the last turn of the effect
 export const poison = Symbol('poison')
-export const Poison: Class<Effect> = MetaEffect(poison, {
+export const Poison = defineEffect(poison, {
     name: 'Poison',
     outerColor: '#22bb33',
     innerColor: '#66ee88',

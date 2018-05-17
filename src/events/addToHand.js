@@ -4,7 +4,7 @@ import { defineEvent } from "./event"
 import { Creature } from "../creatures/creature"
 import { ConsumerArgs } from "./listener";
 import { ReclaimDiscardPile } from "./reclaimDiscardPile";
-import { AddToDiscardPile } from "./addToDiscard";
+import { AddToDiscardPile } from "./addToDiscardPile";
 
 type Type = {
     data: {},

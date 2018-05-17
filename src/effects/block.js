@@ -1,12 +1,12 @@
 import type { ListenerGroup } from '../events/listener'
-import { MetaEffect, Effect } from "./effect"
+import { defineEffect, Effect } from "./effect"
 import { damage, blockable } from '../events/damage'
 import { vulnerability } from "./vulnerability"
 import { BindEffect } from '../events/bindEffect'
 import { Listener, ConsumerArgs } from '../events/listener'
 
 export const block = Symbol('block')
-export const Block: Class<Effect> = MetaEffect(block, {
+export const Block = defineEffect(block, {
     name: 'Block',
     innerColor: '#6688ee',
     outerColor: '#2233bb',

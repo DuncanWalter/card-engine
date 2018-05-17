@@ -1,13 +1,14 @@
-import { MetaEffect, Effect, tick } from "./effect"
+import { defineEffect, Effect, tick } from "./effect"
 import { damage } from '../events/damage'
 import type { ListenerGroup } from '../events/listener'
 import { Block, block } from "./block"
 import { bindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
-import { Listener, ConsumerArgs } from '../events/listener';
+import { Listener, ConsumerArgs } from '../events/listener'
+import { EffectGroup } from "./effectGroup"
 
 export const blockade = Symbol('blockade');
-export const Blockade: Class<Effect> = MetaEffect(blockade, {
+export const Blockade = defineEffect(blockade, {
     name: 'Blockade',
     innerColor: '#2233bb',
     outerColor: '#6688ee',
@@ -19,7 +20,7 @@ export const Blockade: Class<Effect> = MetaEffect(blockade, {
     delta: x => x,
     min: 1,
     max: 1,
-}, (owner: { +effects: Effect[] }, self: Effect) => new Listener(
+}, (owner: { +effects: EffectGroup }, self: Effect) => new Listener(
     blockade,
     {
         subjects: [owner],

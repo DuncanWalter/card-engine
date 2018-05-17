@@ -11,7 +11,5 @@ type Type = {
 
 export const addToDrawPile = Symbol('addToDrawPile')
 export const AddToDrawPile = defineEvent(addToDrawPile, function*({ actor, subject, resolver, data, game }: ConsumerArgs<Type>){ 
-    game.drawPile.addToTop(subject)
-    // TODO: don't want to shuffle the whole thing
-    game.drawPile.shuffle()
+    game.drawPile.shuffleIn(subject, game.player.seed)
 })

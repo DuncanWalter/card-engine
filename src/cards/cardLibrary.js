@@ -27,29 +27,22 @@ export const CardLibrary = {
     },
 
 
-    // getCardMembership(player?: Player, card: Card<>): { 
-    //     color: string,
-    //     rarity: Rarity, 
-    // } | void {
-
-    //     if(!player){
-    //         // $FlowFixMe
-    //         return [...sets.values()].reduce((acc, set) => {
-    //             // $FlowFixMe
-    //             return set.members.get(card.constructor) || acc
-    //         }, undefined)
-    //     } else {
-    //         // $FlowFixMe
-    //         return player.inner.data.sets.reduce((acc, name: string) => {
-    //             let set = sets.get(name)
-    //             if(set){
-    //                 return set.members.get(card.constructor) || acc
-    //             } else {
-    //                 return acc
-    //             }
-    //         }, undefined)
-    //     }
-    // }
+    getCardMembership(fromSets: string[], card: Card<>): { 
+        color: string,
+        rarity: Rarity, 
+    } {
+        return fromSets.reduce((acc: { color: string, rarity: Rarity }, name: string) => {
+            let set = sets.get(name)
+            if(set){
+                return set.members.get(card.type) || acc
+            } else {
+                return acc
+            }
+        }, {
+            color: '#353542',
+            rarity: 'F',
+        })  
+    }
 
 
 }

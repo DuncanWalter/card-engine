@@ -9,6 +9,7 @@ export interface Reward {
     active: boolean,
     description: string,
     id: Symbol,
+    init: (reward: Reward, level: number, seed: Sequence<number>) => Reward,
 }
 
 const rewardLibrary: Reward[] = []

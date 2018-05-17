@@ -4,7 +4,7 @@ import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { DrawCards } from '../../events/drawCards'
-import { MetaEffect } from '../../effects/effect'
+import { defineEffect } from '../../effects/effect'
 import { BindEffect } from '../../events/bindEffect'
 import { deafListener } from '../../events/listener'
 import { Default } from '../../effects/default';
@@ -28,7 +28,7 @@ export const Rampage: () => Card<RampageData> = defineCard(rampage, playRampage,
 }, [Default, 1])
 
 let rampageSymbol = Symbol(rampage)
-let RampageStacks = MetaEffect(rampageSymbol, null, {
+let RampageStacks = defineEffect(rampageSymbol, null, {
     stacked: true,
     delta: x => x,
     max: 999,

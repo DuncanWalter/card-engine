@@ -1,11 +1,10 @@
 import type { State } from "../../state";
 import type { Reducer } from "../../utils/state"
-import type { Card } from "../../cards/card"
 import { createReducer } from "../../utils/state"
-import { view } from "vitrarius"
-import { CardState } from "../../cards/card";
+import { CardState, Card } from "../../cards/card";
 
 interface HandState {
+    focus: string,
     cursor: {
         x: number,
         y: number,
@@ -16,16 +15,14 @@ interface HandState {
         y: number,
     },
     cardSlots: CardSlot[],
-    cardSprites: CardSprite[],
+    // cardSprites: CardSprite[],
 }
 
-interface CardSlot {
-    card: Card<>,
+export interface CardSlot {
+    card: CardState<>,
     pos: {
         x: number,
         y: number,
-        // dx: number,
-        // dy: number,
         a: number,
     },
     isActive: boolean,
@@ -37,8 +34,6 @@ interface CardSprite {
     pos: {
         x: number,
         y: number,
-        // dx: number,
-        // dy: number,
         a: number,
     },
     trg: {
@@ -65,7 +60,6 @@ function targetLocation(isActive, isFocussed, index, handSize){
     }
 }
 
-// TODO: how do I prevent this from updating twice in a single frame?
 function easeTo(from, to, delta, speed){
     let dx = from.x - to.x
     let dy = from.y - to.y
@@ -83,32 +77,40 @@ function easeTo(from, to, delta, speed){
 
 
 export const handReducer: Reducer<HandState, any, State> = createReducer({
-    setFocus: (state, data) => {
-        if (state.dragging) return state
-        return view('focus', () => data, state)
+    setFocus(slice, { focus }, { battle }: State){
+        if(focus.id == slice.focus){
+            return slice
+        } else {
+            return {
+                ...slice,
+                focus: focus.id,
+            }
+        }
     },
-    setCursor: (state, data) => /*console.log(data) ||*/ state,
-    offFocus: (state, data) => {
-        if (state.dragging) return state
-        if (state.focus != data) return state
-        return view('focus', () => null, state)
+    unsetFocus(slice, { focus }, { battle }: State){
+        if(focus.id == slice.focus){
+            return {
+                ...slice,
+                focus: '',
+            }
+        } else {
+            return slice
+        }
     },
-    updateHand: (state, data, { battle, entity }: State) => {
-        // TODO: tick it over a frame
-        let visibleCards: (CardState<> | void)[] = [...battle.hand, ...battle.activeCards]
+    updateHand: (slice, data, { battle }: State) => {
+        let visibleCards: CardState<>[] = [...battle.hand, ...battle.activeCards]
 
-        let preservedSlots = state.cardSlots.filter(slot => {
-            return visibleCards.indexOf(slot.card) >= 0
+        let preservedSlots = slice.cardSlots.filter(slot => {
+            return new Card(slot.card).isIn(visibleCards) >= 0
         }).map((slot, index) => {
 
-            let subIndex = visibleCards.indexOf(slot.card)
-            let card = visibleCards.splice(subIndex, 1, undefined)[0]
+            let card = visibleCards[visibleCards.indexOf(slot.card)]
 
-            let isActive = !!battle.activeCards.filter(ac => ac.id == card.id).length
+            let isActive = new Card(card).isIn(battle.activeCards) >= 0
             let isDragging = false
-            let isFocussed = entity.cursorFocus == card
+            let isFocus = slice.focus == card.id
 
-            let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
+            let target = targetLocation(isActive, isFocus, index, visibleCards.length)
 
             let angle = target.a
             target = easeTo(slot.pos, target, 0.0166, 900)
@@ -118,61 +120,62 @@ export const handReducer: Reducer<HandState, any, State> = createReducer({
                 card,
                 pos: target,
                 isActive,
-                isFocussed,
+                isFocus,
                 isDragging,
             }
         })
 
-        let newSlots = visibleCards.filter(card => card).map((card, subIndex) => {
+        let newSlots = visibleCards.filter(card => 
+            !preservedSlots.filter(slot => slot.card.id == card.id).length 
+        ).map((card, subIndex) => {
 
             let index = preservedSlots.length + subIndex
 
-            let isActive = !!battle.activeCards.filter(ac => ac.id == card.id).length
+            let isActive = new Card(card).isIn(battle.activeCards) >= 0
             let isDragging = false
-            let isFocussed = entity.cursorFocus == card
+            let isFocus = card.id == slice.focus
 
-            let target = targetLocation(isActive, isFocussed, index, visibleCards.length)
+            let target = targetLocation(isActive, isFocus, index, visibleCards.length)
             
             return {
                 card,
                 pos: target,
                 isActive,
-                isFocussed,
+                isFocus,
                 isDragging,
             }
         })
 
-        visibleCards = [...battle.hand, ...battle.activeCards]
-        state.cardSprites.push(...state.cardSlots.filter(slot => {
-            return visibleCards.indexOf(slot.card) < 0
-        }).map(slot => {
-            return {
-                pos: {
-                    x: slot.pos.x,
-                    y: slot.pos.y,
-                    // TODO: save the divide by zero case
-                    a: 180/3.1415*Math.atan((-100 - slot.pos.y)/(1000 - slot.pos.x)),
-                },
-                trg: { x: 1000, y: -100, a: 0 },
-            }
-        }))
+        // visibleCards = [...battle.hand, ...battle.activeCards]
+        // slice.cardSprites.push(...slice.cardSlots.filter(slot => {
+        //     return visibleCards.indexOf(slot.card) < 0
+        // }).map(slot => {
+        //     return {
+        //         pos: {
+        //             x: slot.pos.x,
+        //             y: slot.pos.y,
+        //             // TODO: save the divide by zero case
+        //             a: 180/3.1415*Math.atan((-100 - slot.pos.y)/(1000 - slot.pos.x)),
+        //         },
+        //         trg: { x: 1000, y: -100, a: 0 },
+        //     }
+        // }))
 
-        let cardSprites = state.cardSprites.map(sprite => {
-            return {
-                pos: easeTo(sprite.pos, sprite.trg, 0.0166, 1100),
-                trg: sprite.trg,
-                a: 0,
-            }
-        }).filter(sprite => sprite.pos != sprite.trg)
+        // let cardSprites = slice.cardSprites.map(sprite => {
+        //     return {
+        //         pos: easeTo(sprite.pos, sprite.trg, 0.0166, 1100),
+        //         trg: sprite.trg,
+        //         a: 0,
+        //     }
+        // }).filter(sprite => sprite.pos != sprite.trg)
 
-        // if(cardSprites.length)console.log(cardSprites.length, cardSprites[0].pos)
 
         return {
             cursor: { x: Math.random(), y: 3 },
             dragging: false,
-            anchor: state.anchor,
+            anchor: slice.anchor,
             cardSlots: [...preservedSlots, ...newSlots],
-            cardSprites,
+            focus: slice.focus,
         }
     },
 })
@@ -189,8 +192,23 @@ export const handInitial: HandState = {
     },
     cardSlots: [],
     cardSprites: [],
+    focus: '',
 }
 
-export function updateHand(dispatch: ({ type: string }) => void){
-    dispatch({ type: 'updateHand' })
+export function updateHand(){
+    return { type: 'updateHand' }
+}
+
+export function setFocus(card: Card<>){
+    return {
+        type: 'setFocus',
+        focus: card,
+    }
+}
+
+export function unsetFocus(card: Card<>){
+    return {
+        type: 'unsetFocus',
+        focus: card,
+    }
 }

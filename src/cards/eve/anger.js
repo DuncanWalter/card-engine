@@ -3,7 +3,7 @@ import { Damage, targeted } from './../../events/damage'
 import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
-import { AddToDiscardPile } from '../../events/addToDiscard';
+import { AddToDiscardPile } from '../../events/addToDiscardPile';
 import { Volatile } from '../../effects/volatile';
 
 type AngerData = { damage: number, energy: number }

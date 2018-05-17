@@ -13,7 +13,8 @@ import { resolver } from '../events/eventResolver'
 import { withState, dispatch } from '../state'
 import { selectFreedom, generateFreedoms } from './pathState';
 import { Monster } from '../creatures/monster';
-import { Entity } from '../components/entity';
+import { Entity } from '../utils/entity';
+import { Player } from '../creatures/player';
 
 type Props = { state: State }
 export const PathSelection: Component<any> = withState(({ state }: Props) => {
@@ -28,7 +29,7 @@ export const PathSelection: Component<any> = withState(({ state }: Props) => {
                         generateFreedoms(dispatch)
                         history.push('/game/battle')
                         // TODO: Remove new Entity hacj
-                        resolver.enqueueEvents(new SetupCombat(new Entity({}), new Entity({}), {
+                        resolver.enqueueEvents(new SetupCombat(new Entity({}), new Player(state.battle.player), {
                             enemies: path.enemies.map(enemy => new Monster(enemy)),
                             seed: path.seed.fork(),
                         }))

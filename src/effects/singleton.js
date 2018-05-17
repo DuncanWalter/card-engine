@@ -1,16 +1,16 @@
 import type { ListenerGroup, ConsumerArgs } from '../events/listener'
-import { MetaEffect, Effect, tick } from "./effect"
+import { defineEffect, Effect, tick } from "./effect"
 import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
 import { BindEffect, bindEffect } from '../events/bindEffect'
 import { playCard, PlayCard } from '../events/playCard'
 import { Listener } from '../events/listener'
-import { addToDiscardPile } from '../events/addToDiscard';
+import { addToDiscardPile } from '../events/addToDiscardPile';
 import { ExhaustCard } from '../events/exhaustCard';
 import { Card } from "../cards/card";
 
 export const singleton = Symbol('singleton')
-export const Singleton: Class<Effect> = MetaEffect(singleton, {
+export const Singleton = defineEffect(singleton, {
     name: 'Singleton',
     innerColor: '#343434',
     outerColor: '#565656',

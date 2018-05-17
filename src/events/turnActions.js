@@ -1,8 +1,5 @@
 import type { Event } from './event'
 import { defineEvent, startTurn, endTurn } from "./event"
-import { Creature } from "../creatures/creature"
-import { Player } from "../creatures/player"
-// import { NPC } from "../creatures/npc"
 import { DrawCards } from "./drawCards"
 import { TakeTurn } from "./takeTurn"
 import { ConsumerArgs } from "./listener"
@@ -12,7 +9,7 @@ export const drain = Symbol('drain')
 export const fill  = Symbol('fill')
 export { startTurn }
 export const StartTurn = defineEvent(startTurn, function*({ game, subject, resolver }){ 
-    if(subject instanceof Player){
+    if(subject.is(game.player)){
         yield resolver.processEvent(new BindEnergy(game.player, game.player, { 
             quantity: -game.player.energy 
         }, startTurn, drain))
@@ -29,7 +26,7 @@ export const StartTurn = defineEvent(startTurn, function*({ game, subject, resol
 
 export { endTurn }
 export const EndTurn = defineEvent(endTurn, function*({ subject, resolver, game }){
-    if(subject instanceof Player){
+    if(subject.is(game.player)){
         // gameState.allies.reduce((acc, ally) => {
         //     acc.appendList(new LL(ally.takeTurn({ resolver, game: gameState })))
         //     return acc

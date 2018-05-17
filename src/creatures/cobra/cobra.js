@@ -18,9 +18,9 @@ const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, g
     action.defaultListeners.push(new Listener(
         damage, 
         {},
-        function*({ data, resolver, actors, subject, internal }): * {
+        function*({ data, resolver, actors, subject, internal }){
             yield internal()
-            if(data.damage > 0){
+            if(typeof data.damage == 'number' && data.damage >= 0){
                 yield resolver.processEvent(new BindEffect(actors, subject, {
                     Effect: Poison,
                     stacks: 3,

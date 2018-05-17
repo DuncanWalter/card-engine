@@ -4,7 +4,6 @@ import { Modal, Row, Col, Block, Button } from '../utility'
 import { Route } from 'react-router-dom'
 import { resolver } from '../events/eventResolver'
 import { Card as CardComponent } from '../cards/component';
-import { queryEntity } from '../components/entityState';
 import { DraftCard } from '../events/draftCard';
 import { navigateTo } from '../utils/navigation';
 import { CardLibrary } from '../cards/cardLibrary';

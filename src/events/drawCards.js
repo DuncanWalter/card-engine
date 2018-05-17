@@ -21,6 +21,6 @@ export const DrawCards = defineEvent(drawCards, function*({ actors, subject, res
         if(!game.drawPile.size){
             yield resolver.processEvent(new ReclaimDiscardPile(actors, game.player, {}, drawCards))
         }
-        yield resolver.processEvent(new AddToHand(actors, ...game.drawPile.take(1), {}, drawCards))
+        yield resolver.processEvent(new AddToHand(actors, game.drawPile.take(1)[0], {}, drawCards))
     }
 })

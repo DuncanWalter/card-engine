@@ -5,7 +5,7 @@ import { Creature } from '../../creatures/creature'
 import { targeted, damage } from '../../events/damage';
 import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
-import { MetaEffect } from '../../effects/effect';
+import { defineEffect } from '../../effects/effect';
 import { endTurn } from '../../events/event';
 import { Listener } from '../../events/listener';
 import { Strength } from '../../effects/strength'
@@ -51,7 +51,7 @@ function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs<>)
 
 
 const flexSymbol = Symbol('flex')
-const FlexEffect = MetaEffect(flexSymbol, {
+const FlexEffect = defineEffect(flexSymbol, {
     description: '',
     innerColor: "#aacc44",
     outerColor: "#889911",

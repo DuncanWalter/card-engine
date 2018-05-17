@@ -40,12 +40,6 @@ export class CardStack implements Iterable<Card<any>> {
         return rr
     }
 
-    // takeAll(): Card<any>[] {
-    //     let rr = this.cards
-    //     this.cards = []
-    //     return rr
-    // }
-
     shuffleIn(card: Card<>, seed: Sequence<number>): void {
         this.cards.splice(Math.floor(this.cards.length * seed.next()), 0, card.unwrap())
     }
@@ -89,4 +83,5 @@ export class CardStack implements Iterable<Card<any>> {
             yield* self.cards.map(card => new Card(card))
         })()
     } 
+    
 }

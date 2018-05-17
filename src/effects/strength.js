@@ -1,4 +1,4 @@
-import { MetaEffect, Effect } from "./effect"
+import { defineEffect, Effect } from "./effect"
 import { damage } from '../events/damage'
 import { Listener, ConsumerArgs } from '../events/listener';
 import { blockable } from '../events/damage';
@@ -6,7 +6,7 @@ import { latency } from "./latency";
 import { Card } from "../cards/card";
 
 export const strength = Symbol('strength');
-export const Strength: Class<Effect> = MetaEffect(strength, {
+export const Strength = defineEffect(strength, {
     name: 'Strength',
     innerColor: '#ee4444',
     outerColor: '#aa3333',

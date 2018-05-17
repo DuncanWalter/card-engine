@@ -1,5 +1,5 @@
 import type { ListenerGroup, ConsumerArgs } from '../events/listener'
-import { MetaEffect, Effect, tick } from "./effect"
+import { defineEffect, Effect, tick } from "./effect"
 import { damage, Damage } from '../events/damage'
 import { vulnerability } from "./vulnerability"
 import { BindEffect, bindEffect } from '../events/bindEffect'
@@ -11,7 +11,7 @@ import { ExhaustCard } from '../events/exhaustCard'
 import { Card } from "../cards/card";
 
 export const volatile = Symbol('volatile')
-export const Volatile: Class<Effect> = MetaEffect(volatile, {
+export const Volatile = defineEffect(volatile, {
     name: 'Volatile',
     innerColor: '#343467',
     outerColor: '#56569a',

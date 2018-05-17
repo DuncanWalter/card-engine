@@ -1,4 +1,4 @@
-import { MetaEffect, Effect } from "./effect"
+import { defineEffect, Effect } from "./effect"
 import { damage } from '../events/damage'
 import { Listener, ConsumerArgs } from '../events/listener';
 import { blockable } from '../events/damage';
@@ -7,7 +7,7 @@ import { Card } from "../cards/card";
 import { endTurn } from '../events/event';
 
 export const latency = Symbol('latency');
-export const Latency: Class<Effect> = MetaEffect(latency, {
+export const Latency = defineEffect(latency, {
     name: 'Latency',
     innerColor: '#22ee33',
     outerColor: '#119922',

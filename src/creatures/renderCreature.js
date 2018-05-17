@@ -2,11 +2,11 @@ import type { Component } from '../component'
 import type { State } from '../state'
 import { renderEffect as Effect } from '../effects/renderEffect'
 import { renderBehavior as Behavior, Behavior as BehaviorWrapper } from './behavior'
-import { Entity } from '../components/entity'
 import { resolver } from '../events/eventResolver'
 import { withState } from '../state';
 import { Monster } from './monster';
 import { Creature } from './creature';
+import { Effect as EffectObject } from '../effects/effect' 
 
 type Props = { 
     creature: Creature<>,
@@ -31,27 +31,24 @@ export const renderCreature: Component<Props> = withState(({ isEnemy, creature, 
         behaviors.push(creature.behavior)
     }
     
-    // TODO: display enemy intent
-    return <Entity entity={creature}>
-        <div style={sty.creature}>
-            <div style={sty.effectBar}>{
-                behaviors.map(b => 
-                    <Behavior data={ b.simulate(any(creature), resolver, resolver.state.getGame()) }/>
-                )
-            }</div>
-            <div style={{ backgroundColor: '#7777cc', ...sty.img }}/>
-            <div style={sty.healthBar}>
-                <div style={ sty.healthBarFill (health, block, maxHealth) }/>
-                <div style={ sty.healthBarEmpty(health, block, maxHealth) }/>
-                <div style={ sty.healthBarBlock(health, block, maxHealth) }/>
-            </div>
-            <div style={sty.effectBar}>
-                {creature.effects.map(e => <Effect effect={e}/>)}
-            </div>
-            <div>{creature.inner.type}</div>
-            <div>{health}/{maxHealth}</div>
+    return <div style={sty.creature}>
+        <div style={sty.effectBar}>{
+            behaviors.map(b => 
+                <Behavior data={ b.simulate(any(creature), resolver, resolver.state.getGame()) }/>
+            )
+        }</div>
+        <div style={{ backgroundColor: '#7777cc', ...sty.img }}/>
+        <div style={sty.healthBar}>
+            <div style={ sty.healthBarFill (health, block, maxHealth) }/>
+            <div style={ sty.healthBarEmpty(health, block, maxHealth) }/>
+            <div style={ sty.healthBarBlock(health, block, maxHealth) }/>
         </div>
-    </Entity>
+        <div style={sty.effectBar}>
+            { creature.inner.effects.map(e => <Effect effect={ new EffectObject(e) }/>) }
+        </div>
+        <div>{creature.inner.type}</div>
+        <div>{health}/{maxHealth}</div>
+    </div>
 })
 
 const sty = {

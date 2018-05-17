@@ -1,6 +1,5 @@
 import type { Component } from './component'
 import { combineReducers, createStore } from "./utils/state"
-import { entityReducer, entityInitial } from "./components/entityState"
 import { battleReducer, battleInitial, emit } from "./game/battle/battleState"
 import { handReducer, handInitial } from "./game/hand/handState"
 import { pathReducer, pathInitial } from "./paths/pathState"
@@ -20,7 +19,6 @@ const toAccessor = stream => {
 const globalReducer = combineReducers({
     battle: battleReducer,
     hand: handReducer,
-    entity: entityReducer,
     path: pathReducer,
     menu: menuReducer,
     // settings
@@ -33,7 +31,6 @@ export type State = $Call<<S>((S, *, *) => S) => S, typeof globalReducer>
 export const { dispatch, stream } = createStore(globalReducer, {
     battle: battleInitial,
     hand: handInitial,
-    entity: entityInitial,
     path: pathInitial,
     menu: menuInitial,
 })

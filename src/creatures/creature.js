@@ -3,9 +3,11 @@ import type { ListenerGroup, ConsumerArgs } from '../events/listener'
 import { damage } from '../events/damage'
 import { RemoveCreature } from '../events/removeCreature'
 import { Listener } from '../events/listener'
-import { resolver } from '../events/eventResolver';
-import { Entity } from "../utils/entity";
-import { randomSequence, Sequence } from "../utils/random";
+import { resolver } from '../events/eventResolver'
+import { Entity } from "../utils/entity"
+import { randomSequence, Sequence } from "../utils/random"
+import { EffectGroup } from '../effects/effectGroup'
+import { EffectState } from '../effects/effect'
 
 const death = Symbol('death')
 resolver.registerListenerType(death, [damage])
@@ -45,15 +47,15 @@ export interface CreatureState<D=any> {
     type: CreatureType,
     health: number,
     maxHealth: number,
-    effects: Effect[],
+    effects: EffectState[],
     seed: number,
     data: D,
 }
 
 export class Creature<D=any> extends Entity<CreatureState<D>> {
 
-    get effects(): Effect[] {
-        return this.inner.effects
+    get effects(): EffectGroup {
+        return new EffectGroup(this.inner.effects)
     }
     
     set health(value: number){
@@ -72,7 +74,7 @@ export class Creature<D=any> extends Entity<CreatureState<D>> {
 
     get listener(): ListenerGroup {
         // TODO: effects and death listener, I presume
-        return [this.inner.effects] // TODO: add the death listener
+        return this.effects.asListener(this) // TODO: add the death listener
     }
 
     get seed(): Sequence<number> {
@@ -98,16 +100,12 @@ export class Creature<D=any> extends Entity<CreatureState<D>> {
     }
 
     stacksOf(effectType: Symbol): number {
-        let effects: Effect[] = this.inner.effects.filter(effect => effect.id == effectType)
+        let effects: EffectState[] = this.inner.effects.filter(effect => effect.type == effectType.toString())
         if(effects.length === 0){
             return 0
         } else {
             return effects[0].stacks
         }
-    }
-
-    constructor(state: CreatureState<D>){
-        super(state)
     }
 
 }

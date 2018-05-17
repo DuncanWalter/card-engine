@@ -83,6 +83,8 @@ function serializeGame(game: Game): GameState {
         famePoints: game.famePoints,
     }
 
+    console.log(JSON.parse(JSON.stringify(state)))
+
 
     return state
 }
