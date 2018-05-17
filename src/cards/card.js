@@ -105,7 +105,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
     }
 
     clone(): Card<Data>{
-        let raw = this.unwrap()
+        let raw = { ...this.unwrap() }
         if(raw.id){ 
             delete raw.id
         }

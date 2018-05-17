@@ -2,15 +2,12 @@ This is the nucleus of a deck-building game based heavily on Megacrit's Slay the
 
 //TODO:
 
+* Kill symbols from the code
 * Switch to another theme/lore for the game (to force originality and get away from STS a bit)
-* Type naming convention change- Foo and Foo Wrapper to FooState and Foo
 * unify all string Id generators!
-* make Entity class to be the super of all current wrapper classes. make action resolver check matches using entity Id. 
 
 * Find someone to help out
 * Make some documentation
-
-* convert playcard functions to use self, not this (help flow out)
 
 * make state serializable (plain obj representations w/ data and function services)
 * make action creators instead of HOF that take dispatch as a parameter

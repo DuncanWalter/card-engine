@@ -5,6 +5,7 @@ import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { AddToDiscardPile } from '../../events/addToDiscardPile';
 import { Volatile } from '../../effects/volatile';
+import { Monster } from '../../creatures/monster';
 
 type AngerData = { damage: number, energy: number }
 
@@ -22,22 +23,18 @@ export const Anger: () => Card<AngerData> = defineCard(anger, playAnger, {
 }, [Volatile, 1])
 
 function* playAnger(self, { resolver, actors }: PlayArgs<>): Generator<any, AngerData, any>{
-    let target = yield queryEnemy(any => true)
-    if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processEvent(
-            new Damage(
-                actors,
-                target,
-                {
-                    damage: self.data.damage,
-                },
-                targeted, 
-                blockable,
-            ),
-        )
-        yield resolver.processEvent(new AddToDiscardPile(self, self.clone(), {}))
-        return { damage: action.data.damage, energy: self.data.energy }
-    } else {
-        return self.data
-    }
+    let target: Monster = yield queryEnemy(any => true)
+    const action: Damage = yield resolver.processEvent(
+        new Damage(
+            actors,
+            target,
+            {
+                damage: self.data.damage,
+            },
+            targeted, 
+            blockable,
+        ),
+    )
+    yield resolver.processEvent(new AddToDiscardPile(self, self.clone(), {}))
+    return { damage: action.data.damage, energy: self.data.energy }
 }

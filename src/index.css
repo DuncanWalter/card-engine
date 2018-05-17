@@ -4,3 +4,12 @@
     font-family: Earth;
     src: url(../static/BeKindToTheEarth/BeKindToTheEarth.otf);
 }
+
+::-webkit-scrollbar {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #44444f;
+    border-radius: 12px;
+}

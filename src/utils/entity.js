@@ -34,7 +34,7 @@ export class Entity<State: Object> {
         return others.map(other => other.id).indexOf(this.inner.id)
     }
 
-    constructor(state: State){
+    constructor(state: State & { id?: string }){
         if(state.id){
             // $FlowFixMe
             this.inner = state
