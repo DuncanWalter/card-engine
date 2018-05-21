@@ -7,7 +7,7 @@ import { Card } from "../cards/card"
 import { Listener, ConsumerArgs } from '../events/listener'
 import { EffectGroup } from "./effectGroup"
 
-export const blockade = Symbol('blockade');
+export const blockade = 'blockade';
 export const Blockade = defineEffect(blockade, {
     name: 'Blockade',
     innerColor: '#2233bb',

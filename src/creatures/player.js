@@ -7,24 +7,20 @@ interface PlayerData {
     sets: string[],
 }
 
-export type PlayerState = CreatureState<PlayerData>
+export type PlayerState = CreatureState & PlayerData
 
 export class Player extends Creature<PlayerData> {
 
     set energy(value: number){
-        this.inner.data.energy = Math.floor(Math.max(0, Math.min(999, value)))
+        this.inner.energy = Math.floor(Math.max(0, Math.min(999, value)))
     }
 
     get energy(): number {
-        return this.inner.data.energy
+        return this.inner.energy
     }
 
     get sets(): string[] {
-        return this.inner.data.sets
-    }
-
-    constructor(state: PlayerState){
-        super(state)
+        return this.inner.sets
     }
 
 }

@@ -48,10 +48,7 @@ function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs<>)
     return { flex: action.data.stacks, energy: self.data.energy }
 }
 
-
-
-const flexSymbol = Symbol('flex')
-const FlexEffect = defineEffect(flexSymbol, {
+const FlexEffect = defineEffect('flex', {
     description: '',
     innerColor: "#aacc44",
     outerColor: "#889911",
@@ -63,15 +60,15 @@ const FlexEffect = defineEffect(flexSymbol, {
     min: 1, 
     max: 99,
     on: endTurn,
-}, (owner, self) => new Listener(flexSymbol, { 
+}, (owner, self) => new Listener('flex', { 
     subject: owner,
     type: endTurn,
-}, function*({ resolver }): * {
+}, function*({ resolver }){
     let actors = new Set()
     actors.add(owner)
     actors.add(self)
     yield resolver.processEvent(new BindEffect(actors, owner, {
         stacks: -self.stacks,
         Effect: Strength,
-    }, block, flexSymbol))
+    }, block, 'flex'))
 }, false), [], [endTurn])

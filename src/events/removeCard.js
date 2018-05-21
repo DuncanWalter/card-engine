@@ -10,7 +10,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const removeCard: Symbol = Symbol('removeCard')
+export const removeCard: string = 'removeCard'
 export const RemoveCard = defineEvent(removeCard, function*({ game, subject }: ConsumerArgs<Type>){ 
     game.deck.remove(subject)
 })

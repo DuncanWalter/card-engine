@@ -10,7 +10,7 @@ import { endTurn } from '../events/event'
 import { ExhaustCard } from '../events/exhaustCard'
 import { Card } from "../cards/card";
 
-export const volatile = Symbol('volatile')
+export const volatile = 'volatile'
 export const Volatile = defineEffect(volatile, {
     name: 'Volatile',
     innerColor: '#343467',
@@ -30,7 +30,7 @@ export const Volatile = defineEffect(volatile, {
         type: endTurn,
     },
     function*({ actors, game, data, resolver }: ConsumerArgs<>): * {
-        if(owner instanceof Card && game.hand.has(owner)){
+        if(owner instanceof Card && game.hand.includes(owner)){
             yield resolver.processEvent(new ExhaustCard(actors, owner, { 
                 from: game.hand,
             }))

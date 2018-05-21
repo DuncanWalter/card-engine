@@ -1,42 +1,16 @@
-import type { ListenerGroup } from "../events/listener";
-import { Effect, EffectState } from "./effect";
-import { Entity } from "../utils/entity";
+import type { ListenerGroup } from "../events/listener"
+import type { Entity, ID } from "../utils/entity"
+import { Effect, EffectState } from "./effect"
+import { EntityGroup } from "../utils/entityGroup";
 
-export class EffectGroup {
+export class EffectGroup extends EntityGroup<Class<Effect>> {
 
-    effects: EffectState[]
-
-    constructor(effects: EffectState[]){
-        this.effects = effects
-    }
-
-    add(...effects: Effect[]){
-        this.effects.push(...effects.map(effect => effect.unwrap()))
-    }
-
-    remove(effect: Effect){
-        let index
-        if((index = effect.isIn(this.effects)) >= 0){
-            this.effects.splice(index, 1)
-        }
+    constructor(effects: ID<EffectState>[]){
+        super(Effect, effects)
     }
 
     asListener(owner: Entity<any>): ListenerGroup {
-        return this.effects.map(effect => new Effect(effect).asListener(owner)) 
-    }
-
-    clear(){
-        this.effects.splice(0, this.effects.length)
+        return this.ids.map(id => new Effect(id).asListener(owner)) 
     }
 
 }
-
-
-
-
-
-
-
-
-
-

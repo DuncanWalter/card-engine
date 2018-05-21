@@ -1,53 +1,47 @@
 import type { ListenerGroup, ConsumerArgs } from '../events/listener'
-import type { BehaviorType } from "./behavior"
+import type { BehaviorState } from "./behavior"
 import type { Game } from "../game/battle/battleState"
 import { CreatureState, Creature } from "./creature"
-import { BehaviorState, Behavior, primeBehavior } from "./behavior"
+import { Behavior, primeBehavior } from "./behavior"
 import { startCombat } from '../events/event'
 import { Listener } from '../events/listener'
 import { synchronize, SyncPromise } from "../utils/async"
 import { EventResolver, resolver } from '../events/eventResolver'
 import { Sequence, randomSequence } from "../utils/random";
+import { createEntity } from "../utils/entity";
 
 interface MonsterData {
     behavior: BehaviorState,
 }
 
-export type MonsterState = CreatureState<MonsterData>
+export type MonsterState = CreatureState & MonsterData
 
-const definedMonsters: Map<string, (last: BehaviorType, seed: Sequence<number>, owner: Monster) => BehaviorType> = new Map()
-
+const definedMonsters: Map<string, (last: BehaviorState, seed: Sequence<number>, owner: Monster) => BehaviorState> = new Map()
 
 export class Monster extends Creature<MonsterData> {
 
     get behavior(): Behavior {
-        return new Behavior(this.inner.data.behavior)
+        return new Behavior(this.inner.behavior)
     }
+    
     set behavior(behavior: Behavior){
-        this.inner.data.behavior = behavior.unwrap()
+        this.inner.behavior = behavior.unwrap()
     }
 
     seed: Sequence<number>
 
     takeTurn(resolver: EventResolver, game: $ReadOnly<Game>): Promise<void> {
-        
+        console.log('taking turn')
         let self = this
-        
         return synchronize(function*(): * {
             yield self.behavior.perform({ owner: self, resolver, game })
-            const getBehavior = definedMonsters.get(self.behavior.type)
+            const getBehavior = definedMonsters.get(self.type)
             if(getBehavior){
-                self.behavior = new Behavior({
-                    type: getBehavior(self.behavior.type, self.seed, self),
-                    name: 'CURRENTlY NAMELESS', // TODO:  
-                    
-                })
+                self.behavior = new Behavior(getBehavior(self.behavior.name, self.seed, self))
+            } else {
+                throw new Error(`unrecognized creature type ${self.type}`)
             }
         })()
-    }
-
-    constructor(state: MonsterState){
-        super(state)
     }
     
 }
@@ -56,7 +50,7 @@ export class Monster extends Creature<MonsterData> {
 export function defineMonster(
     name: string,
     health: number, 
-    behavior: (last: BehaviorType, seed: Sequence<number>, owner: Monster) => BehaviorType, 
+    behavior: (last: BehaviorState, seed: Sequence<number>, owner: Monster) => BehaviorState, 
     onCreate?: (self: Monster, seed: Sequence<number>) => Monster,
 ){
 
@@ -67,20 +61,16 @@ export function defineMonster(
     }
 
     return function(seed: Sequence<number>){
-        const base: CreatureState<> = { 
+        const base: MonsterState = { 
             type: name, 
             health,
             maxHealth: health,
             effects: [],
             seed: seed.next(),
-            data: {
-                behavior: {
-                    type: primeBehavior,
-                    name: 'NAN',
-                },
-            },
+            behavior: primeBehavior,
         }
-        let self = onCreate? onCreate(new Monster(base), seed): new Monster(base)
+        const id = createEntity(Monster, base)
+        const self = onCreate? onCreate(new Monster(id), seed): new Monster(id)
         self.takeTurn(resolver, resolver.state.getGame())
         return self
     }

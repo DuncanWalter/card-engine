@@ -14,13 +14,12 @@ type Type = {
 }
 
 
-export const drawCards = Symbol('drawCards')
+export const drawCards = 'drawCards'
 export const DrawCards = defineEvent(drawCards, function*({ actors, subject, resolver, data, game }: ConsumerArgs<Type>): * { 
-    // TODO: is this how I want to do max hand size?
     while(data.count-- && game.discardPile.size + game.drawPile.size){
         if(!game.drawPile.size){
             yield resolver.processEvent(new ReclaimDiscardPile(actors, game.player, {}, drawCards))
         }
-        yield resolver.processEvent(new AddToHand(actors, game.drawPile.take(1)[0], {}, drawCards))
+        yield resolver.processEvent(new AddToHand(actors, game.drawPile.pop(), {}, drawCards))
     }
 })

@@ -4,7 +4,7 @@ import { vulnerability } from "./vulnerability"
 import { bindEffect } from '../events/bindEffect'
 import { Listener, ConsumerArgs } from '../events/listener';
 
-export const corruption = Symbol('corruption')
+export const corruption = 'corruption'
 export const Corruption = defineEffect(corruption, {
     name: 'Corruption',
     outerColor: '#332233',

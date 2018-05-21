@@ -1,5 +1,3 @@
-import type { Component } from '../component'
-
 // TODO: use styled component
 
 const sty = { 
@@ -12,5 +10,5 @@ const sty = {
     position: 'relative',
 }
 
-export const CenterPoint: Component<{ content: any }> = ({ content }) => 
+export const CenterPoint = ({ content }: any) => 
     <div style={sty}>{ content }</div>

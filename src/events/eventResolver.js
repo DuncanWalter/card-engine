@@ -1,13 +1,13 @@
 import type { Event } from './../events/event'
 import type { ListenerGroup } from './listener'
-import type { Slice } from '../utils/state'
 import type { State } from '../state'
 import type { Game } from '../game/battle/battleState'
-import { Listener, ConsumerArgs, reject } from './listener'
+import { Listener, ConsumerArgs, reject, EventType } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
 import { synchronize } from '../utils/async'
 import { Animation } from '../animations/animation'
+import { Entity } from '../utils/entity';
 
 interface GameTransducer {
     +getGame: () => Game,
@@ -16,47 +16,47 @@ interface GameTransducer {
 
 function any(self: any): any { return self }
 
-function testListener(event: Event<>, listener: Listener<>){
+function testListener(event: Event<EventType>, listener: Listener<>): string {
     let matched = false
     const h = listener.header
+    if(h.type){
+        if(h.type == event.id){
+            matched = true
+        } else {
+            return 'Wrong Event Type'
+        }
+    }
     if(h.actors){
         const headerIds = [...h.actors].map(actor => actor.id)
         const actorIds = [...event.actors].map(actor => actor.id)
         if(headerIds.reduce((acc, actor) => acc || actorIds.includes(actor), false)){
             matched = true
         } else {
-            return false
+            return 'Wrong Actor'
         }
     }
     if(h.subjects){
-        if(event.subject.isIn(h.subjects) >= 0){
+        if(event.subject.indexIn(h.subjects) >= 0){
             matched = true
         } else {
-            return false
+            return 'Wrong Subject'
         }
     }
     if(h.tags){
-        if(h.tags.reduce((a, t) => event.tags.indexOf(t) >= 0 && a, true)){
+        if(h.tags.reduce((a, t) => event.tags.includes(t) && a, true)){
             matched = true
         } else {
-            return false
+            return 'Wrong Tags'
         }
     }
     if(h.filter){
         if(h.filter(event)){
             matched = true
         } else {
-            return false
+            return 'Filtered Out'
         }
     }
-    if(h.type){
-        if(h.type == event.id){
-            matched = true
-        } else {
-            return false
-        }
-    }
-    return matched
+    return matched? 'Passed': 'No Header'
 }
 
 export class EventResolver {
@@ -67,12 +67,12 @@ export class EventResolver {
     simulating: boolean
     eventQueue: LL<Event<>>
     animations: Map<any, Set<Animation>>
-    listenerOrder: Map<Symbol, {
-        parents: Symbol[],
-        children: Symbol[],
+    listenerOrder: Map<string, {
+        parents: string[],
+        children: string[],
         index: number,
         compare: any => 1 | 0 | -1,
-        id: Symbol,
+        id: string,
     }>
 
     constructor(){
@@ -111,9 +111,11 @@ export class EventResolver {
         return r
     }
 
-    registerListenerType(id: Symbol, parents?: Symbol[], children?: Symbol[]){
+    registerListenerType(id: string, parents?: string[], children?: string[]){
         if(this.initialized){
             throw new Error(`Cannot register id ${id.toString()} with event resolver after the resolver is initialized.`)
+        } else if(this.listenerOrder.get(id)){
+            throw new Error(`Collision on name ${id}`)
         } else {
             this.listenerOrder.set(id, {
                 parents: parents || [],
@@ -171,11 +173,8 @@ function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
     return listeners
 }
 
-
+let c = []
 function aggregate(ls: ListenerGroup, event: Event<>): LL<Listener<>> {
-    if(!ls){
-        return new LL() // TODO: maybe not a silent fail?
-    } else
     // $FlowFixMe
     if(ls[Symbol.iterator]){
         // $FlowFixMe
@@ -184,14 +183,19 @@ function aggregate(ls: ListenerGroup, event: Event<>): LL<Listener<>> {
             return a
         }, new LL())
     } else if(ls instanceof Listener){
-        let ret = testListener(event, ls) ? new LL(ls) : new LL()
-        return ret
+        c.push(ls)
+        let test = testListener(event, ls)
+        if(test == 'Passed'){
+            return new LL(ls)
+        } else {
+            c.push(test)
+            return new LL()
+        }
     } else {
         // $FlowFixMe
         return aggregate(ls.listener, event)
     } 
 }
-
 
 
 const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<>): Generator<any, Event<>, any> {
@@ -213,8 +217,11 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
     })
 
     if(!self.simulating){ 
-        console.log(event.id, event, game) 
+        console.log(event.id, event, game)
+        // console.log('active:', activeListeners.toArray().length, 'checked:', c) 
     }
+
+    c = []
 
     activeListeners = applyInternals(activeListeners)
 

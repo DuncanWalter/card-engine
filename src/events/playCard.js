@@ -15,7 +15,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const playCard: Symbol = Symbol('playCard')
+export const playCard: string = 'playCard'
 export const PlayCard = defineEvent(playCard, function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Type>){ 
 
     if(game.player.energy < subject.data.energy){
@@ -28,7 +28,7 @@ export const PlayCard = defineEvent(playCard, function*({ game, data, subject, a
         quantity: -subject.data.energy
     }, playCard))
     
-    game.activeCards.addToTop(subject) // TODO: could be safer than push pop
+    game.activeCards.push(subject) // TODO: could be safer than push pop
 
     actors.add(subject)
 
@@ -41,11 +41,9 @@ export const PlayCard = defineEvent(playCard, function*({ game, data, subject, a
     })
 
     let card: Card<> = subject
-    let event = yield resolver.processEvent(new AddToDiscardPile(actors, card, playCard))
+    let event = yield resolver.processEvent(new AddToDiscardPile(actors, card, {}, playCard))
     
-    game.activeCards.take()
-
-    console.log("Play Card:", event)
+    game.activeCards.pop()
 
 })
 

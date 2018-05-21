@@ -6,7 +6,7 @@ import { vulnerability } from "./vulnerability";
 import { Card } from "../cards/card";
 import { endTurn } from '../events/event';
 
-export const latency = Symbol('latency');
+export const latency = 'latency';
 export const Latency = defineEffect(latency, {
     name: 'Latency',
     innerColor: '#22ee33',

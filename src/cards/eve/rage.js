@@ -42,8 +42,7 @@ function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs<>)
 
 
 
-const rageSymbol = Symbol('rage')
-const RageEffect = defineEffect(rageSymbol, {
+const RageEffect = defineEffect('rage', {
     description: '',
     innerColor: "#aacc44",
     outerColor: "#889911",
@@ -55,7 +54,7 @@ const RageEffect = defineEffect(rageSymbol, {
     min: 1, 
     max: 99,
     on: endTurn,
-}, (owner, self) => new Listener(rageSymbol, { 
+}, (owner, self) => new Listener('rage', { 
     actors: [owner],
     type: damage,
 }, function*({ resolver }): * {
@@ -65,5 +64,5 @@ const RageEffect = defineEffect(rageSymbol, {
     yield resolver.processEvent(new BindEffect(actors, owner, {
         stacks: self.stacks,
         Effect: Block,
-    }, block, rageSymbol))
+    }, block, 'rage'))
 }, false), [], [damage])

@@ -2,9 +2,10 @@ import type { State } from "../../state";
 import type { Reducer } from "../../utils/state"
 import { createReducer } from "../../utils/state"
 import { CardState, Card } from "../../cards/card";
+import { type ID } from '../../utils/entity'
 
 interface HandState {
-    focus: string,
+    focus: ID<CardState<>> | void,
     cursor: {
         x: number,
         y: number,
@@ -19,7 +20,7 @@ interface HandState {
 }
 
 export interface CardSlot {
-    card: CardState<>,
+    card: ID<CardState<>>,
     pos: {
         x: number,
         y: number,
@@ -76,9 +77,9 @@ function easeTo(from, to, delta, speed){
 }
 
 
-export const handReducer: Reducer<HandState, any, State> = createReducer({
-    setFocus(slice, { focus }, { battle }: State){
-        if(focus.id == slice.focus){
+export const handReducer: Reducer<HandState, State> = createReducer({
+    setFocus(slice: HandState, { focus }, { battle }: State){
+        if(focus == slice.focus){
             return slice
         } else {
             return {
@@ -87,28 +88,28 @@ export const handReducer: Reducer<HandState, any, State> = createReducer({
             }
         }
     },
-    unsetFocus(slice, { focus }, { battle }: State){
-        if(focus.id == slice.focus){
+    unsetFocus(slice: HandState, { focus }, { battle }: State){
+        if(focus == slice.focus){
             return {
                 ...slice,
-                focus: '',
+                focus: undefined,
             }
         } else {
             return slice
         }
     },
-    updateHand: (slice, data, { battle }: State) => {
-        let visibleCards: CardState<>[] = [...battle.hand, ...battle.activeCards]
+    updateHand: (slice: HandState, data, { battle }: State) => {
+        let visibleCards: ID<CardState<>>[] = [...battle.hand, ...battle.activeCards]
 
         let preservedSlots = slice.cardSlots.filter(slot => {
-            return new Card(slot.card).isIn(visibleCards) >= 0
+            return new Card(slot.card).indexIn(visibleCards) >= 0
         }).map((slot, index) => {
 
             let card = visibleCards[visibleCards.indexOf(slot.card)]
 
-            let isActive = new Card(card).isIn(battle.activeCards) >= 0
+            let isActive = new Card(card).indexIn(battle.activeCards) >= 0
             let isDragging = false
-            let isFocus = slice.focus == card.id
+            let isFocus = slice.focus == slot.card
 
             let target = targetLocation(isActive, isFocus, index, visibleCards.length)
 
@@ -126,14 +127,14 @@ export const handReducer: Reducer<HandState, any, State> = createReducer({
         })
 
         let newSlots = visibleCards.filter(card => 
-            !preservedSlots.filter(slot => slot.card.id == card.id).length 
+            !preservedSlots.filter(slot => slot.card == card).length 
         ).map((card, subIndex) => {
 
             let index = preservedSlots.length + subIndex
 
-            let isActive = new Card(card).isIn(battle.activeCards) >= 0
+            let isActive = new Card(card).indexIn(battle.activeCards) >= 0
             let isDragging = false
-            let isFocus = card.id == slice.focus
+            let isFocus = card == slice.focus
 
             let target = targetLocation(isActive, isFocus, index, visibleCards.length)
             
@@ -192,7 +193,7 @@ export const handInitial: HandState = {
     },
     cardSlots: [],
     cardSprites: [],
-    focus: '',
+    focus: undefined,
 }
 
 export function updateHand(){
@@ -202,13 +203,13 @@ export function updateHand(){
 export function setFocus(card: Card<>){
     return {
         type: 'setFocus',
-        focus: card,
+        focus: card.id,
     }
 }
 
 export function unsetFocus(card: Card<>){
     return {
         type: 'unsetFocus',
-        focus: card,
+        focus: card.id,
     }
 }

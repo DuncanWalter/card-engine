@@ -8,7 +8,7 @@ import { Listener, deafListener } from '../events/listener'
 import { addToDiscardPile } from '../events/addToDiscardPile';
 import { Card } from "../cards/card";
 
-export const taunt = Symbol('taunt')
+export const taunt = 'taunt'
 export const Taunt = defineEffect(taunt, {
     name: 'Taunt',
     innerColor: '#448811',

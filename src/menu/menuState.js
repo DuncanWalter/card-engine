@@ -13,7 +13,7 @@ interface MenuState {
     detailPanel: 'cards' | 'summary',
 }
 
-export const menuReducer: Reducer<MenuState, any, State> = createReducer({
+export const menuReducer: Reducer<MenuState, State> = createReducer({
     reset(slice, action, state){
         return {
             previewing: '',

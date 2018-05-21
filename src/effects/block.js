@@ -5,7 +5,7 @@ import { vulnerability } from "./vulnerability"
 import { BindEffect } from '../events/bindEffect'
 import { Listener, ConsumerArgs } from '../events/listener'
 
-export const block = Symbol('block')
+export const block = 'block'
 export const Block = defineEffect(block, {
     name: 'Block',
     innerColor: '#6688ee',

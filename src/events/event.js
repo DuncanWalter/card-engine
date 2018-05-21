@@ -5,21 +5,21 @@ import type { EventType, Subject, Data } from './listener'
 import { Listener, reject } from './listener'
 import { EventResolver, resolver } from './eventResolver'
 
-export const startTurn = Symbol('startTurn')
-export const startCombat = Symbol('startCombat')
-export const endTurn = Symbol('endTurn')
+export const startTurn = 'startTurn'
+export const startCombat = 'startCombat'
+export const endTurn = 'endTurn'
 
 function any(any: any): any { return any }
 
 export class Event<T=any> extends Listener<T> {
-    id: Symbol
+    id: string
     actors: Set<Entity<any>>
     subject: Subject<T>
-    tags: Symbol[]
+    tags: string[]
     data: Data<T>
     defaultListeners: Listener<>[]
 
-    constructor(id: Symbol, consumer: Consumer<T>, actor: Entity<any> | Set<Entity<any>>, subject: Subject<T>, data: Data<T>, ...tags: Symbol[]){
+    constructor(id: string, consumer: Consumer<T>, actor: Entity<any> | Set<Entity<any>>, subject: Subject<T>, data: Data<T>, ...tags: string[]){
         super(id, reject, consumer, false)
         this.data = data
         this.subject = subject
@@ -35,10 +35,10 @@ export class Event<T=any> extends Listener<T> {
     }
 }
 
-export function defineEvent<T>(id: Symbol, consumer: Consumer<T>): (actors: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: Symbol[]) => Event<T> {
+export function defineEvent<T>(id: string, consumer: Consumer<T>): (actors: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: string[]) => Event<T> {
     resolver.registerListenerType(id)
-    return function(actors, subject, data){
-        return new Event(id, consumer, actors, subject, data)
+    return function(actors, subject, data, ...tags){
+        return new Event(id, consumer, actors, subject, data, ...tags)
     }
 }
 
@@ -46,10 +46,10 @@ export function defineEvent<T>(id: Symbol, consumer: Consumer<T>): (actors: Set<
 
 
 // export class Action<Data=any, Subject=any, Actor=any> extends Listener<> {
-//     id: Symbol
+//     id: string
 //     actors: Set<Actor>
 //     subject: Subject
-//     tags: Symbol[]
+//     tags: string[]
 //     data: Data
 //     defaultListeners: Listener<>[]
 
@@ -57,7 +57,7 @@ export function defineEvent<T>(id: Symbol, consumer: Consumer<T>): (actors: Set<
 //         return [...this.actors].reduce((acc, actor) => acc || actor instanceof Type, false)
 //     }
     
-//     constructor(id: Symbol, consumer: Consumer<>, actor: Actor | Set<Actor>, subject: Subject, data: Data, ...tags: Symbol[]){
+//     constructor(id: string, consumer: Consumer<>, actor: Actor | Set<Actor>, subject: Subject, data: Data, ...tags: string[]){
 //         super(id, reject, consumer, false)
 //         this.data = data
 //         this.subject = subject
@@ -75,19 +75,19 @@ export function defineEvent<T>(id: Symbol, consumer: Consumer<T>): (actors: Set<
 
 // export type () => Event<> = Class<CA<Data, Subject, Actor>>
 // export function defineEvent<Data, Subject: Entity<any>, Actor: Entity<any> | Set<Entity<any>>>(
-//     id: Symbol, 
+//     id: string, 
 //     consumer: Consumer<>,
 // ): Class<CA<Data, Subject, Actor>> {
 //     resolver.registerListenerType(id)
 //     return any(class CustomAction extends Action<Data, Subject, Actor> {
 
-//         id: Symbol
+//         id: string
 //         actors: Set<Actor>
 //         subject: Subject
-//         tags: Symbol[]
+//         tags: string[]
 //         data: Data
 
-//         constructor(actor: Actor | Set<Actor>, subject: Subject, data: Data, ...tags: Symbol[]){
+//         constructor(actor: Actor | Set<Actor>, subject: Subject, data: Data, ...tags: string[]){
 //             super(id, consumer, actor, subject, data, id, ...tags)
 //         }
 //     })

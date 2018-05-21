@@ -1,4 +1,3 @@
-import type { Component } from '../component'
 import type { Rarity } from './cardSet';
 import type { Card as CardObject } from './card'
 import type { State } from '../state';
@@ -148,7 +147,7 @@ const CardRarity = styled.div`
     border-radius: 10px;
 `
 
-export const Card: Component<Props> = withState(({ card, state, glow, sets }) => {
+export const Card = withState(({ card, state, glow, sets }) => {
 
     const game: Game = resolver.state.getGame()
  

@@ -3,18 +3,16 @@ import { CardPool, pickKey } from "./cardPool"
 import { CardSet } from "./cardSet"
 import { Sequence } from "../utils/random"
 import { Card } from "./card"
-import { Player } from "../creatures/player";
+import { Player } from "../creatures/player"
 
-type maybeCardMembership = { rarity: Rarity, color: string }
+type CardMembership = { rarity: Rarity, color: string }
 
 const sets: Map<string, CardSet> = new Map()
 
 export const CardLibrary = {
-
     register(set: CardSet){
         sets.set(set.name, set)
     },
-
     sample(count: number, setDistro: { [set: string]: number }, rarityDistro: { [rarity: Rarity]: number }, seed: Sequence<number>): (() => Card<>)[] {
         let result = new Set()
         while(result.size < count){
@@ -25,13 +23,8 @@ export const CardLibrary = {
         }
         return [...result]
     },
-
-
-    getCardMembership(fromSets: string[], card: Card<>): { 
-        color: string,
-        rarity: Rarity, 
-    } {
-        return fromSets.reduce((acc: { color: string, rarity: Rarity }, name: string) => {
+    getCardMembership(fromSets: string[], card: Card<>): CardMembership {
+        return fromSets.reduce((acc: CardMembership, name: string) => {
             let set = sets.get(name)
             if(set){
                 return set.members.get(card.type) || acc
@@ -43,6 +36,4 @@ export const CardLibrary = {
             rarity: 'F',
         })  
     }
-
-
 }

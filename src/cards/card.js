@@ -1,18 +1,18 @@
 import type { ListenerGroup } from '../events/listener'
 import type { EventResolver } from './../events/eventResolver'
 import type { Event } from './../events/event'
-import type { Component } from '../component'
 import type { Game } from "../game/battle/battleState"
+import type { ID } from '../utils/entity';
 import { PlayCard } from '../events/playCard'
 import { synchronize } from '../utils/async'
 import { resolver } from '../events/eventResolver'
 import { Effect, EffectState } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
-import { Entity } from '../utils/entity';
+import { Entity, createEntity } from '../utils/entity';
 import { EffectGroup } from '../effects/effectGroup';
 
-export type cardFactory = () => Card<> 
+export type CardFactory = () => Card<> 
 
 export interface PlayArgs<T: Object|void = {}|void> {
     actors: Set<Entity<any>> | Entity<any>,
@@ -31,13 +31,13 @@ function registerCard(type: string, play: (self: Card<>, args: PlayArgs<>) => Pr
 export interface CardState<Data: Object = any> {
     type: string,
     appearance: {
-        color: string, // TODO: this is a stand in for images
+        color: string,
         textTemplate: string,
         titleTemplate: string,
         energyTemplate: string,
     },
     data: Data,
-    effects: EffectState[],
+    effects: ID<EffectState>[],
     id?: string,
 }
 
@@ -100,37 +100,34 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         }
     }
 
-    upgrade(){
-
+    upgrade(): Card<>[] {
+        return []
     }
 
     clone(): Card<Data>{
-        let raw = { ...this.unwrap() }
-        if(raw.id){ 
-            delete raw.id
-        }
-        raw.appearance = { ...raw.appearance }
-        raw.data = { ...raw.data }
-
-        return new Card(raw)
+        const clone = super.clone()
+        const data = clone.inner
+        data.appearance = { ...data.appearance }
+        data.data = { ...data.data }
+        data.effects = [ ...data.effects ]
+        return new Card(clone.id)
     }
 
-    stacksOf(effectType: Symbol): number {
-        let effects: EffectState[] = this.inner.effects.filter(effect => effect.type == effectType.toString())
+    stacksOf(effectType: string): number {
+        let effects: EffectState[] = [...this.effects].filter(effect =>
+            effect.type == effectType
+        )
         if(effects.length === 0){
             return 0
         } else {
             return effects[0].stacks
         }
     }
-
 }
 
 
 
-function any(any: any): any { return any }
-
-export function defineCard<Meta: {}>(
+export function defineCard<Meta:Object>(
     type: string, // unique string id
     play: (self: Card<Meta>, ctx: PlayArgs<>) => Generator<any, Meta, any>,
     data: Meta,
@@ -142,18 +139,15 @@ export function defineCard<Meta: {}>(
     },
     ...effects: [(stacks: number) => Effect, number][]
 ): () => Card<Meta> {
-
     registerCard(type, synchronize(play))
-
     return function(){
-        return new Card({
+        return new Card(createEntity(Card, {
             appearance,
-            effects: effects.map(([E, s]) => new E(s).unwrap()),
+            effects: effects.map(([E, s]) => new E(s).id),
             type,
             data: { ...data },
-        })
+        }))
     }
-
 }
 
 

@@ -27,8 +27,7 @@ export const Rampage: () => Card<RampageData> = defineCard(rampage, playRampage,
     textTemplate: 'Deal #{damage} damage to an enemy. Deals #{scaling} more damage for each time this card has been played this combat.',
 }, [Default, 1])
 
-let rampageSymbol = Symbol(rampage)
-let RampageStacks = defineEffect(rampageSymbol, null, {
+let RampageStacks = defineEffect('rampage', null, {
     stacked: true,
     delta: x => x,
     max: 999,
@@ -43,7 +42,7 @@ function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs<>)
                 actors,
                 target,
                 {
-                    damage: self.data.damage + self.stacksOf(rampageSymbol) * self.data.scaling,
+                    damage: self.data.damage + self.stacksOf('rampage') * self.data.scaling,
                 },
                 targeted,
                 blockable,

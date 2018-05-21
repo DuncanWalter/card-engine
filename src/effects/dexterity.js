@@ -5,7 +5,7 @@ import { bindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
 import { ConsumerArgs, Listener } from '../events/listener';
 
-export const dexterity = Symbol('dexterity');
+export const dexterity = 'dexterity';
 export const Dexterity = defineEffect(dexterity, {
     name: 'Dexterity',
     outerColor: '#22aa88',

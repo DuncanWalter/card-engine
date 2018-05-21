@@ -1,6 +1,7 @@
 import type { State } from '../state'
 import type { Reducer } from '../utils/state'
 import type { Monster, MonsterState } from "../creatures/monster";
+import type { ID } from '../utils/entity'
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { getEncounter } from "./encounterLibrary"
@@ -14,7 +15,7 @@ function createPath(level: number, seed: Sequence<number>){
     let rewardFund = challengeRating - level - 5
 
     return {
-        enemies: enemies.map(enemy => enemy.unwrap()),
+        enemies: enemies.map(enemy => enemy.id),
         rewards: getRewards(rewardFund, level, seed),
         challengeRating,
         level,
@@ -25,14 +26,14 @@ function createPath(level: number, seed: Sequence<number>){
 
 interface PathState {
     level: number,
-    enemies: MonsterState[],
+    enemies: ID<MonsterState>[],
     challengeRating: number, 
     rewards: any[],
     seed: Sequence<number>,
     freedoms: PathState[],
 }
 
-export const pathReducer: Reducer<PathState, any, State> = createReducer({
+export const pathReducer: Reducer<PathState, State> = createReducer({
     generateFreedoms(slice){
 
         let level = slice.level + 1

@@ -6,6 +6,8 @@
 [libs]
 ./flowtyped/external
 ./flowtyped
+./node_modules/kefir/kefire.js.flow
+./node_modules/preact/src/preact.js.flow
 
 [options]
 experimental.const_params=true

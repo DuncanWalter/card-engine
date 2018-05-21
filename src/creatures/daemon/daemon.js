@@ -1,4 +1,4 @@
-import type { BehaviorType } from "../behavior"
+import type { BehaviorState } from "../behavior"
 import { Damage, targeted, blockable, damage } from '../../events/damage'
 import { Block } from "../../effects/block"
 import { BindEffect } from '../../events/bindEffect'
@@ -10,7 +10,7 @@ import { Latency } from "../../effects/latency"
 import { defineBehavior } from "../behavior"
 import { defineMonster } from "../monster";
 
-const scratch: BehaviorType = defineBehavior('Swipe', function*({ owner, resolver, game }){
+const scratch: BehaviorState = defineBehavior('Daemon Swipe', function*({ owner, resolver, game }){
     let action: Damage = new Damage(owner, game.player, { 
         damage: 5
     }, targeted, blockable)

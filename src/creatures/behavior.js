@@ -1,20 +1,9 @@
 import type { MonsterState, Monster } from "./monster"
 import type { Game } from "../game/battle/battleState"
-import type { Component } from "../component"
 import { Event } from '../events/event'
 import { EventResolver } from '../events/eventResolver'
 import { synchronize } from "../utils/async"
-import { Entity } from "../utils/entity";
-
-
-export type BehaviorType = string
-
-let types = (function*(){
-    let i = 1
-    while(i++){
-        yield i.toString(26)
-    }
-})()
+import { Entity } from "../utils/entity"
 
 export interface Intent {
     damage?: number,
@@ -32,53 +21,39 @@ export interface BehaviorContext {
     game: $ReadOnly<Game>,
 }
 
-export interface BehaviorState {
-    type: BehaviorType,
-    name: string,
-    // TODO:
-    // description: string,
-}
+export type BehaviorState = string
 
 const definedBehaviors: Map<string, BehaviorContext => Promise<Intent>> = new Map()
 
-export function defineBehavior<D>(name: string, behavior: BehaviorContext => Generator<any, Intent, any>): BehaviorType {
+export function defineBehavior<D>(name: string, behavior: BehaviorContext => Generator<any, Intent, any>): BehaviorState {
     
-    // TODO: use the name, add a description formatter
-
-    let { value, done } = types.next()
-
-    if(value && !definedBehaviors.get(value)){
-        definedBehaviors.set(value, synchronize(behavior))
+    if(!definedBehaviors.get(name)){
+        definedBehaviors.set(name, synchronize(behavior))
     } else {
         throw new Error(`BehaviorType collision on ${name}.`)
     }
     
-    return value
+    return name
 
 }
 
 
 const baseIntent: Intent = { isMiscBehavior: true }
 
-export class Behavior extends Entity<BehaviorState> {
+export class Behavior {
 
-    get type(): BehaviorType {
-        return this.inner.type
-    }
+    inner: BehaviorState
     
     get name(): string {
-        return this.inner.name
+        return this.inner
     }
 
-    // selectNext: (seed: number) => Behavior
-    // perform: (ctx: BehaviorContext) => Promise<Intent>
-
     perform(context: BehaviorContext): Promise<Intent> {
-        const behavior = definedBehaviors.get(this.type)
+        const behavior = definedBehaviors.get(this.inner)
         if(behavior){
             return behavior(context)
         } else {
-            throw new Error(`Unknown behavior type ${this.type}`)
+            throw new Error(`Unknown behavior type ${this.inner}`)
         }
     }
 
@@ -90,8 +65,20 @@ export class Behavior extends Entity<BehaviorState> {
         if(data != baseIntent){
             return data
         } else {
-            throw new Error(`Async detected in simulation of the behavior ${this.type}`)
+            throw new Error(`Async detected in simulation of the behavior ${this.inner}`)
         }
+    }
+
+    unwrap(): BehaviorState {
+        return this.inner
+    }
+
+    // is(other: BehaviorState | Behavior): boolean {
+    //     return this.inner == other || this.inner == other.inner
+    // }
+
+    constructor(state: BehaviorState){
+        this.inner = state
     }
 
 }
@@ -100,29 +87,10 @@ type Props = {
     data: Intent
 }
 
-export const primeBehavior: BehaviorType = defineBehavior('PRIME_BEHAVIOR', function*(){ return {} })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const primeBehavior: BehaviorState = defineBehavior('PRIME_BEHAVIOR', function*(){ return {} })
 
 // TODO: needs a revamp
-export const renderBehavior: Component<Props> = ({ data }) => {
+export const renderBehavior = ({ data }: { data: Intent }) => {
     return <div style={renderData(data).container}>
         <p>{data.damage || ''}</p>
     </div>
@@ -130,7 +98,7 @@ export const renderBehavior: Component<Props> = ({ data }) => {
 
 function renderData(data: Intent){
 
-    let innerColor = '#00000', outerColor = '#ffffff'
+    let innerColor = '#000000', outerColor = '#ffffff'
     
     switch(true){
         case data.damage != undefined :{

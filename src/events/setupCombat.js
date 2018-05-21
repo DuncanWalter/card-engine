@@ -14,10 +14,8 @@ interface Type {
     subject: Player,
 }
 
-export const setupCombat: Symbol = Symbol('setupCombat')
+export const setupCombat: string = 'setupCombat'
 export const SetupCombat = defineEvent(setupCombat, function*({ game, resolver, data }: ConsumerArgs<Type>){ 
-    
-
     game.drawPile.clear()
     game.hand.clear()
     game.discardPile.clear()
@@ -25,8 +23,7 @@ export const SetupCombat = defineEvent(setupCombat, function*({ game, resolver, 
     game.activeCards.clear()
     game.player.effects.clear()
     game.player.seed = data.seed
-    game.enemies = data.enemies
+    game.enemies.clear()
+    game.enemies.add(...data.enemies)
     game.player.seed = data.seed.fork()
-
-
 })

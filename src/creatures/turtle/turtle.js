@@ -1,4 +1,4 @@
-import type { BehaviorType } from "../behavior"
+import type { BehaviorState } from "../behavior"
 import { Behavior, defineBehavior, primeBehavior } from "../behavior"
 import { Damage, targeted, blockable } from '../../events/damage'
 import { Block } from "../../effects/block"
@@ -7,14 +7,14 @@ import { startCombat } from '../../events/startCombat'
 import { Blockade } from "../../effects/blockade"
 import { defineMonster } from "../monster"
 
-const chomp: BehaviorType = defineBehavior('Chomp', function*({ owner, resolver, game }){
+const chomp: BehaviorState = defineBehavior('Turtle Chomp', function*({ owner, resolver, game }){
     const action: Damage = yield resolver.processEvent(new Damage(self, game.player, { 
         damage: 7 
     }, targeted, blockable))
     return { damage: action.data.damage }
 })
 
-const hunker: BehaviorType = defineBehavior('Hunker', function*({ owner, resolver, game }){
+const hunker: BehaviorState = defineBehavior('Turtle Hunker', function*({ owner, resolver, game }){
     yield resolver.processEvent(new BindEffect(owner, owner, {
         Effect: Block,
         stacks: 8,

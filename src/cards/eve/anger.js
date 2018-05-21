@@ -9,8 +9,6 @@ import { Monster } from '../../creatures/monster';
 
 type AngerData = { damage: number, energy: number }
 
-// TODO: make it etherial
-
 export const anger = 'anger'
 export const Anger: () => Card<AngerData> = defineCard(anger, playAnger, {
     energy: 0,

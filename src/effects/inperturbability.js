@@ -4,7 +4,7 @@ import { Listener, ConsumerArgs } from '../events/listener'
 import { vulnerability } from "./vulnerability"
 import { bindEffect } from '../events/bindEffect';
 
-export const imperturbability = Symbol('imperturbability')
+export const imperturbability = 'imperturbability'
 export const Imperturbability = defineEffect(imperturbability, null, {
     stacked: false, 
     delta: x => x,

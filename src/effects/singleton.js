@@ -9,7 +9,7 @@ import { addToDiscardPile } from '../events/addToDiscardPile';
 import { ExhaustCard } from '../events/exhaustCard';
 import { Card } from "../cards/card";
 
-export const singleton = Symbol('singleton')
+export const singleton = 'singleton'
 export const Singleton = defineEffect(singleton, {
     name: 'Singleton',
     innerColor: '#343434',

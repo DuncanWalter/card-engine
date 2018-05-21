@@ -6,7 +6,7 @@
 //     points: number,
 // }
 
-// export const bindFamePoints: Symbol = Symbol('bindFamePoints')
+// export const bindFamePoints: string = 'bindFamePoints'
 // export const BindFamePoints = defineEvent(bindFamePoints, ({ game, data }: ConsumerArgs<Type>): void => {
 //     game.famePoints += Math.floor(data.points)
 // })

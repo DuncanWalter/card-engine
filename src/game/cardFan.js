@@ -28,11 +28,12 @@ const Canvas = styled.div`
     justify-content: center;
 `
 
-const Panel = styled.div`
-    flex-wrap: wrap;
+const Fan = styled.div`
+    flex-direction: row;
     justify-content: space-around;
     display: flex;
     max-width: 85%;
+    align-items: center;
 `
 
 const CardHolder = styled.div`
@@ -47,25 +48,17 @@ type CardPanelProps = {
     onClick?: (card: Card) => void,
 }
 
-const CardPanelInner = ({ state, cards, sets, onClick }: CardPanelProps) => <Wrapper>
+export const CardFan = ({ cards, sets, onClick }: CardPanelProps) => <Wrapper>
     <Canvas>
-        <Panel>
+        <Fan>
             {cards.map(card => 
                 <CardHolder onClick={ click => onClick? onClick(card): null }>
                     <Card card={ card } sets={ sets } glow={ false }/>
                 </CardHolder>
             )}
-            <CardHolder/>
-            <CardHolder/>
-            <CardHolder/>
-            <CardHolder/>
-            <CardHolder/>
-            <CardHolder/>
-        </Panel>
+        </Fan>
     </Canvas>
 </Wrapper>
-
-export const CardPanel = withState(CardPanelInner)
 
 
 

@@ -1,4 +1,3 @@
-import type { Component } from './component'
 import styled from "styled-components";
 
 export const Col = styled.div`

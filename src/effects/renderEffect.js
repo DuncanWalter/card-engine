@@ -1,8 +1,7 @@
-import type { Component } from '../component'
 import type { Effect } from './effect'
 
 type Props = { effect: Effect }
-export const renderEffect: Component<Props> = ({ effect }: Props) => {
+export const renderEffect = ({ effect }: Props) => {
     let styles = renderData(effect)
     return styles ? <div style={styles.border}>
         <div style={styles.base}>

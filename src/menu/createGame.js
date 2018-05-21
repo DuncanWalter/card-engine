@@ -1,4 +1,3 @@
-import type { Component } from '../component'
 import { Link, Route } from 'react-router-dom'
 import { Button, Block, Frame, Modal, Col, Row, Shim } from "../utility"
 import { resolver } from '../events/eventResolver'
@@ -6,9 +5,9 @@ import { StartGame } from '../events/startGame'
 import styled from 'styled-components'
 import { withState, dispatch } from '../state'
 import { beginSelectingCharacter, previewCharacter, selectCharacter, cancelCharacterSelection, viewDetailPanel } from './menuState';
-import { cardSets } from '../cards/cardSet';
-import { CardPanel } from '../game/cardPanel';
-import { Entity } from '../utils/entity';
+import { cardSets } from '../cards/cardSet'
+import { CardPanel } from '../game/cardPanel'
+import { Entity } from '../utils/entity'
 
 const Panel = styled.div`
     width: 240px;
@@ -32,7 +31,7 @@ const CharacterPanel = ({ index, character }) => {
     
 }
 
-export const CreateGame: Component<> = withState(({ state }) => {
+export const CreateGame = withState(({ state }) => {
     let { isSelecting, selectingIndex, previewing, character, detailPanel } = state.menu
     return isSelecting? <Modal>
         <Col shim>
@@ -108,7 +107,7 @@ export const CreateGame: Component<> = withState(({ state }) => {
                 <Route render={({ history }) => 
                     <Button primary onClick={click => {
                         // TODO: GET RID OF THE ENTITY DEALIO
-                        resolver.processEvent(new StartGame(new Entity({}), new Entity({}), {
+                        resolver.processEvent(new StartGame(new Entity(''), new Entity(''), {
                             seed: 100345,
                             character: ['Adventurer', ...character],
                         }))

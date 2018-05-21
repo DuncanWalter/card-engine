@@ -2,6 +2,7 @@ import type { PlayerState } from "../../creatures/player"
 import type { State } from "../../state"
 import type { Reducer } from "../../utils/state"
 import type { MonsterState } from '../../creatures/monster';
+import type { ID } from '../../utils/entity'
 
 import { randomSequence, Sequence } from '../../utils/random'
 
@@ -10,9 +11,11 @@ import { CardStack } from "../../cards/cardStack"
 import { createReducer } from "../../utils/state"
 import { Monster } from '../../creatures/monster';
 import { Player } from '../../creatures/player';
+import { MonsterGroup } from '../../creatures/monsterGroup';
+import { createEntity } from '../../utils/entity';
 
 
-function any(any: any): any { return any }
+// function any(any: any): any { return any }
 
 // TODO:
 // ancestor bonus for winning last game
@@ -24,37 +27,35 @@ export interface Game {
     hand: CardStack,
     drawPile: CardStack,
     discardPile: CardStack,
-    enemies: Monster[],
-    allies: Monster[],
+    enemies: MonsterGroup,
+    allies: MonsterGroup,
     player: Player,
     equipment: Array<any>,
     deck: CardStack,
     exhaustPile: CardStack,
     activeCards: CardStack,
-    famePoints: number,    
 }
 
 interface GameState {
-    dummy: MonsterState,
-    hand: CardState<>[],
-    drawPile: CardState<>[],
-    discardPile: CardState<>[],
-    enemies: MonsterState[],
-    allies: MonsterState[],
-    player: PlayerState,
+    dummy: ID<MonsterState>,
+    hand: ID<CardState<>>[],
+    drawPile: ID<CardState<>>[],
+    discardPile: ID<CardState<>>[],
+    enemies: ID<MonsterState>[],
+    allies: ID<MonsterState>[],
+    player: ID<PlayerState>,
     equipment: Array<any>,
-    deck: CardState<>[],
-    exhaustPile: CardState<>[],
-    activeCards: CardState<>[],
-    famePoints: number, 
+    deck: ID<CardState<>>[],
+    exhaustPile: ID<CardState<>>[],
+    activeCards: ID<CardState<>>[],
 }
 
 export function liftState(state: GameState): Game {
     return {
         dummy: new Monster(state.dummy),
         hand: new CardStack(state.hand),
-        enemies: state.enemies.map(enemy => new Monster(enemy)),
-        allies: state.allies.map(ally => new Monster(ally)),
+        enemies: new MonsterGroup(state.enemies),
+        allies: new MonsterGroup(state.allies),
         player: new Player(state.player),
         equipment: state.equipment,
         activeCards: new CardStack(state.activeCards),
@@ -62,25 +63,23 @@ export function liftState(state: GameState): Game {
         discardPile: new CardStack(state.discardPile),
         drawPile: new CardStack(state.drawPile),
         deck: new CardStack(state.deck),
-        famePoints: state.famePoints,
     }
 }
 
 function serializeGame(game: Game): GameState {
 
     let state = {
-        dummy: game.dummy.unwrap(),
-        hand: game.hand.unwrap(),
-        enemies: game.enemies.map(enemy => enemy.unwrap()),
-        allies: game.allies.map(ally => ally.unwrap()),
-        player: game.player.unwrap(),
+        dummy: game.dummy.id,
+        hand: game.hand.ids,
+        enemies: game.enemies.ids,
+        allies: game.allies.ids,
+        player: game.player.id,
         equipment: game.equipment,
-        activeCards: game.activeCards.unwrap(),
-        exhaustPile: game.exhaustPile.unwrap(),
-        discardPile: game.discardPile.unwrap(),
-        drawPile: game.drawPile.unwrap(),
-        deck: game.deck.unwrap(),
-        famePoints: game.famePoints,
+        activeCards: game.activeCards.ids,
+        exhaustPile: game.exhaustPile.ids,
+        discardPile: game.discardPile.ids,
+        drawPile: game.drawPile.ids,
+        deck: game.deck.ids,
     }
 
     console.log(JSON.parse(JSON.stringify(state)))
@@ -96,38 +95,31 @@ export const battleInitial: GameState = {
     deck: [],
     exhaustPile: [],
     equipment: [],
-    player: {
+    player: createEntity(Player, {
         health: 65,
         maxHealth: 65,
         type: 'Player',
         effects: [],
         seed: 0,
-        data: {
-            sets: [],
-            energy: 3,
-            isActive: true,
-        },
-    },
+        sets: [],
+        energy: 3,
+        isActive: true,
+    }),
     allies: [],
     enemies: [],
     activeCards: [],
-    dummy: {
+    dummy: createEntity(Monster, {
         health: 10,
         maxHealth: 10,
         type: 'TrainingDummy',
         effects: [],
-        data: {
-            behavior: {
-                name: 'Blue',
-                type: 'PRIME_BEHAVIOR',
-            },
-        },
+        behavior: 'PRIME_BEHAVIOR',
         seed: 1234125151,
-    },
+    }),
     famePoints: 0,
 }
 
-export const battleReducer: Reducer<GameState, any, any> = createReducer({
+export const battleReducer: Reducer<GameState, mixed> = createReducer({
     emitBattleState(slice: GameState, { game }: { game: Game }){
         return serializeGame(game)
     },
@@ -139,27 +131,6 @@ export function emit(game: Game){
         game,
     }
 }
-
-// TODO: we need in file action dispatchers...
-// export function bind(fn: (state: GameState) => GameState){
-//     dispatcher.bind(fn)
-// }
-
-// export function emit(){
-//     battleSlice.dispatcher.emit()
-// }
-
-// function clearBattleEffects(){
-//     // TODO: make it happen
-// }
-
-// function save(){
-
-// }
-
-// function load(){
-
-// }
 
 
 

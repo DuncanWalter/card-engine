@@ -12,11 +12,10 @@ type Type = {
 }
 
 
-export const addToHand = Symbol('addToHand')
+export const addToHand = 'addToHand'
 export const AddToHand = defineEvent(addToHand, function* addToHand({ actors, subject, resolver, data, game }: ConsumerArgs<Type>){ 
-    // TODO: is this how I want to do max hand size?
-    if(game.hand.size < 10){
-        game.hand.addToTop(subject)
+if(game.hand.size < 10){
+        game.hand.push(subject)
     } else {
         yield resolver.processEvent(new AddToDiscardPile(actors, subject, data))
     }

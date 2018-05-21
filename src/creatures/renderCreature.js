@@ -1,4 +1,3 @@
-import type { Component } from '../component'
 import type { State } from '../state'
 import { renderEffect as Effect } from '../effects/renderEffect'
 import { renderBehavior as Behavior, Behavior as BehaviorWrapper } from './behavior'
@@ -16,7 +15,7 @@ type Props = {
 
 function any(any: any): any { return any }
 
-export const renderCreature: Component<Props> = withState(({ isEnemy, creature, state }: Props) => {
+export const renderCreature = withState(({ isEnemy, creature, state }: Props) => {
     
     const { health, inner } = creature
     const { maxHealth } = inner

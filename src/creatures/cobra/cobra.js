@@ -1,4 +1,4 @@
-import type { BehaviorType } from "../behavior"
+import type { BehaviorState } from "../behavior"
 import { Behavior, defineBehavior, primeBehavior } from "../behavior"
 import { Damage, targeted, blockable, damage } from '../../events/damage'
 import { Block } from "../../effects/block"
@@ -10,7 +10,7 @@ import { Poison } from "../../effects/poison"
 import { Latency } from "../../effects/latency"
 import { defineMonster } from "../monster";
 
-const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, game }){
+const bite: BehaviorState = defineBehavior('Cobra Bite', function*({ owner, resolver, game }){
     let action: Damage = new Damage(owner, game.player, { 
         damage: 9 
     }, targeted, blockable)
@@ -33,7 +33,7 @@ const bite: BehaviorType = defineBehavior('Bite', function*({ owner, resolver, g
     return { damage: action.data.damage, isDebuffing: true }
 })
 
-const hiss: BehaviorType = defineBehavior('Hiss', function*({ owner, resolver, game }){
+const hiss: BehaviorState = defineBehavior('Cobra Hiss', function*({ owner, resolver, game }){
     yield resolver.processEvent(new BindEffect(owner, game.player, {
         Effect: Latency,
         stacks: 2,

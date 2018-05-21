@@ -12,7 +12,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const exhaustCard: Symbol = Symbol('exhaustCard')
+export const exhaustCard: string = 'exhaustCard'
 export const ExhaustCard = defineEvent(exhaustCard, function*({ data, game, subject, cancel }: ConsumerArgs<Type>){ 
     
     if(data.from){

@@ -1,6 +1,4 @@
-import type { Component } from "../component"
 import type { State } from '../state'
-
 import { Link } from 'react-router-dom'
 import { Modal, Row, Button, Col, Block, Shim } from '../utility'
 import { Route } from 'react-router-dom'
@@ -17,7 +15,7 @@ import { Entity } from '../utils/entity';
 import { Player } from '../creatures/player';
 
 type Props = { state: State }
-export const PathSelection: Component<any> = withState(({ state }: Props) => {
+export const PathSelection = withState(({ state }: Props) => {
     return <Modal>
         <h1>Select Path</h1>
         <Row>
@@ -29,11 +27,11 @@ export const PathSelection: Component<any> = withState(({ state }: Props) => {
                         generateFreedoms(dispatch)
                         history.push('/game/battle')
                         // TODO: Remove new Entity hacj
-                        resolver.enqueueEvents(new SetupCombat(new Entity({}), new Player(state.battle.player), {
+                        resolver.enqueueEvents(new SetupCombat(new Entity(''), new Player(state.battle.player), {
                             enemies: path.enemies.map(enemy => new Monster(enemy)),
                             seed: path.seed.fork(),
                         }))
-                        resolver.enqueueEvents(new StartCombat(new Entity({}), new Entity({}), {}))
+                        resolver.enqueueEvents(new StartCombat(new Entity(''), new Entity(''), {}))
                     }}>
                         <Col style={{ width: '500px', height: '700px' }}>
                             <h1>{path.challengeRating - state.path.level - 10}</h1>

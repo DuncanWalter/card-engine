@@ -2,9 +2,15 @@ import type { Event } from '../events/event'
 import type { Creature } from '../creatures/creature'
 import { defineEvent } from './event'
 import { EndCombat } from './endCombat'
+import { ConsumerArgs } from './listener';
 
-export const removeCreature = Symbol('removeCreature')
-export const RemoveCreature = defineEvent(removeCreature, function*({ game, actors, subject, resolver }){ 
+type Type = {
+    subject: Creature<>,
+    data: {},
+}
+
+export const removeCreature = 'removeCreature'
+export const RemoveCreature = defineEvent(removeCreature, function*({ game, actors, subject, resolver }: ConsumerArgs<Type>){ 
     let index
     switch(true){
         case game.player.id == subject.id:{
@@ -12,17 +18,16 @@ export const RemoveCreature = defineEvent(removeCreature, function*({ game, acto
             resolver.pushEvents(new EndCombat(actors, subject, {}))
             break
         }
-        case (index = subject.isIn(game.enemies)) >= 0:{
+        case game.enemies.includes(subject):{
             // check if it all ends
-            game.enemies.splice(index, 1)
-            if(!game.enemies.length){
+            game.enemies.remove(subject)
+            if(!game.enemies.size){
                 resolver.pushEvents(new EndCombat(actors, subject, {}))
             }
             break
         }
-        case (index = subject.isIn(game.allies)) >= 0:{
-            // check if it all ends
-            game.allies.splice(index, 1)
+        case game.allies.includes(subject):{
+            game.allies.remove(subject)
             break
         }
     }

@@ -8,16 +8,15 @@ import { Entity } from "../utils/entity"
 export type Header = {
     actors?: any[],
     subjects?: any[],
-    tags?: Symbol[],
+    tags?: string[],
     filter?: (event: Event<>) => boolean,
-    type?: Symbol,
+    type?: string,
 }
 
 export interface EventType {
     subject: Entity<any>,
     data: Object,
 }
-
 
 export type Subject<T> = $PropertyType<T, 'subject'>
 
@@ -41,15 +40,14 @@ export interface ConsumerArgs<T=any> {
 
 export type Consumer<T=any> = (args: ConsumerArgs<T>) => Generator<Promise<any>, void, any>
 
-
 export class Listener<T=any>{
 
-    id: Symbol
-    internal: Symbol
+    id: string
+    internal: string
     consumer: (args: ConsumerArgs<T>) => Promise<void>
     header: Header
 
-    constructor(id: Symbol, header: Header, consumer: Consumer<T>, isWrapper: boolean){
+    constructor(id: string, header: Header, consumer: Consumer<T>, isWrapper: boolean){
         this.header = header,
         this.consumer = synchronize(consumer)
         if (!isWrapper) this.id = id
@@ -57,6 +55,5 @@ export class Listener<T=any>{
     }
 }
 
-const deaf = Symbol('deaf')
 export const reject: Header = { filter: a => false }
-export const deafListener: Listener<any> = new Listener(deaf, reject, function*(){}, false)
+export const deafListener: Listener<any> = new Listener('DEAF_LISTENER', reject, function*(){}, false)

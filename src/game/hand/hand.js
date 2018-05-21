@@ -1,4 +1,3 @@
-import type { Component } from '../../component'
 import { Card } from '../../cards/component'
 import { Card as CardObject } from './../../cards/card'
 import { updateHand, setFocus, unsetFocus, CardSlot as CardSlotT } from './handState'

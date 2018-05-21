@@ -1,9 +1,12 @@
-import { fromEvents, never, combine } from 'kefir'
+import { Observable, Stream, fromEvents, never, combine } from 'kefir'
 
-export interface Slice<S={}> {
-    state: $ReadOnly<S>,
-    stream: $ReadOnly<any>,
-    dispatcher: $ReadOnly<any>,
+type Action = any //{ type: string }
+export type Dispatch = (action: Action) => void
+export type Reducer<Slice, Global> = (Slice, Action, Global) => Slice
+export interface Store<S> {
+    reducer: Reducer<S, S>,
+    stream: Stream<S, S>,
+    dispatch: Dispatch,
 }
 
 let lastTime = Date.now()
@@ -24,24 +27,22 @@ function runStats(type){
     }
 }
 
-
-
-interface ReducerAction { type: string }
-export type Reducer<Slice, Action: ReducerAction, Global> = (Slice, Action, Global) => Slice
-
 // TODO: get union type of string-action pairs up
-export function createReducer<S, G>(reducers: { [string]: Reducer<S, any, G> }): Reducer<S, any, G> {
-    return (slice, action, state) => 
-        reducers[action.type] ?
+export function createReducer<S, G>(reducers: { [string]: Reducer<S, G> }): Reducer<S, G> {
+    return (slice: S, action: Action, state: G) => 
+        reducers[action.type]?
             reducers[action.type](slice, action, state):
             slice;
 }
 
 // TODO: get union of strings and actions once again
-type CombineReducers = <R: { [string]: Reducer<any, any, any> }, G>(reducers: R) => Reducer<$ObjMap<R, <T>((any, any, any) => T) => T>, ReducerAction, G>
-export const combineReducers: CombineReducers = reducers =>
-    (slice, action, state) => 
-        Object.keys(reducers).reduce((acc, key) => {
+// type CombineReducers = <R: , G>(reducers: R) => Reducer<$ObjMap<R, <T>((any, any, any) => T) => T>, ReducerAction, G>
+
+type ReducerMap<S:Object, G> = $ObjMap<S, <T>(T) => (Reducer<S, G> | Store<T>)> //{ [string]: Reducer<S, any, G> | Store<S> }
+
+export function combineReducers<S: Object, G>(reducers: ReducerMap<S, G>): Reducer<S, G> {
+    return function(slice: S, action: Action, state: G): S {
+        return Object.keys(reducers).reduce((acc, key) => {
             let result = reducers[key](slice[key], action, state)
             if(slice[key] !== result){
                 if(slice !== acc){
@@ -56,9 +57,10 @@ export const combineReducers: CombineReducers = reducers =>
                 return acc
             }
         }, slice)
-    
+    }
+}
 
-export function createStore<S>(reducer: Reducer<S, *, S>, initial: S): { dispatch: (ReducerAction) => void, stream: any } {
+export function createStore<S>(reducer: Reducer<S, S>, initial: S): Store<S> {
     let state = initial
     let emitter = new Emitter(initial)
     let stream = fromEvents(emitter, '')
@@ -75,10 +77,10 @@ export function createStore<S>(reducer: Reducer<S, *, S>, initial: S): { dispatc
             }
         },
         stream,
+        reducer,
     }
 }
 
-export type Dispatch = (ReducerAction) => void
 
 
 function Emitter(initial){

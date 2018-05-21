@@ -11,7 +11,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const addToDiscardPile = Symbol('addToDiscardPile')
+export const addToDiscardPile = 'addToDiscardPile'
 export const AddToDiscardPile = defineEvent(addToDiscardPile, function*({ subject, resolver, game }: ConsumerArgs<Type>){ 
-    game.discardPile.addToTop(subject)
+    game.discardPile.push(subject)
 })

@@ -10,7 +10,7 @@ type Type = {
     subject: Creature<>,
 }
 
-export const heal: Symbol = Symbol('heal')
+export const heal: string = 'heal'
 export const Heal = defineEvent(heal, function*({ data, subject, cancel }: ConsumerArgs<Type>){ 
     data.healing = Math.floor(data.healing)
     if(data.healing <= 0){
