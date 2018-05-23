@@ -13,10 +13,10 @@ export const Strike: () => Card<StrikeData> = defineCard('Strike', playStrike, {
     energyTemplate: '#{energy}',
     color: '#dd2244',
     titleTemplate: 'Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy.',
+    textTemplate: 'Deal #{damage} damage.',
 })
 
-function* playStrike(self: Card<StrikeData>, { resolver, actors }: PlayArgs<>) {
+function* playStrike(self: Card<StrikeData>, { resolver, actors }: PlayArgs) {
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

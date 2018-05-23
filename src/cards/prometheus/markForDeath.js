@@ -21,7 +21,7 @@ export const MarkForDeath: () => Card<MarkForDeathData> = defineCard(markForDeat
     textTemplate: 'Apply #{taunt} #[taunt] and #{vulnerability} #[vulnerability].',
 })
 
-function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors }: PlayArgs<>): Generator<any, MarkForDeathData, any>{
+function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors }: PlayArgs): Generator<any, MarkForDeathData, any>{
     // TODO: query creature
     let target = yield queryEnemy(any => true)
     yield resolver.processEvent(new BindEffect(actors, target, {

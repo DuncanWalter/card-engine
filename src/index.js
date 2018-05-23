@@ -46,14 +46,13 @@ const Root = props => <Anchor>
 
 // HMR friendly bootstrapping
 ;(function bootstrap(anchorElement){
-    // if(!document.getElementById('app-root')){
     render(<Root/>, anchorElement)
-    // }
 })(document.getElementById('anchor'))
 
 function any(any: any): any { return any }
 
 // enables HMR at this root
+// $FlowFixMe
 if( module.hot ){ 
     any(module).hot.accept()
 }

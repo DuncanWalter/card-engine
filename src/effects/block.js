@@ -10,7 +10,7 @@ export const Block = defineEffect(block, {
     name: 'Block',
     innerColor: '#6688ee',
     outerColor: '#2233bb',
-    description: '',
+    description: 'Until the start of your next turn, avoid the next #{stacks} damage you would take.',
     sides: 5,
     rotation: 0.5,
 }, {

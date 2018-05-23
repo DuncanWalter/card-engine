@@ -3,7 +3,7 @@ import type { Entity, ID } from "../utils/entity"
 import { Effect, EffectState } from "./effect"
 import { EntityGroup } from "../utils/entityGroup";
 
-export class EffectGroup extends EntityGroup<Class<Effect>> {
+export class EffectGroup extends EntityGroup<Effect> {
 
     constructor(effects: ID<EffectState>[]){
         super(Effect, effects)

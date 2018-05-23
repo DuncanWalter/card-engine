@@ -14,17 +14,16 @@ import { EffectGroup } from '../effects/effectGroup';
 
 export type CardFactory = () => Card<> 
 
-export interface PlayArgs<T: Object|void = {}|void> {
+export interface PlayArgs {
     actors: Set<Entity<any>> | Entity<any>,
     subject: Card<any>,
-    target: T,
     resolver: EventResolver,
     game: $ReadOnly<Game>,
 }
 
 const cards = new Map()
 
-function registerCard(type: string, play: (self: Card<>, args: PlayArgs<>) => Promise<any>): void {
+function registerCard(type: string, play: (self: Card<>, args: PlayArgs) => Promise<any>): void {
     cards.set(type, play)
 }
 
@@ -64,7 +63,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         return this.effects.asListener(this)
     }
 
-    play(ctx: PlayArgs<>){
+    play(ctx: PlayArgs){
         const cardBehavior = cards.get(this.type)
         if(cardBehavior){
             return cardBehavior(this, ctx)
@@ -73,7 +72,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         }
     }
 
-    simulate({ actors, subject, target, resolver }: PlayArgs<>):{
+    simulate({ actors, subject, resolver }: PlayArgs):{
         text: string,
         color: string,
         title: string,
@@ -81,7 +80,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
     }{
         let meta: Data = this.data
         resolver.simulate(resolver => {
-            this.play({ actors, subject, target, resolver, game: resolver.state.getGame() }).then(v => meta = v)
+            this.play({ actors, subject, resolver, game: resolver.state.getGame() }).then(v => meta = v)
         })
 
         Object.keys(meta).forEach(key => {
@@ -129,7 +128,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
 
 export function defineCard<Meta:Object>(
     type: string, // unique string id
-    play: (self: Card<Meta>, ctx: PlayArgs<>) => Generator<any, Meta, any>,
+    play: (self: Card<Meta>, ctx: PlayArgs) => Generator<any, Meta, any>,
     data: Meta,
     appearance: {
         color: string,

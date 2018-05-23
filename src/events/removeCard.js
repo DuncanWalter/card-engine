@@ -5,9 +5,9 @@ import { defineEvent } from './event'
 import { ConsumerArgs } from './listener';
 import { CardStack } from '../cards/cardStack';
 
-type Type = {
-    data: {},
-    subject: Card<>,
+interface Type {
+    +data: {},
+    +subject: Card<>,
 }
 
 export const removeCard: string = 'removeCard'

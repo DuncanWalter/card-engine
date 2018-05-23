@@ -16,12 +16,12 @@ export const Bash: () => Card<BashData> = defineCard(bash, playBash, {
     energyTemplate: '#{energy}',
     color: '#bb4433',
     titleTemplate: 'Bash',
-    textTemplate: `Deal #{damage} damage. #[Bloodied]: apply 2 #[vulnerability].`,
+    textTemplate: `Deal #{damage} damage. #[On Damage]: apply 2 #[vulnerability].`,
 })
 
 
 // TODO: the bash vulnerability should be a default listener on the damage action
-function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs<>){
+function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs){
     let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

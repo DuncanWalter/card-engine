@@ -1,20 +1,17 @@
 import { createStore, createReducer } from "./state";
 
-// entities are objects with a POJO state representation, but also with class behavior. 
-// they can be serialized and and recovered using ids etc.
-
 export opaque type ID<State> = string
 
 interface EntityStoreState {
     [subset: string]: { [id: string]: any } 
 }
 
-const entityIds = (function*(): Generator<ID<any>, void, any, > {
+const entityIds = (function*(entropy): Generator<ID<any>, void, any, > {
     let i = 1
     while(true){
-        yield `id:${(++i).toString(36)}`
+        yield `id:${entropy.toString(36)}:${(++i).toString(36)}`
     }
-})()
+})(Date.now())
 
 function addEntity<T>(id: ID<T>, Subset: Class<Entity<T>>, entity: T){
     dispatch({
@@ -57,6 +54,14 @@ export class Entity<State: Object = any> {
     get inner(): State {
         return this.unwrap()
     }
+
+    constructor(id: ID<State>){
+        if(typeof id == 'string'){
+            this.id = id
+        } else {
+            throw new Error('Invalid Id ' + id)
+        }
+    }
     
     unwrap(): State {
         let inner = state[this.constructor.name][this.id]
@@ -76,7 +81,7 @@ export class Entity<State: Object = any> {
         }
     }
     
-    indexIn(others: ID<State>[] | Entity<any>[]): number {
+    indexIn(others: Array<ID<State>|Entity<any>>): number {
         if(others.length){
             if(others[0] instanceof Entity){
                 return others.map(entity => entity.id).indexOf(this.id)
@@ -92,13 +97,6 @@ export class Entity<State: Object = any> {
         return new this.constructor(createEntity(this.constructor, {...this.unwrap()}))
     }
 
-    constructor(id: ID<State>){
-        if(typeof id == 'string'){
-            this.id = id
-        } else {
-            throw new Error('Invalid Id')
-        }
-    }
 }
 
 

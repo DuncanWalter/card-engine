@@ -18,10 +18,10 @@ export const FightersStance: () => Card<FightersStanceData> = defineCard(fighter
     energyTemplate: '#{energy}',
     color: '#551199',
     titleTemplate: 'Fighter\'s Stance',
-    textTemplate: 'Gain #{block} block. Add #{jabs} copies of Jab to your hand.',
+    textTemplate: 'Gain #{block} block. Add #{jabs} #[Jab]s to your hand.',
 })
 
-function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver }: PlayArgs<>): Generator<any, FightersStanceData, any> {
+function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver }: PlayArgs): Generator<any, FightersStanceData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 

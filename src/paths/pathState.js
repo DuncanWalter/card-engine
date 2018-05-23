@@ -24,7 +24,7 @@ function createPath(level: number, seed: Sequence<number>){
     }
 }
 
-interface PathState {
+export interface PathState {
     level: number,
     enemies: ID<MonsterState>[],
     challengeRating: number, 

@@ -9,22 +9,22 @@ export type Header = {
     actors?: any[],
     subjects?: any[],
     tags?: string[],
-    filter?: (event: Event<>) => boolean,
+    filter?: (event: Event<EventType>) => boolean,
     type?: string,
 }
 
 export interface EventType {
-    subject: Entity<any>,
-    data: Object,
+    +subject: Entity<any>,
+    +data: Object,
 }
 
-export type Subject<T> = $PropertyType<T, 'subject'>
+export type Subject<+T> = $PropertyType<$ReadOnly<T>, 'subject'>
 
 export type Data<T> = $PropertyType<T, 'data'>
 
-export type ListenerGroup = Listener<> 
+export type ListenerGroup = Listener<any> 
                           | Iterable<ListenerGroup> 
-                          | { listener: ListenerGroup }
+                          | { +listener: ListenerGroup }
 
 export interface ConsumerArgs<T=any> {
     data: Data<T>,
@@ -38,9 +38,9 @@ export interface ConsumerArgs<T=any> {
     internal: () => Promise<void>,
 }
 
-export type Consumer<T=any> = (args: ConsumerArgs<T>) => Generator<Promise<any>, void, any>
+export type Consumer<T:EventType> = (args: ConsumerArgs<T>) => Generator<Promise<any>, void, any>
 
-export class Listener<T=any>{
+export class Listener<T:EventType>{
 
     id: string
     internal: string

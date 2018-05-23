@@ -26,7 +26,7 @@ export const Adrenaline: () => Card<AdrenalineData> = defineCard('Adrenaline', p
     textTemplate: 'Gain #{reEnergize} energy. Draw #{draw} cards. #[Singleton].',
 }, [Singleton, 1])
 
-function* playAdrenaline(self: Card<AdrenalineData>, { actors, resolver, game }: PlayArgs<>){
+function* playAdrenaline(self: Card<AdrenalineData>, { actors, resolver, game }: PlayArgs){
     yield resolver.processEvent(new DrawCards(actors, game.player, { count: self.data.draw }))
     yield resolver.processEvent(new BindEnergy(actors, game.player, { quantity: self.data.reEnergize }))
     return self.data

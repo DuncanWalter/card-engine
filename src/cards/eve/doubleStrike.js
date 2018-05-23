@@ -14,10 +14,10 @@ export const DoubleStrike: () => Card<DoubleStrikeData> = defineCard(doubleStrik
     energyTemplate: '#{energy}',
     color: '#dd4466',
     titleTemplate: 'Double Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy twice.',
+    textTemplate: 'Deal #{damage} damage twice.',
 })
 
-function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors }: PlayArgs<>): Generator<any, DoubleStrikeData, any>{
+function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors }: PlayArgs): Generator<any, DoubleStrikeData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

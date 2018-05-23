@@ -18,7 +18,7 @@ export const Footwork: () => Card<FootworkData> = defineCard(footwork, playFootw
     textTemplate: 'Gain #{dexterity} dexterity. #[Singleton]',
 }, [Singleton, 1])
 
-function* playFootwork(self: Card<FootworkData>, { actors, game, resolver }: PlayArgs<>): Generator<any, FootworkData, any> {
+function* playFootwork(self: Card<FootworkData>, { actors, game, resolver }: PlayArgs): Generator<any, FootworkData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 

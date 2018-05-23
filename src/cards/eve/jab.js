@@ -16,10 +16,10 @@ export const Jab: () => Card<JabData> = defineCard(jab, playJab, {
     energyTemplate: '#{energy}',
     color: '#662222',
     titleTemplate: 'Jab',
-    textTemplate: 'Deal #{damage} damage to an enemy. #[Singleton].',
+    textTemplate: 'Deal #{damage} damage. #[Singleton].',
 }, [Singleton, 1])
 
-function* playJab(self: Card<JabData>, { resolver, actors }: PlayArgs<>): Generator<any, JabData, any>{
+function* playJab(self: Card<JabData>, { resolver, actors }: PlayArgs): Generator<any, JabData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

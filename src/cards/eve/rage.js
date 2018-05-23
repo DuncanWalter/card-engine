@@ -23,7 +23,7 @@ export const Rage: () => Card<RageData> = defineCard(rage, playRage, {
     textTemplate: 'Gain #{block} block whenever you deal damage until the end of your turn.',
 })
 
-function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs<>): Generator<any, RageData, any> {
+function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs): Generator<any, RageData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
@@ -36,11 +36,6 @@ function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs<>)
     )
     return { rage: action.data.stacks, energy: self.data.energy }
 }
-
-
-
-
-
 
 const RageEffect = defineEffect('rage', {
     description: '',

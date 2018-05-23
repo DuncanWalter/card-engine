@@ -24,7 +24,7 @@ export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
     textTemplate: 'Gain #{flex} strength. Lose #{flex} strength at the end of your turn.',
 })
 
-function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs<>): Generator<any, FlexData, any> {
+function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs): Generator<any, FlexData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 

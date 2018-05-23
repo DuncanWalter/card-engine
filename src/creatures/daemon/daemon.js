@@ -9,9 +9,10 @@ import { Poison } from "../../effects/poison"
 import { Latency } from "../../effects/latency"
 import { defineBehavior } from "../behavior"
 import { defineMonster } from "../monster";
+import { pickTarget } from '../utils';
 
 const scratch: BehaviorState = defineBehavior('Daemon Swipe', function*({ owner, resolver, game }){
-    let action: Damage = new Damage(owner, game.player, { 
+    let action: Damage = new Damage(owner, pickTarget(owner), { 
         damage: 5
     }, targeted, blockable)
     

@@ -20,12 +20,11 @@ const bite: BehaviorState = defineBehavior('Cobra Bite', function*({ owner, reso
         {},
         function*({ data, resolver, actors, subject, internal }){
             yield internal()
-            if(typeof data.damage == 'number' && data.damage >= 0){
-                yield resolver.processEvent(new BindEffect(actors, subject, {
-                    Effect: Poison,
-                    stacks: 3,
-                }))
-            }
+            // TODO: this might not cancel properly...
+            yield resolver.processEvent(new BindEffect(actors, subject, {
+                Effect: Poison,
+                stacks: 3,
+            }))
         },
         true,
     ))

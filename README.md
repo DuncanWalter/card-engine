@@ -2,9 +2,8 @@ This is the nucleus of a deck-building game based heavily on Megacrit's Slay the
 
 //TODO:
 
-* Kill symbols from the code
 * Switch to another theme/lore for the game (to force originality and get away from STS a bit)
-* unify all string Id generators!
+* opaque type identifiers behind non-dup functions (didn't know this was an option before)
 
 * Find someone to help out
 * Make some documentation

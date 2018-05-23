@@ -1,6 +1,6 @@
 
 let syntaxes = [
-    [/([^#]+)/, (data, text) => text], 
+    [/([^#]+)/, (data, text) => text],
     [/#{([^}#]*)}/, (data, sub) => data[sub]],
     [/#\[([^\]#]*)]/, (data, sub) => <b>{sub}</b>],
     [/#<([^>#]*)>/, (data, icon) => <ico class={`fa ${icon}`}></ico>],
@@ -17,7 +17,7 @@ export function interpolate<Data: { [string]: any }>(text: string, data: Data): 
 
     let match
     while(match = tt.exec(text)){
-        let subs = syntaxes.filter(syntax => 
+        let subs = syntaxes.filter(syntax =>
             syntax[0].exec(match[0]) != null
         ).map(syntax => {
             let [$0, $1, $2] = syntax[0].exec(match[0])
@@ -38,11 +38,11 @@ export function createInterpolationContext<Data: { [string]: any }>(expected: Da
             case expected[key] == resultant[key]:{
                 acc[key] = <span style={{ color: '#ffffff' }}>{ resultant[key] }</span>
                 break
-            } 
+            }
             case expected[key] >= resultant[key]:{
                 acc[key] = <span style={{ color: '#ff3333' }}>{ resultant[key] }</span>
                 break
-            } 
+            }
             case expected[key] <= resultant[key]:{
                 acc[key] = <span style={{ color: '#78ff51' }}>{ resultant[key] }</span>
                 break
@@ -51,5 +51,3 @@ export function createInterpolationContext<Data: { [string]: any }>(expected: Da
         return acc
     }, {})
 }
-
-// 'Deal #{damage} damage to every enemy. #[Exhaust].'

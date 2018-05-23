@@ -4,7 +4,7 @@ import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { reducer } from "vitrarius"
 
-interface MenuState {
+export interface MenuState {
     isSelecting: boolean,
     selectingIndex: number,
     character: string[],

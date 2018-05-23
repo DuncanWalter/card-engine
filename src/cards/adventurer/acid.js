@@ -21,10 +21,10 @@ export const Acid: () => Card<AcidData> = defineCard(acid, playAcid, {
     energyTemplate: '#{energy}',
     color: '#eeff33',
     titleTemplate: 'Acid',
-    textTemplate: 'Deal #{damage} damage to a target. Convert blocked damage to poison.',
+    textTemplate: 'Deal #{damage} damage. Convert blocked damage to poison.',
 })
 
-function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs<>){
+function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs){
     let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = new Damage(

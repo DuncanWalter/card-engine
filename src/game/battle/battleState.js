@@ -36,7 +36,7 @@ export interface Game {
     activeCards: CardStack,
 }
 
-interface GameState {
+export interface GameState {
     dummy: ID<MonsterState>,
     hand: ID<CardState<>>[],
     drawPile: ID<CardState<>>[],

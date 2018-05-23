@@ -4,7 +4,7 @@ import { Monster } from "./monster"
 import { Entity } from "../utils/entity"
 import { EntityGroup } from "../utils/entityGroup";
 
-export class MonsterGroup extends EntityGroup<Class<Monster>> {
+export class MonsterGroup extends EntityGroup<Monster> {
 
     monsters: ID<MonsterState>[]
 

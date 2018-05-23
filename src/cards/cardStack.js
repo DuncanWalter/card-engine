@@ -4,7 +4,7 @@ import { Card } from "./card"
 import { Sequence } from "../utils/random"
 import { EntityGroup } from "../utils/entityGroup";
 
-export class CardStack extends EntityGroup<Class<Card<>>> {
+export class CardStack extends EntityGroup<Card<>> {
 
     constructor(cards: ID<CardState<>>[]){
         super(Card, cards)

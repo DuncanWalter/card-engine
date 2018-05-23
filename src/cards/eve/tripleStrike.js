@@ -14,10 +14,10 @@ export const TripleStrike: () => Card<TripleStrikeData> = defineCard(tripleStrik
     energyTemplate: '#{energy}',
     color: '#dd6688',
     titleTemplate: 'Triple Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy thrice.',
+    textTemplate: 'Deal #{damage} damage thrice.',
 })
 
-function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors }: PlayArgs<>): Generator<any, TripleStrikeData, any>{
+function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors }: PlayArgs): Generator<any, TripleStrikeData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

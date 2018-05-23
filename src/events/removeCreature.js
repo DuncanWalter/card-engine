@@ -6,7 +6,7 @@ import { ConsumerArgs } from './listener';
 
 type Type = {
     subject: Creature<>,
-    data: {},
+    data: any,
 }
 
 export const removeCreature = 'removeCreature'

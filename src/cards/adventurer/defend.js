@@ -16,7 +16,7 @@ export const Defend: () => Card<DefendData> = defineCard('Defend', playDefend, {
     textTemplate: 'Gain #{block} block.',
 })
 
-function* playDefend(self: Card<DefendData>, { actors, game, resolver }: PlayArgs<>) {
+function* playDefend(self: Card<DefendData>, { actors, game, resolver }: PlayArgs) {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 

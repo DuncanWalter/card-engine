@@ -18,10 +18,10 @@ export const LegReap: () => Card<LegReapData> = defineCard(legReap, playLegReap,
     energyTemplate: '#{energy}',
     color: '#ee4422',
     titleTemplate: 'Leg Reap',
-    textTemplate: 'Deal #{damage} damage to an enemy. Ap.',
+    textTemplate: 'Deal #{damage} damage to an enemy.',
 })
 
-function* playLegReap(self: Card<LegReapData>, { resolver, actors, game }: PlayArgs<>): Generator<any, LegReapData, any>{
+function* playLegReap(self: Card<LegReapData>, { resolver, actors, game }: PlayArgs): Generator<any, LegReapData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

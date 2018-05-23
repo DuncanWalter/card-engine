@@ -5,7 +5,8 @@ import { resolver } from '../events/eventResolver'
 import { withState } from '../state';
 import { Monster } from './monster';
 import { Creature } from './creature';
-import { Effect as EffectObject } from '../effects/effect' 
+import { ToolTips } from '../components/toolTips';
+import styled from 'styled-components';
 
 type Props = { 
     creature: Creature<>,
@@ -14,6 +15,14 @@ type Props = {
 }
 
 function any(any: any): any { return any }
+
+
+const CreatureWrapper = styled.div`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 export const renderCreature = withState(({ isEnemy, creature, state }: Props) => {
     
@@ -30,7 +39,7 @@ export const renderCreature = withState(({ isEnemy, creature, state }: Props) =>
         behaviors.push(creature.behavior)
     }
     
-    return <div style={sty.creature}>
+    return <CreatureWrapper>
         <div style={sty.effectBar}>{
             behaviors.map(b => 
                 <Behavior data={ b.simulate(any(creature), resolver, resolver.state.getGame()) }/>
@@ -43,19 +52,20 @@ export const renderCreature = withState(({ isEnemy, creature, state }: Props) =>
             <div style={ sty.healthBarBlock(health, block, maxHealth) }/>
         </div>
         <div style={sty.effectBar}>
-            { creature.inner.effects.map(e => <Effect effect={ new EffectObject(e) }/>) }
+            { [...creature.effects].map(effect => <Effect effect={ effect }/>) }
         </div>
         <div>{creature.inner.type}</div>
         <div>{health}/{maxHealth}</div>
-    </div>
+        <ToolTips effects={ creature.effects }/>
+    </CreatureWrapper>
 })
 
 const sty = {
-    creature: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
+    // creature: {
+    //     display: 'flex',
+    //     flexDirection: 'column',
+    //     alignItems: 'center',
+    // },
     img: {
         width: '250px',
         height: '250px',

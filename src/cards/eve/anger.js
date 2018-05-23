@@ -17,10 +17,10 @@ export const Anger: () => Card<AngerData> = defineCard(anger, playAnger, {
     energyTemplate: '#{energy}',
     color: '#ee4422',
     titleTemplate: 'Anger',
-    textTemplate: 'Deal #{damage} damage to an enemy. Add a copy of Anger to the discard pile. #[Volatile].',
+    textTemplate: 'Deal #{damage} damage. Add a copy of Anger to the discard pile. #[Volatile].',
 }, [Volatile, 1])
 
-function* playAnger(self, { resolver, actors }: PlayArgs<>): Generator<any, AngerData, any>{
+function* playAnger(self, { resolver, actors }: PlayArgs): Generator<any, AngerData, any>{
     let target: Monster = yield queryEnemy(any => true)
     const action: Damage = yield resolver.processEvent(
         new Damage(

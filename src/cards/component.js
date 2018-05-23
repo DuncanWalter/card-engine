@@ -8,6 +8,7 @@ import { renderEffect as EffectComponent } from '../effects/renderEffect'
 import { withState } from '../state';
 import { CardLibrary } from './cardLibrary';
 import styled from 'styled-components';
+import { ToolTips, ToolTipsWrapper } from '../components/toolTips';
 
 interface Props {
     card: CardObject<>,
@@ -186,6 +187,7 @@ export const Card = withState(({ card, state, glow, sets }) => {
             <b>{energy}</b>
         </CardCost>
         <CardRarity membership={membership}/>
+        <ToolTips effects={ card.effects }/>
     </CardBack>
 })
 

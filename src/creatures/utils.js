@@ -1,10 +1,12 @@
 import { Creature } from "./creature"
 import { state } from '../state'
+import { Sequence } from "../utils/random";
+import { Monster } from "./monster";
+import { Player } from "./player";
 
-// TODO: add and random thingy
-function pickTarget(self){
+export function pickTarget(self: Monster): Creature<> {
     if(state.battle.enemies.includes(self)){
-        return state.battle.player
+        return new Player(state.battle.player)
 
         // TODO: taunt and phantom
 
@@ -19,10 +21,8 @@ function pickTarget(self){
         //     return battle.player
         // }
     } else {
-        // TODO: psuedorandom
-        return state.battle.enemies[Math.floor(Math.random() * state.battle.enemies.length)]
-
-
+        const enemies = state.battle.enemies
+        return new Monster(enemies[Math.floor(self.seed.next() * enemies.length)])
     }
 }
 

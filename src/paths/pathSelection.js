@@ -26,12 +26,12 @@ export const PathSelection = withState(({ state }: Props) => {
                         selectFreedom(dispatch, path)
                         generateFreedoms(dispatch)
                         history.push('/game/battle')
-                        // TODO: Remove new Entity hacj
-                        resolver.enqueueEvents(new SetupCombat(new Entity(''), new Player(state.battle.player), {
+                        let player = new Player(state.battle.player)
+                        resolver.enqueueEvents(new SetupCombat(player, player, {
                             enemies: path.enemies.map(enemy => new Monster(enemy)),
                             seed: path.seed.fork(),
                         }))
-                        resolver.enqueueEvents(new StartCombat(new Entity(''), new Entity(''), {}))
+                        resolver.enqueueEvents(new StartCombat(player, player, {}))
                     }}>
                         <Col style={{ width: '500px', height: '700px' }}>
                             <h1>{path.challengeRating - state.path.level - 10}</h1>

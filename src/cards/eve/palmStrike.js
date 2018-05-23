@@ -16,10 +16,10 @@ export const PalmStrike: () => Card<PalmStrikeData> = defineCard(palmStrike, pla
     energyTemplate: '#{energy}',
     color: '#ee4422',
     titleTemplate: 'Palm Strike',
-    textTemplate: 'Deal #{damage} damage to an enemy. Draw #{draw} cards.',
+    textTemplate: 'Deal #{damage} damage. Draw #{draw} cards.',
 })
 
-function* playPalmStrike(self: Card<PalmStrikeData>, { game, resolver, actors }: PlayArgs<>): Generator<any, PalmStrikeData, any>{
+function* playPalmStrike(self: Card<PalmStrikeData>, { game, resolver, actors }: PlayArgs): Generator<any, PalmStrikeData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

@@ -12,7 +12,7 @@ export const cheapShot = 'cheapShot'
 export const CheapShot: () => Card<CheapShotData> = defineCard(cheapShot, playCheapShot, {
     damage: 8,
     energy: 1,
-    vulnerability: 2,
+    vulnerability: 1,
 }, {
     energyTemplate: '#{energy}',
     color: '#bb4433',
@@ -20,7 +20,7 @@ export const CheapShot: () => Card<CheapShotData> = defineCard(cheapShot, playCh
     textTemplate: `Deal #{damage} damage. Apply #{vulnerability} vulnerability.`,
 })
 
-function* playCheapShot(self: Card<CheapShotData>, { resolver, actors }: PlayArgs<>): Generator<any, CheapShotData, any> {
+function* playCheapShot(self: Card<CheapShotData>, { resolver, actors }: PlayArgs): Generator<any, CheapShotData, any> {
     let target = yield queryEnemy(any => true)
     if(target instanceof Creature){
         const action: Damage = yield resolver.processEvent(
@@ -36,7 +36,7 @@ function* playCheapShot(self: Card<CheapShotData>, { resolver, actors }: PlayArg
         )
         const binding: BindEffect = yield resolver.processEvent(new BindEffect(self, target, {
             Effect: Vulnerability,
-            stacks: 2,
+            stacks: self.data.vulnerability,
         }, blockable))
         return { damage: action.data.damage, energy: self.data.energy, vulnerability: binding.data.stacks }
     } else {

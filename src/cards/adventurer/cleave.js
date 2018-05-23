@@ -13,10 +13,10 @@ export const Cleave: () => Card<CleaveData> = defineCard('Cleave', playCleave, {
     energyTemplate: '#{energy}',
     color: '#ee5511',
     titleTemplate: 'Cleave',
-    textTemplate: 'Deal #{damage} damage to all enemies.',
+    textTemplate: 'Deal #{damage} damage to each enemy.',
 })
 
-function* playCleave(self: Card<CleaveData>, { resolver, game, actors }: PlayArgs<>){
+function* playCleave(self: Card<CleaveData>, { resolver, game, actors }: PlayArgs){
     // TODO: get nested simulations up so that aoe can list damages correctly
     for(let promise of [...game.enemies].map(enemy =>
         resolver.processEvent(

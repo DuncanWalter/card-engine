@@ -2,7 +2,7 @@ import type { ID } from '../utils/entity'
 import type { CreatureState, Creature } from "../creatures/creature"
 import { createReducer } from "../utils/state"
 
-interface CombatState {
+export interface CombatState {
     queries: {
         [id: string]: {
             id: string,
@@ -12,7 +12,7 @@ interface CombatState {
             submissions: mixed[],
         }
     },
-    focus: ID<CreatureState<>> | void,
+    focus: ID<CreatureState> | void,
 }
 
 export const combatReducer = createReducer({

@@ -11,13 +11,13 @@ export const endTurn = 'endTurn'
 
 function any(any: any): any { return any }
 
-export class Event<T=any> extends Listener<T> {
+export class Event<T:EventType> extends Listener<T> {
     id: string
     actors: Set<Entity<any>>
     subject: Subject<T>
     tags: string[]
     data: Data<T>
-    defaultListeners: Listener<>[]
+    defaultListeners: Listener<any>[]
 
     constructor(id: string, consumer: Consumer<T>, actor: Entity<any> | Set<Entity<any>>, subject: Subject<T>, data: Data<T>, ...tags: string[]){
         super(id, reject, consumer, false)
@@ -35,7 +35,7 @@ export class Event<T=any> extends Listener<T> {
     }
 }
 
-export function defineEvent<T>(id: string, consumer: Consumer<T>): (actors: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: string[]) => Event<T> {
+export function defineEvent<T:EventType>(id: string, consumer: Consumer<T>): (actors: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: string[]) => Event<T> {
     resolver.registerListenerType(id)
     return function(actors, subject, data, ...tags){
         return new Event(id, consumer, actors, subject, data, ...tags)

@@ -20,7 +20,7 @@ export const Backflip: () => Card<BackflipData> = defineCard(backflip, playBackf
     textTemplate: 'Gain #{block} block. Draw #{draw} cards.',
 })
 
-function* playBackflip(self: Card<BackflipData>, { actors, game, resolver }: PlayArgs<>): Generator<any, BackflipData, any> {
+function* playBackflip(self: Card<BackflipData>, { actors, game, resolver }: PlayArgs): Generator<any, BackflipData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 

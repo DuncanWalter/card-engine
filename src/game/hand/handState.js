@@ -4,7 +4,7 @@ import { createReducer } from "../../utils/state"
 import { CardState, Card } from "../../cards/card";
 import { type ID } from '../../utils/entity'
 
-interface HandState {
+export interface HandState {
     focus: ID<CardState<>> | void,
     cursor: {
         x: number,
@@ -79,7 +79,7 @@ function easeTo(from, to, delta, speed){
 
 export const handReducer: Reducer<HandState, State> = createReducer({
     setFocus(slice: HandState, { focus }, { battle }: State){
-        if(focus == slice.focus){
+        if(focus.id == slice.focus){
             return slice
         } else {
             return {
@@ -89,7 +89,7 @@ export const handReducer: Reducer<HandState, State> = createReducer({
         }
     },
     unsetFocus(slice: HandState, { focus }, { battle }: State){
-        if(focus == slice.focus){
+        if(focus.id == slice.focus){
             return {
                 ...slice,
                 focus: undefined,
@@ -203,13 +203,13 @@ export function updateHand(){
 export function setFocus(card: Card<>){
     return {
         type: 'setFocus',
-        focus: card.id,
+        focus: card,
     }
 }
 
 export function unsetFocus(card: Card<>){
     return {
         type: 'unsetFocus',
-        focus: card.id,
+        focus: card,
     }
 }

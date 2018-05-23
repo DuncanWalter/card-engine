@@ -8,7 +8,7 @@ export interface Reward {
     collect: (self: Reward, state: State) => Promise<void>,
     active: boolean,
     description: string,
-    id: Symbol,
+    id: string,
     init: (reward: Reward, level: number, seed: Sequence<number>) => Reward,
 }
 
@@ -27,8 +27,8 @@ export function registerReward(description: string, cost: number, collect: (self
     })
 }
 
-export function getRewards(rewardFunds: number, level: number, seed: Sequence<number>){
-    let rewards = []
+export function getRewards(rewardFunds: number, level: number, seed: Sequence<number>): Reward[] {
+    const rewards = []
     let available = rewardLibrary
     let funds = rewardFunds
     while(funds > 0){
@@ -41,6 +41,7 @@ export function getRewards(rewardFunds: number, level: number, seed: Sequence<nu
     return rewards.map(reward => ({ 
         ...reward.init(reward, level, seed),
         collected: false, 
-        id: Symbol('id'),
+        // TODO: get a real id?
+        id: Math.random().toString(),
     }))
 }

@@ -7,7 +7,7 @@ import { withState, dispatch } from '../state'
 import { beginSelectingCharacter, previewCharacter, selectCharacter, cancelCharacterSelection, viewDetailPanel } from './menuState';
 import { cardSets } from '../cards/cardSet'
 import { CardPanel } from '../game/cardPanel'
-import { Entity } from '../utils/entity'
+import { Entity, createEntity } from '../utils/entity'
 
 const Panel = styled.div`
     width: 240px;
@@ -64,7 +64,7 @@ export const CreateGame = withState(({ state }) => {
                             <CardPanel
                                 sets={[previewing]}
                                 // TODO: catch gracefully
-                                cards={[...cardSets.get(previewing).cards()].map(C => new C())}
+                                cards={[...(cardSets.get(previewing)||{cards(){return[]}}).cards()].map(C => new C())}
                             />:
                             // $FlowFixMe
                             <h3> {cardSets.get(previewing)? cardSets.get(previewing).description: 'Empty'} </h3>
@@ -106,8 +106,9 @@ export const CreateGame = withState(({ state }) => {
                 }/>
                 <Route render={({ history }) => 
                     <Button primary onClick={click => {
-                        // TODO: GET RID OF THE ENTITY DEALIO
-                        resolver.processEvent(new StartGame(new Entity(''), new Entity(''), {
+                        // TODO: Delete the blnak
+                        const blank = createEntity(Entity, {})
+                        resolver.processEvent(new StartGame(new Entity(blank), new Entity(blank), {
                             seed: 100345,
                             character: ['Adventurer', ...character],
                         }))

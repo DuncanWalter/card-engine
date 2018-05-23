@@ -24,7 +24,7 @@ export const Rampage: () => Card<RampageData> = defineCard(rampage, playRampage,
     energyTemplate: '#{energy}',
     color: '#ff9944',
     titleTemplate: 'Rampage',
-    textTemplate: 'Deal #{damage} damage to an enemy. Deals #{scaling} more damage for each time this card has been played this combat.',
+    textTemplate: 'Deal #{damage} damage. Deals #{scaling} more damage for each time played this combat.',
 }, [Default, 1])
 
 let RampageStacks = defineEffect('rampage', null, {
@@ -34,7 +34,7 @@ let RampageStacks = defineEffect('rampage', null, {
     min: 0,
 }, (owner, self) => deafListener,  [], [])
 
-function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs<>): Generator<any, RampageData, any>{
+function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs): Generator<any, RampageData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

@@ -16,7 +16,7 @@ interface GameTransducer {
 
 function any(self: any): any { return self }
 
-function testListener(event: Event<EventType>, listener: Listener<>): string {
+function testListener(event: Event<EventType>, listener: Listener<any>): string {
     let matched = false
     const h = listener.header
     if(h.type){
@@ -65,7 +65,7 @@ export class EventResolver {
     initialized: boolean
     processing: boolean
     simulating: boolean
-    eventQueue: LL<Event<>>
+    eventQueue: LL<Event<any>>
     animations: Map<any, Set<Animation>>
     listenerOrder: Map<string, {
         parents: string[],
@@ -84,7 +84,7 @@ export class EventResolver {
         this.animations = new Map()
     }
 
-    processEvent<A: Event<>>(event: A): Promise<A> {
+    processEvent<A: Event<any>>(event: A): Promise<A> {
         return processEvent(this, event)
     }
     
@@ -92,13 +92,13 @@ export class EventResolver {
         return processQueue(this)
     }
 
-    enqueueEvents(...events: Event<>[]): void {
+    enqueueEvents(...events: Event<any>[]): void {
         if (this.simulating) return
         events.forEach(event => this.eventQueue.append(event))
         if (!this.processing) this.processQueue()
     }
 
-    pushEvents(...events: Event<>[]): void {
+    pushEvents(...events: Event<any>[]): void {
         if (this.simulating) return
         events.reverse().forEach(event => this.eventQueue.push(event))
         if (!this.processing) this.processQueue()
@@ -146,12 +146,12 @@ export class EventResolver {
 }
 
 // TODO: this can be made cleaner. Also, if it returns the same list...
-function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
+function applyInternals(ls: LL<Listener<any>>): LL<Listener<any>> {
     let listener, alv = ls.view(), listeners = ls
     while(listener = alv.list[0]){
         if(listener && listener.internal){
-            const wrapper: Listener<> = listener
-            listeners = listeners.filter(listener => listener != wrapper).map((listener: Listener<>) => {
+            const wrapper: Listener<any> = listener
+            listeners = listeners.filter(listener => listener != wrapper).map((listener: Listener<any>) => {
                 if(listener.id == wrapper.internal){
                     return Object.create(listener, {
                         consumer: {
@@ -174,11 +174,11 @@ function applyInternals(ls: LL<Listener<>>): LL<Listener<>> {
 }
 
 let c = []
-function aggregate(ls: ListenerGroup, event: Event<>): LL<Listener<>> {
+function aggregate(ls: ListenerGroup, event: Event<any>): LL<Listener<any>> {
     // $FlowFixMe
     if(ls[Symbol.iterator]){
         // $FlowFixMe
-        return [...ls].reduce((a: LL<Listener<>>, ls: ListenerGroup) => {
+        return [...ls].reduce((a: LL<Listener<any>>, ls: ListenerGroup) => {
             a.appendList(aggregate(ls, event))
             return a
         }, new LL())
@@ -198,10 +198,10 @@ function aggregate(ls: ListenerGroup, event: Event<>): LL<Listener<>> {
 }
 
 
-const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<>): Generator<any, Event<>, any> {
+const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<any>): Generator<any, Event<any>, any> {
     let game = self.state.getGame()    
     
-    let activeListeners: LL<Listener<>> = aggregate([
+    let activeListeners: LL<Listener<any>> = aggregate([
         game.player,
         game.enemies,
         game.allies,
@@ -212,7 +212,7 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
     ], event)
     
     activeListeners.append(event)
-    event.defaultListeners.forEach((listener: *) => {
+    event.defaultListeners.forEach((listener) => {
         activeListeners.append(listener)
     })
 
@@ -225,7 +225,7 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
 
     activeListeners = applyInternals(activeListeners)
 
-    const executionQueue: Listener<>[] = activeListeners.toArray().sort((a, b) => {
+    const executionQueue: Listener<any>[] = activeListeners.toArray().sort((a, b) => {
         // TODO: perform checks
         const ai = any(self.listenerOrder.get(a.id)).index
         const bi = any(self.listenerOrder.get(b.id)).index
@@ -278,7 +278,7 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
 const processQueue = synchronize(function* processQueue(self: EventResolver): Generator<any, void, any> {
     if (self.processing) return
     self.processing = true
-    let next: Event<>
+    let next: Event<any>
     // $FlowFixMe
     while(next = self.eventQueue.next()){
         yield self.processEvent(next)

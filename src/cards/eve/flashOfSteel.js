@@ -15,10 +15,10 @@ export const FlashOfSteel: () => Card<FlashOfSteelData> = defineCard(flashOfStee
     energyTemplate: '#{energy}',
     color: '#cccc44',
     titleTemplate: 'Flash Of Steel',
-    textTemplate: 'Deal #{damage} damage to a target. Draw a card.',
+    textTemplate: 'Deal #{damage} damage. Draw a card.',
 })
 
-function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors, game }: PlayArgs<>): Generator<any, FlashOfSteelData, any>{
+function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors, game }: PlayArgs): Generator<any, FlashOfSteelData, any>{
     let target = yield queryEnemy(any => true)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(

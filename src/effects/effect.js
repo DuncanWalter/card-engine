@@ -1,7 +1,7 @@
 import type { ListenerGroup } from '../events/listener'
 import type { Creature } from "../creatures/creature"
 import type { Card } from "../cards/card"
-import { Listener, ConsumerArgs } from '../events/listener'
+import { Listener, ConsumerArgs, EventType } from '../events/listener'
 import { startTurn, endTurn } from '../events/event'
 import { BindEffect } from '../events/bindEffect'
 import { resolver } from '../events/eventResolver'
@@ -34,7 +34,7 @@ interface Appearance {
 interface EffectDefinition {
     stackBehavior: StackBehavior,
     appearance: Appearance | void | null,
-    listenerFactory: (owner: Card<> | Creature<>, self: Effect) => Listener<>,
+    listenerFactory: (owner: Card<> | Creature<>, self: Effect) => Listener<EventType>,
     effectFactory: (stacks: number) => Effect,
 }
 
@@ -50,18 +50,22 @@ export class Effect extends Entity<EffectState> {
         return this.inner.stacks 
     }
 
+    get def(): EffectDefinition {
+        const def = definedEffects.get(this.inner.type)
+        if(def){
+            return def
+        } else {
+            throw new Error(`Unrecognized Effect type ${this.type}`)
+        }
+    }
+
     // TODO: check for stack ranges
     set stacks(n: number){  
         this.inner.stacks = n 
     }
 
     get appearance(): Appearance | void | null {
-        const def = definedEffects.get(this.inner.type)
-        if(def){
-            return def.appearance 
-        } else {
-            throw new Error(`Unrecognized Effect type ${this.type}`)
-        }
+        return this.def.appearance
     }
 
     asListener(owner: Entity<any>): ListenerGroup {
@@ -102,10 +106,11 @@ export function defineEffect(
     id: string, 
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
-    listener: (owner: Creature<> | Card<>, self: Effect) => Listener<>,
+    listener: (owner: Creature<> | Card<>, self: Effect) => Listener<EventType>,
     parents: string[],
     children: string[],
 ): (stacks: number) => Effect {
+
     resolver.registerListenerType(id, parents, children)
 
     const factory = function(stacks){
