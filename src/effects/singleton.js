@@ -14,7 +14,7 @@ export const Singleton = defineEffect(singleton, {
     name: 'Singleton',
     innerColor: '#343434',
     outerColor: '#565656',
-    description: '',
+    description: 'On play, #[Destroy] instead of adding to discard.',
     sides: 30,
 }, {
     stacked: false, 

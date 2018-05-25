@@ -1,15 +1,15 @@
 import type { Effect } from './effect'
 import { interpolate } from '../utils/textTemplate'
-import styled from 'styled-components'
 import { EffectGroup } from './effectGroup';
 import { ToolTips } from '../components/toolTips';
-
+import styled from 'styled-components'
 
 const Wrapper = styled.div`
     position: relative;
     width: 38px;
     height: 38px;
-    margin: 3px;
+    margin: 4px;
+    border-radius: 19px;
     background-color: ${ props =>
         props.appearance.outerColor
     };
@@ -18,6 +18,9 @@ const Wrapper = styled.div`
 const Body = styled.div`
     color:'#ffeedd';
     margin: 3px;
+    height: 32px;
+    border-radius: 16px;
+    text-align: center;
     background-color: ${ props =>
         props.appearance.innerColor
     };
@@ -29,7 +32,7 @@ export const renderEffect = ({ effect }: Props) => {
         <Body appearance={ effect.appearance }>
             { effect.stacks }
         </Body>
-        {/* <ToolTips effects={ new EffectGroup([effect.id]) }/> */}
+        <ToolTips effects={ new EffectGroup([effect.id]) }/>
     </Wrapper>: null
     // let styles = renderData(effect)
     // return styles ? <div style={styles.border}>

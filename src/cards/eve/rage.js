@@ -38,7 +38,7 @@ function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs): 
 }
 
 const RageEffect = defineEffect('rage', {
-    description: '',
+    description: 'Upon dealing damage, gain #{stacks} #[Block].',
     innerColor: "#aacc44",
     outerColor: "#889911",
     name: "Rage",

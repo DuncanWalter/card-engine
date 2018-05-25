@@ -5,7 +5,8 @@ import { Defend } from "./defend"
 import { Bash } from "./bash"
 import { Acid } from "./acid"
 import { Cleave } from "./cleave"
-import { CardSet } from "../cardSet";
+import { Character, F, D, C } from "../../character";
+import { LookAhead } from "../../pragmas/lookAhead";
 
 
 // strike
@@ -23,15 +24,17 @@ import { CardSet } from "../cardSet";
 // apotheosis
 
 
-let adventurer = new CardSet('Adventurer', false, '#6f6f76', 'Basic set of cards available to all adventurers.')
+let adventurer = new Character('Adventurer', false, '#6f6f76', 'Basic set of cards available to all adventurers.')
 
-adventurer.add('F', Defend)
-adventurer.add('F', Strike)
+adventurer.addCard(F, Defend)
+adventurer.addCard(F, Strike)
 
-adventurer.add('D', Bash)
-adventurer.add('D', Cleave)
+adventurer.addCard(D, Bash)
+adventurer.addCard(D, Cleave)
 
-adventurer.add('C', Acid)
+adventurer.addCard(C, Acid)
+
+adventurer.addPragma(C, LookAhead)
 
 CardLibrary.register(adventurer)
 

@@ -19,6 +19,7 @@ import './cards/eve/eve'
 import './cards/prometheus/prometheus'
 import './cards/jekyll/jekyll'
 import { Game, emit, liftState } from './game/battle/battleState';
+import { AcquirePragma } from './events/acquirePragma';
 
 // how many creatures?
 
@@ -56,7 +57,7 @@ export const engine = new Module('engine', ({ global, next }) => {
     registerEncounter(21, Cobra, Cobra, Toad)
     registerEncounter(22, Cobra, Cobra, Turtle)
 
-    registerReward('Heal 5 health points.', 1, function* heal(self, state): * {
+    registerReward('Heal 5 health points.', 1, function* heal(self, state){
         collectReward(dispatch, self)
         yield resolver.processEvent(new Heal(resolver.state.getGame().player, resolver.state.getGame().player, {
             healing: 5,
@@ -89,9 +90,19 @@ export const engine = new Module('engine', ({ global, next }) => {
         return self
     })
 
-    registerReward('Remove a Card.', 3, function* remove(self, state): * {
+    registerReward('Remove a Card.', 3, function* remove(self, state){
         activateReward(dispatch, self)
         navigateTo('/game/cardRemove')
+    })
+
+    registerReward('Acquire a Pragma.', 4, function* acquire(self, state){
+        collectReward(dispatch, self)
+        const game = resolver.state.getGame()
+        yield resolver.processEvent(new AcquirePragma(
+            game.player, 
+            game.pragmaSequence.next(), 
+            {},
+        ))
     })
 
     // registerReward('Gain 1 fame point.', 2, function* remove(self, state): * {

@@ -12,6 +12,8 @@ import { Defend } from "../cards/adventurer/defend";
 import { Monster } from "../creatures/monster";
 import { Card } from "../cards/card";
 import { createEntity } from "../utils/entity";
+import { LookAhead } from "../pragmas/lookAhead";
+import { PragmaGroup } from "../pragmas/pragmaGroup";
 
 export const startGame: string = 'startGame'
 export const StartGame = defineEvent(startGame, function*({ resolver, game, data }){
@@ -36,7 +38,10 @@ export const StartGame = defineEvent(startGame, function*({ resolver, game, data
     game.exhaustPile.clear()
     game.enemies.clear()
     game.allies.clear()
-    game.equipment = []
+    game.pragmas = new PragmaGroup([])
+    // TODO: seed this properly
+    game.pragmaSequence = new PragmaGroup([new LookAhead().id], 1000154)
+
     
 
     let cards = CardLibrary.sample(5, data.character.reduce((acc, set) => {

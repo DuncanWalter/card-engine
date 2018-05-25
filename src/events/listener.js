@@ -5,20 +5,24 @@ import type { Player } from "../creatures/player"
 import { synchronize } from "../utils/async"
 import { Entity } from "../utils/entity"
 
-export type Header = {
-    actors?: any[],
-    subjects?: any[],
-    tags?: string[],
-    filter?: (event: Event<EventType>) => boolean,
-    type?: string,
-}
-
-export interface EventType {
+export interface EventContent {
     +subject: Entity<any>,
     +data: Object,
 }
 
-export type Subject<+T> = $PropertyType<$ReadOnly<T>, 'subject'>
+// TODO: major refactor including define listener function
+export /* opaque */ type ListenerType<T:EventContent> = string
+// TODO: export opaque type EventType<T:EventContent> = ListenerType<T>
+
+export type Header<T:EventContent> = {
+    actors?: Entity<any>[],
+    subjects?: Entity<Subject<T>>[],
+    tags?: ListenerType<any>[],
+    filter?: (event: Event<T>) => boolean,
+    type?: ListenerType<T>, // TODO: Event Type
+}
+
+export type Subject<T> = $PropertyType<T, 'subject'>
 
 export type Data<T> = $PropertyType<T, 'data'>
 
@@ -38,16 +42,16 @@ export interface ConsumerArgs<T=any> {
     internal: () => Promise<void>,
 }
 
-export type Consumer<T:EventType> = (args: ConsumerArgs<T>) => Generator<Promise<any>, void, any>
+export type Consumer<T:EventContent> = (args: ConsumerArgs<T>) => Generator<Promise<any>, void, any>
 
-export class Listener<T:EventType>{
+export class Listener<T:EventContent>{
 
-    id: string
-    internal: string
+    id: ListenerType<T>
+    internal: ListenerType<T>
     consumer: (args: ConsumerArgs<T>) => Promise<void>
-    header: Header
+    header: Header<T>
 
-    constructor(id: string, header: Header, consumer: Consumer<T>, isWrapper: boolean){
+    constructor(id: ListenerType<T>, header: Header<T>, consumer: Consumer<T>, isWrapper: boolean){
         this.header = header,
         this.consumer = synchronize(consumer)
         if (!isWrapper) this.id = id
@@ -55,5 +59,13 @@ export class Listener<T:EventType>{
     }
 }
 
-export const reject: Header = { filter: a => false }
+export const reject: Header<any> = { filter: a => false }
 export const deafListener: Listener<any> = new Listener('DEAF_LISTENER', reject, function*(){}, false)
+
+
+
+
+
+
+
+

@@ -9,7 +9,7 @@ export const Corruption = defineEffect(corruption, {
     name: 'Corruption',
     outerColor: '#332233',
     innerColor: '#661166',
-    description: '',
+    description: 'On start turn, take #{stacks} damage and add 1 #[Corruption].',
     sides: 6,
 }, {
     stacked: true, 

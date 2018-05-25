@@ -1,19 +1,19 @@
-import type { Rarity } from "./cardSet"
+import type { Rarity, CharacterName } from "../character"
 import { CardPool, pickKey } from "./cardPool"
-import { CardSet } from "./cardSet"
+import { Character, F, Distro } from "../character"
 import { Sequence } from "../utils/random"
 import { Card } from "./card"
 import { Player } from "../creatures/player"
 
 type CardMembership = { rarity: Rarity, color: string }
 
-const sets: Map<string, CardSet> = new Map()
+const sets: Map<CharacterName, Character> = new Map()
 
 export const CardLibrary = {
-    register(set: CardSet){
+    register(set: Character){
         sets.set(set.name, set)
     },
-    sample(count: number, setDistro: { [set: string]: number }, rarityDistro: { [rarity: Rarity]: number }, seed: Sequence<number>): (() => Card<>)[] {
+    sample(count: number, setDistro: { [set: CharacterName]: number }, rarityDistro: Distro, seed: Sequence<number>): (() => Card<>)[] {
         let result = new Set()
         while(result.size < count){
             let set = sets.get(pickKey(setDistro, seed))
@@ -33,7 +33,7 @@ export const CardLibrary = {
             }
         }, {
             color: '#353542',
-            rarity: 'F',
+            rarity: F,
         })  
     }
 }

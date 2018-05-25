@@ -13,44 +13,48 @@ export const Battle = withState(({ state }) => {
 
     let game = resolver.state.getGame()
     
-    return <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%', alignItems: 'stretch' }}>        
+    return <Col shim>    
 
-        <div style={{ flex: 3, display: 'flex', flexDirection: 'row' }}>
-            <div style={{flex: 1}}/>
-
-            {[game.player, ...game.allies, ...game.enemies].map(c => [
-                <div 
-                    onClick={ click => dispatch(submitTarget('monster', c.id)) }
-                    onMouseEnter={ event => dispatch(setFocus(c)) }
-                    onMouseLeave={ event => dispatch(unsetFocus(c)) }
-                >
-                    <Creature creature={c} game/>
-                </div>,
-                <Shim/>,
-            ]).reduce((a, l) => a.concat(l), [])}
-
-        </div>
+        <Row style={{ flex: 3 }}>
+            <Shim/>
+            {[...game.allies, game.player].map(c => <div 
+                onClick={ click => dispatch(submitTarget('monster', c.id)) }
+                onMouseEnter={ event => dispatch(setFocus(c)) }
+                onMouseLeave={ event => dispatch(unsetFocus(c)) }
+            >
+                <Creature creature={c} game/>
+            </div>)}
+            <Shim/>
+            {[...game.enemies].map(c => <div 
+                onClick={ click => dispatch(submitTarget('monster', c.id)) }
+                onMouseEnter={ event => dispatch(setFocus(c)) }
+                onMouseLeave={ event => dispatch(unsetFocus(c)) }
+            >
+                <Creature creature={c} game/>
+            </div>)}
+            <Shim/>
+        </Row>
 
         <Row shim>
-            <div class='col' style={{ flex: 2, textAlign: 'center' }}>
+            <Col shim style={{ textAlign: 'center' }}>
                 <div>Energy: {game.player.energy}</div>
                 <div>Draw Pile: {game.drawPile.size}</div>
                 <div>Hand Size: {game.hand.size}/10</div>
-            </div>
-            <div style={{ flex: 6 }}/>
-            <div class='col' style={{ flex: 2, textAlign: 'center' }}>
+            </Col>
+            <div style={{ flex: 3 }}/>
+            <Col shim style={{ textAlign: 'center' }}>
                 <div>Exhausted: {game.exhaustPile.size}</div>
                 <div>Discard Pile: {game.discardPile.size}</div>
                 <Button onClick={() => tryEndTurn(game)} style={sty.button}>End Turn</Button>
-            </div>
+            </Col>
         </Row>
 
-        <div style={{ height: 0, display: 'flex', flexDirection: 'row' }}>
+        <Row style={{ height: 0 }}>
             <Shim/>            
             <Hand/>
             <Shim/>        
-        </div>
-    </div>
+        </Row>
+    </Col>
 })
 
 const sty = {

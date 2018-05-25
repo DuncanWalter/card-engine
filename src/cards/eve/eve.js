@@ -12,7 +12,7 @@ import { TripleStrike } from "./tripleStrike";
 import { Flex } from "./flex";
 import { LegReap } from "./LegReap";
 import { CheapShot } from "./cheapShot";
-import { CardSet } from "../cardSet";
+import { Character, F, D, C, B, A } from "../../character";
 import { Strike } from "../adventurer/strike";
 
 // motion blur
@@ -42,24 +42,24 @@ import { Strike } from "../adventurer/strike";
 
 // jab
 
-let eve = new CardSet('Eve', true, '#7a190b', 'Espionage software designed by an intelligence agencies to run with limited system resources on foreign machines. Excels at executing many, simple attacks, but lacks facilities for protecting sensitive data.')
+let eve = new Character('Eve', true, '#7a190b', 'Espionage software designed by an intelligence agencies to run with limited system resources on foreign machines. Excels at executing many, simple attacks, but lacks facilities for protecting sensitive data.')
 
-eve.add('F', Strike)
+eve.addCard(F, Strike)
 
-eve.add('D', Anger)
-eve.add('D', CheapShot)
-eve.add('D', FightersStance)
-eve.add('D', PalmStrike)
+eve.addCard(D, Anger)
+eve.addCard(D, CheapShot)
+eve.addCard(D, FightersStance)
+eve.addCard(D, PalmStrike)
 
-eve.add('C', DoubleStrike)
-eve.add('C', Flex)
-eve.add('C', LegReap)
-eve.add('C', Rage)
-eve.add('C', Rampage)
+eve.addCard(C, DoubleStrike)
+eve.addCard(C, Flex)
+eve.addCard(C, LegReap)
+eve.addCard(C, Rage)
+eve.addCard(C, Rampage)
 
-eve.add('B', Adrenaline)
-eve.add('B', TripleStrike)
+eve.addCard(B, Adrenaline)
+eve.addCard(B, TripleStrike)
 
-eve.add('A', FlashOfSteel)
+eve.addCard(A, FlashOfSteel)
 
 CardLibrary.register(eve)

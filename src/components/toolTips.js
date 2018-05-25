@@ -13,12 +13,14 @@ const ToolTipsStack = styled.div`
     position: absolute;
     left: 100%;
     top: 0;
+    opacity: 0;
     flex-direction: column;
     align-items: stretch;
     flex-wrap: wrap;
-    background-color: rgba(34, 34, 44, 0.32);
     max-height: 700px;
     z-index: 3;
+    transition: opacity 0.2s;
+
 `
 
 const ToolTipsWrapper = styled.div`
@@ -29,25 +31,33 @@ const ToolTipsWrapper = styled.div`
     bottom: 0;
     &:hover ${ToolTipsStack} {
         display: flex;
+        opacity: 1;
+    }
+    &:hover ${ToolTipsStack}:hover {
+        display: none;
+        opacity: 0;
     }
 `
 
 const ToolTipWrapper = Col.extend`
-    width: 420px;
+    width: 280px;
     text-align: left;
-    & p, & h4 {
-        margin: 4px;
+    font-size: 1.3rem;
+    & p {
+        margin: 6px 12px 6px;
     }
 `
 
 export const ToolTip = ({ effect }: { effect: Effect }) => {
     let appearance = effect.appearance
-    return appearance? <div>
+    return appearance? <Block>
         <ToolTipWrapper>
-            <h4><b>{ appearance.name }</b></h4>
-            <p>{ interpolate(appearance.description, effect) }</p>
+            <p>
+                <b>{ appearance.name + ': '}</b>
+                { interpolate(appearance.description, effect) }
+            </p>
         </ToolTipWrapper>
-    </div>: null
+    </Block>: null
 }
 
 export const ToolTips = ({ effects }: { effects: EffectGroup }) => {

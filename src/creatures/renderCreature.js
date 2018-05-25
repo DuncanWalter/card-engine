@@ -18,11 +18,32 @@ function any(any: any): any { return any }
 
 
 const CreatureWrapper = styled.div`
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 12px;
 `
+
+const CreaturePortrait = styled.div`
+    width: 200px;
+    height: 200px;
+    border-radius: 100px;
+    margin: 12px;
+    position: relative;
+`
+
+const HealthBarWrapper = styled.div`
+    display: flex;
+    flex-direction: horizontal;
+    width: 250px;
+    height: 12px;
+`
+
+// const HealthBar = ({ health, max, block }) => <HealthBarWrapper>
+//     <HealthBarBody style={{ flex: health }}/>
+//     <div style={{ flex: max-health }}/>
+// </HealthBarWrapper>
+
 
 export const renderCreature = withState(({ isEnemy, creature, state }: Props) => {
     
@@ -45,7 +66,9 @@ export const renderCreature = withState(({ isEnemy, creature, state }: Props) =>
                 <Behavior data={ b.simulate(any(creature), resolver, resolver.state.getGame()) }/>
             )
         }</div>
-        <div style={{ backgroundColor: '#7777cc', ...sty.img }}/>
+        <CreaturePortrait style={{ backgroundColor: '#338888' }}>
+            <ToolTips effects={ creature.effects }/>
+        </CreaturePortrait>
         <div style={sty.healthBar}>
             <div style={ sty.healthBarFill (health, block, maxHealth) }/>
             <div style={ sty.healthBarEmpty(health, block, maxHealth) }/>
@@ -56,7 +79,6 @@ export const renderCreature = withState(({ isEnemy, creature, state }: Props) =>
         </div>
         <div>{creature.inner.type}</div>
         <div>{health}/{maxHealth}</div>
-        <ToolTips effects={ creature.effects }/>
     </CreatureWrapper>
 })
 
@@ -66,17 +88,17 @@ const sty = {
     //     flexDirection: 'column',
     //     alignItems: 'center',
     // },
-    img: {
-        width: '250px',
-        height: '250px',
-        borderRadius: '125px',
-        margins: '10px',
-    },
+    // img: {
+    //     width: '250px',
+    //     height: '250px',
+    //     borderRadius: '125px',
+    //     margins: '10px',
+    // },
     healthBar: {
         display: 'flex',
         flexDirection: 'horizontal',
-        width: '400px',
-        height: '17px',
+        width: '250px',
+        height: '12px',
     },
     healthBarFill(current, block, max){
         return {

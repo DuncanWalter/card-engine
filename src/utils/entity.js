@@ -1,6 +1,6 @@
 import { createStore, createReducer } from "./state";
 
-export opaque type ID<State> = string
+export opaque type ID<State:Object> = string
 
 interface EntityStoreState {
     [subset: string]: { [id: string]: any } 
@@ -37,7 +37,7 @@ const { stream, dispatch } = createStore(createReducer({
 let state = {}
 stream.onValue(v => (state = v))
 
-export function createEntity<T>(Subset: Class<Entity<T>>, state: T): ID<T> { 
+export function createEntity<T:Object>(Subset: Class<Entity<T>>, state: T): ID<T> { 
     const { value } = entityIds.next()
     if(value){
         addEntity(value, Subset, state)

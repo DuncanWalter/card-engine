@@ -1,7 +1,7 @@
 import type { ListenerGroup } from '../events/listener'
 import type { Creature } from "../creatures/creature"
 import type { Card } from "../cards/card"
-import { Listener, ConsumerArgs, EventType } from '../events/listener'
+import { Listener, ConsumerArgs, EventContent } from '../events/listener'
 import { startTurn, endTurn } from '../events/event'
 import { BindEffect } from '../events/bindEffect'
 import { resolver } from '../events/eventResolver'
@@ -34,7 +34,7 @@ interface Appearance {
 interface EffectDefinition {
     stackBehavior: StackBehavior,
     appearance: Appearance | void | null,
-    listenerFactory: (owner: Card<> | Creature<>, self: Effect) => Listener<EventType>,
+    listenerFactory: (owner: Card<> | Creature<>, self: Effect) => Listener<EventContent>,
     effectFactory: (stacks: number) => Effect,
 }
 
@@ -68,7 +68,7 @@ export class Effect extends Entity<EffectState> {
         return this.def.appearance
     }
 
-    asListener(owner: Entity<any>): ListenerGroup {
+    asListener(owner: Card<>|Creature<>): ListenerGroup {
         const def = definedEffects.get(this.inner.type)
         let self = this
         if(def){
@@ -106,7 +106,7 @@ export function defineEffect(
     id: string, 
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
-    listener: (owner: Creature<> | Card<>, self: Effect) => Listener<EventType>,
+    listener: (owner: Creature<> | Card<>, self: Effect) => Listener<EventContent>,
     parents: string[],
     children: string[],
 ): (stacks: number) => Effect {

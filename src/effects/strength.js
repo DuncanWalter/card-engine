@@ -10,7 +10,7 @@ export const Strength = defineEffect(strength, {
     name: 'Strength',
     innerColor: '#ee4444',
     outerColor: '#aa3333',
-    description: '',
+    description: 'Deal #{stacks} addition damage from external sources.',
     sides: 3,
     rotation: 0,
 }, {

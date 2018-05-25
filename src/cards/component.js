@@ -1,4 +1,4 @@
-import type { Rarity } from './cardSet';
+import type { Rarity } from '../character';
 import type { Card as CardObject } from './card'
 import type { State } from '../state';
 import type { Game } from '../game/battle/battleState'
@@ -8,7 +8,7 @@ import { renderEffect as EffectComponent } from '../effects/renderEffect'
 import { withState } from '../state';
 import { CardLibrary } from './cardLibrary';
 import styled from 'styled-components';
-import { ToolTips, ToolTipsWrapper } from '../components/toolTips';
+import { ToolTips } from '../components/toolTips';
 
 interface Props {
     card: CardObject<>,

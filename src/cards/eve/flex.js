@@ -49,7 +49,7 @@ function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs): 
 }
 
 const FlexEffect = defineEffect('flex', {
-    description: '',
+    description: 'Lose #{stacks} #[Strength] at the end of the turn.',
     innerColor: "#aacc44",
     outerColor: "#889911",
     name: "Flex",

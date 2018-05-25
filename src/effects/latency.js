@@ -11,7 +11,7 @@ export const Latency = defineEffect(latency, {
     name: 'Latency',
     innerColor: '#22ee33',
     outerColor: '#119922',
-    description: '',
+    description: 'Deal 25% less damage for #{stacks} turns.',
     sides: 3,
     rotation: 0.5,
 }, {

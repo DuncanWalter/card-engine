@@ -15,7 +15,7 @@ export const Volatile = defineEffect(volatile, {
     name: 'Volatile',
     innerColor: '#343467',
     outerColor: '#56569a',
-    description: '',
+    description: 'On turn end, if in hand #[Destroy] instead of adding to discard pile.',
     sides: 30,
 }, {
     stacked: false, 

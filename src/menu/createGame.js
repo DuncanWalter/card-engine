@@ -5,7 +5,7 @@ import { StartGame } from '../events/startGame'
 import styled from 'styled-components'
 import { withState, dispatch } from '../state'
 import { beginSelectingCharacter, previewCharacter, selectCharacter, cancelCharacterSelection, viewDetailPanel } from './menuState';
-import { cardSets } from '../cards/cardSet'
+import { characters } from '../character'
 import { CardPanel } from '../game/cardPanel'
 import { Entity, createEntity } from '../utils/entity'
 
@@ -21,7 +21,7 @@ const Panel = styled.div`
 // TODO: add a clear button to the character panels?
 const CharacterPanel = ({ index, character }) => {
     
-    const set = cardSets.get(character[index])
+    const set = characters.get(character[index])
 
     return <Panel color={ set? set.color: '#333333' } onClick={ click => 
         beginSelectingCharacter(dispatch, index)
@@ -44,7 +44,7 @@ export const CreateGame = withState(({ state }) => {
                         }>
                             <h3>Empty</h3>
                         </Button>: null}
-                        {[...cardSets.values()].filter(set => set.playable && (!character.includes(set.name) || character[selectingIndex] == set.name)).map(set =>
+                        {[...characters.values()].filter(set => set.playable && (!character.includes(set.name) || character[selectingIndex] == set.name)).map(set =>
                             <Button onClick={ click => 
                                 previewCharacter(dispatch, set.name)
                             }>
@@ -64,10 +64,10 @@ export const CreateGame = withState(({ state }) => {
                             <CardPanel
                                 sets={[previewing]}
                                 // TODO: catch gracefully
-                                cards={[...(cardSets.get(previewing)||{cards(){return[]}}).cards()].map(C => new C())}
+                                cards={[...(characters.get(previewing)||{cards(){return[]}}).cards()].map(C => new C())}
                             />:
                             // $FlowFixMe
-                            <h3> {cardSets.get(previewing)? cardSets.get(previewing).description: 'Empty'} </h3>
+                            <h3> {characters.get(previewing)? characters.get(previewing).description: 'Empty'} </h3>
                         }
                     </Col>
                 </Block>

@@ -1,7 +1,7 @@
 import type { ListenerGroup } from './listener'
 import type { Consumer } from './listener'
 import type { Entity } from '../utils/entity'
-import type { EventType, Subject, Data } from './listener'
+import type { EventContent, Subject, Data } from './listener'
 import { Listener, reject } from './listener'
 import { EventResolver, resolver } from './eventResolver'
 
@@ -11,7 +11,7 @@ export const endTurn = 'endTurn'
 
 function any(any: any): any { return any }
 
-export class Event<T:EventType> extends Listener<T> {
+export class Event<T:EventContent> extends Listener<T> {
     id: string
     actors: Set<Entity<any>>
     subject: Subject<T>
@@ -35,7 +35,7 @@ export class Event<T:EventType> extends Listener<T> {
     }
 }
 
-export function defineEvent<T:EventType>(id: string, consumer: Consumer<T>): (actors: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: string[]) => Event<T> {
+export function defineEvent<T:EventContent>(id: string, consumer: Consumer<T>): (actors: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: string[]) => Event<T> {
     resolver.registerListenerType(id)
     return function(actors, subject, data, ...tags){
         return new Event(id, consumer, actors, subject, data, ...tags)

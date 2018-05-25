@@ -2,7 +2,7 @@ import type { Event } from './../events/event'
 import type { ListenerGroup } from './listener'
 import type { State } from '../state'
 import type { Game } from '../game/battle/battleState'
-import { Listener, ConsumerArgs, reject, EventType } from './listener'
+import { Listener, ConsumerArgs, reject, EventContent } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
 import { synchronize } from '../utils/async'
@@ -16,7 +16,7 @@ interface GameTransducer {
 
 function any(self: any): any { return self }
 
-function testListener(event: Event<EventType>, listener: Listener<any>): string {
+function testListener(event: Event<EventContent>, listener: Listener<any>): string {
     let matched = false
     const h = listener.header
     if(h.type){
@@ -198,7 +198,7 @@ function aggregate(ls: ListenerGroup, event: Event<any>): LL<Listener<any>> {
 }
 
 
-const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<any>): Generator<any, Event<any>, any> {
+const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<any>): Generator<Promise<any>, Event<any>, any> {
     let game = self.state.getGame()    
     
     let activeListeners: LL<Listener<any>> = aggregate([
@@ -209,6 +209,7 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
         game.drawPile,
         game.hand,
         game.discardPile,
+        game.pragmas,
     ], event)
     
     activeListeners.append(event)

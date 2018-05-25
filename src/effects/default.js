@@ -14,7 +14,7 @@ export const Default = defineEffect(default$, {
     name: 'Default',
     innerColor: '#343434',
     outerColor: '#565656',
-    description: '',
+    description: 'On play, add to draw pile instead of discard pile.',
     sides: 30,
 }, {
     stacked: false, 

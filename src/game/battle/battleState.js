@@ -3,6 +3,7 @@ import type { State } from "../../state"
 import type { Reducer } from "../../utils/state"
 import type { MonsterState } from '../../creatures/monster';
 import type { ID } from '../../utils/entity'
+import type { PragmaState } from '../../pragmas/pragma';
 
 import { randomSequence, Sequence } from '../../utils/random'
 
@@ -13,6 +14,7 @@ import { Monster } from '../../creatures/monster';
 import { Player } from '../../creatures/player';
 import { MonsterGroup } from '../../creatures/monsterGroup';
 import { createEntity } from '../../utils/entity';
+import { PragmaGroup } from '../../pragmas/pragmaGroup';
 
 
 // function any(any: any): any { return any }
@@ -34,6 +36,8 @@ export interface Game {
     deck: CardStack,
     exhaustPile: CardStack,
     activeCards: CardStack,
+    pragmas: PragmaGroup,
+    pragmaSequence: PragmaGroup,
 }
 
 export interface GameState {
@@ -48,6 +52,9 @@ export interface GameState {
     deck: ID<CardState<>>[],
     exhaustPile: ID<CardState<>>[],
     activeCards: ID<CardState<>>[],
+    pragmas: ID<PragmaState>[],
+    pragmaSequence: ID<PragmaState>[],
+    pragmaSequenceSeed: number,
 }
 
 export function liftState(state: GameState): Game {
@@ -63,6 +70,8 @@ export function liftState(state: GameState): Game {
         discardPile: new CardStack(state.discardPile),
         drawPile: new CardStack(state.drawPile),
         deck: new CardStack(state.deck),
+        pragmas: new PragmaGroup(state.pragmas),
+        pragmaSequence: new PragmaGroup(state.pragmaSequence, state.pragmaSequenceSeed),
     }
 }
 
@@ -80,10 +89,12 @@ function serializeGame(game: Game): GameState {
         discardPile: game.discardPile.ids,
         drawPile: game.drawPile.ids,
         deck: game.deck.ids,
+        pragmas: game.pragmas.ids,
+        pragmaSequence: game.pragmaSequence.ids,
+        pragmaSequenceSeed: game.pragmaSequence.seed || 0,
     }
 
     console.log(JSON.parse(JSON.stringify(state)))
-
 
     return state
 }
@@ -116,7 +127,9 @@ export const battleInitial: GameState = {
         behavior: 'PRIME_BEHAVIOR',
         seed: 1234125151,
     }),
-    famePoints: 0,
+    pragmas: [],
+    pragmaSequence: [],
+    pragmaSequenceSeed: 0,
 }
 
 export const battleReducer: Reducer<GameState, mixed> = createReducer({

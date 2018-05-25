@@ -6,13 +6,14 @@ import { bindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
 import { Listener, ConsumerArgs } from '../events/listener'
 import { EffectGroup } from "./effectGroup"
+import { Creature } from "../creatures/creature";
 
 export const blockade = 'blockade';
 export const Blockade = defineEffect(blockade, {
     name: 'Blockade',
     innerColor: '#2233bb',
     outerColor: '#6688ee',
-    description: '',
+    description: 'On turn start, retain stacks of #[Block].',
     sides: 30,
     rotation: 0,
 }, {
@@ -20,7 +21,7 @@ export const Blockade = defineEffect(blockade, {
     delta: x => x,
     min: 1,
     max: 1,
-}, (owner: { +effects: EffectGroup }, self: Effect) => new Listener(
+}, (owner: Creature<>|Card<>, self: Effect) => new Listener(
     blockade,
     {
         subjects: [owner],
