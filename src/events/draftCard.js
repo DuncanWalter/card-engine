@@ -10,8 +10,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const draftCard: string = 'draftCard'
-export const DraftCard = defineEvent(draftCard, function*({ game, subject }: ConsumerArgs<Type>){ 
+export const DraftCard = defineEvent('draftCard', function*({ game, subject }: ConsumerArgs<Type>){ 
 
     game.deck.add(subject)
     

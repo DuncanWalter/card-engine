@@ -1,14 +1,16 @@
-import type { ListenerGroup } from '../events/listener'
+import type { ListenerGroup, ListenerType, Header, Consumer } from '../events/listener'
 import type { Creature } from "../creatures/creature"
 import type { Card } from "../cards/card"
-import { Listener, ConsumerArgs, EventContent } from '../events/listener'
-import { startTurn, endTurn } from '../events/event'
+import type { ListenerDefinition } from '../events/defineListener';
+import { Listener, ConsumerArgs, EventContent, deafListener } from '../events/listener'
+import { startTurn, endTurn, type Tag } from '../events/event'
 import { BindEffect } from '../events/bindEffect'
 import { resolver } from '../events/eventResolver'
 import { Entity, createEntity } from '../utils/entity';
+import { defineListener } from '../events/defineListener'
 
 // TODO: put setters on stacks
-
+// TODO: should be name, not type?
 export interface EffectState {
     stacks: number,
     type: string,
@@ -19,7 +21,7 @@ interface StackBehavior {
     delta: (current: number) => number,
     min: number,
     max: number,
-    on?: string,
+    on?: Tag,
 }
 
 interface Appearance {
@@ -31,14 +33,17 @@ interface Appearance {
     rotation?: number,
 }
 
-interface EffectDefinition {
+export interface EffectDefinition {
     stackBehavior: StackBehavior,
     appearance: Appearance | void | null,
-    listenerFactory: (owner: Card<> | Creature<>, self: Effect) => Listener<EventContent>,
-    effectFactory: (stacks: number) => Effect,
+    listenerFactory: (owner: Card<> | Creature<>) => ListenerGroup,
+    effectFactory: { type: ListenerType<any> } & (stacks: number) => Effect,
 }
 
 const definedEffects: Map<string, EffectDefinition> = new Map()
+
+export const tick = resolver.registerListenerType('tick', [{ type: startTurn }, { type: endTurn }], [])
+
 
 export class Effect extends Entity<EffectState> {
 
@@ -85,12 +90,12 @@ export class Effect extends Entity<EffectState> {
                             resolver.pushEvents(new BindEffect(owner, owner, {
                                 Effect: def.effectFactory,
                                 stacks: change,
-                            }, tick, def.effectFactory(1).type))
+                            }, { type: tick }, def.effectFactory))
                         }
                     },
                     false,
                 ),
-                def.listenerFactory(owner, this)
+                def.listenerFactory(owner),
             ]
         } else {
             throw new Error(`Unrecognized Effect type ${this.type}`)
@@ -99,36 +104,66 @@ export class Effect extends Entity<EffectState> {
 
 }
 
-export const tick = 'tick'
-resolver.registerListenerType(tick, [startTurn, endTurn], [])
 
-export function defineEffect(
-    id: string, 
+export function defineEffect<T:EventContent>(
+    name: string,
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
-    listener: (owner: Creature<> | Card<>, self: Effect) => Listener<EventContent>,
-    parents: string[],
-    children: string[],
-): (stacks: number) => Effect {
+    header: (Creature<>|Card<>) => Header<T>,
+    consumer: (Creature<>|Card<>, ListenerType<T>) => Consumer<T>,
+    parents?: Tag[],
+    children?: Tag[],
+){
+    const listener: ListenerDefinition<T, Creature<>|Card<> > = defineListener(name, header, consumer, parents, children)
 
-    resolver.registerListenerType(id, parents, children)
-
-    const factory = function(stacks){
+    const factory = function(stacks: number){
         return new Effect(createEntity(Effect, {
-            type: id,
+            type: name,
             stacks,
         }))
     }
 
-    if(definedEffects.get(id)){
-        throw Error('ID collision on ' + id)
+    factory.type = listener.type
+
+    if(definedEffects.get(name)){
+        throw Error('ID collision on ' + name)
     }
 
-    definedEffects.set(id, {
+    definedEffects.set(name, {
         appearance,
         stackBehavior,
         effectFactory: factory,
-        listenerFactory: listener,
+        listenerFactory: function(owner){ return new listener(owner) },
+    })
+
+    return factory
+}
+
+export function defineCompoundEffect(
+    type: string, 
+    appearance: Appearance | void | null,
+    stackBehavior: StackBehavior,
+    ...listeners: ListenerDefinition<any, Creature<>|Card<> >[]
+): (stacks: number) => Effect {
+
+    const factory = function(stacks){
+        return new Effect(createEntity(Effect, {
+            type: type,
+            stacks,
+        }))
+    }
+
+    factory.type = deafListener.id
+
+    if(definedEffects.get(type)){
+        throw Error('ID collision on ' + type)
+    }
+
+    definedEffects.set(type, {
+        appearance,
+        stackBehavior,
+        effectFactory: factory,
+        listenerFactory: function(owner){ return listeners.map(LD => new LD(owner)) },
     })
 
     return factory

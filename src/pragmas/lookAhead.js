@@ -1,23 +1,24 @@
 import { definePragma } from "./pragma";
 import { C } from "../character";
 import { Listener, ConsumerArgs } from "../events/listener";
-import { startTurn, startCombat } from "../events/event";
 import { BindEnergy } from "../events/bindEnergy";
 import { DrawCards } from "../events/drawCards";
 import { resolver } from "../events/eventResolver";
+import { defineListener } from "../events/defineListener"
+import { StartTurn } from "../events/turnActions";
+import { StartCombat } from "../events/startCombat";
 
-resolver.registerListenerType('LookAhead', [startTurn], [])
-const factory = owner => new Listener('LookAhead', {
-    type: startTurn,
+const lookAhead = defineListener('LookAhead', owner => ({
+    type: StartTurn,
     subjects: [resolver.state.getGame().player],
-    tags: [startCombat],
-}, function*({ game, resolver }: ConsumerArgs<>){
+    tags: [StartCombat],
+}), owner => function*({ game, resolver }: ConsumerArgs<>){
     yield resolver.processEvent(new BindEnergy(owner, game.player, {
         quantity: 1,
     }))
     yield resolver.processEvent(new DrawCards(owner, game.player, {
         count: 1,
     }))
-}, false)
+}, [StartTurn])
 
-export const LookAhead = definePragma('LookAhead', C, function*(){}, factory)
+export const LookAhead = definePragma('LookAhead', function*(){}, lookAhead)

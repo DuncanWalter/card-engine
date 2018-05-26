@@ -1,8 +1,8 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { dexterity, Dexterity } from '../../effects/dexterity'
+import { Dexterity } from '../../effects/dexterity'
 import { Singleton } from '../../effects/singleton'
 
 type FootworkData = { dexterity: number, energy: number }
@@ -27,7 +27,7 @@ function* playFootwork(self: Card<FootworkData>, { actors, game, resolver }: Pla
                 Effect: Dexterity,
                 stacks: self.data.dexterity,
             },
-            dexterity,
+            Dexterity,
         ),
     )
     return { dexterity: action.data.stacks, energy: self.data.energy }

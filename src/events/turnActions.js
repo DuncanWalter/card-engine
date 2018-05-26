@@ -1,5 +1,5 @@
 import type { Event } from './event'
-import { defineEvent, startTurn, endTurn } from "./event"
+import { defineEvent } from "./event"
 import { DrawCards } from "./drawCards"
 import { TakeTurn } from "./takeTurn"
 import { ConsumerArgs } from "./listener"
@@ -7,17 +7,15 @@ import { BindEnergy } from "./bindEnergy"
 
 export const drain = 'drain'
 export const fill  = 'fill'
-export { startTurn }
-export const StartTurn = defineEvent(startTurn, function*({ game, subject, resolver }){ 
-    console.log('starting turn for', subject, game)
+export const StartTurn = defineEvent('startTurn', function*({ game, subject, resolver }){ 
     if(subject.id == game.player.id){
         yield resolver.processEvent(new BindEnergy(game.player, game.player, { 
             quantity: -game.player.energy 
-        }, startTurn, drain))
+        }, StartTurn, drain))
         yield resolver.processEvent(new BindEnergy(game.player, game.player, { 
             quantity: 3 // TODO: is it important to track max energy? // game.player.maxEnergy
-        }, startTurn, fill))
-        yield resolver.processEvent(new DrawCards(game.player, game.player, { count: 5 }, startTurn))
+        }, StartTurn, fill))
+        yield resolver.processEvent(new DrawCards(game.player, game.player, { count: 5 }, StartTurn))
         for(let ally of [...game.allies]){
             yield resolver.processEvent(new StartTurn(ally, ally, {}))
         }
@@ -25,8 +23,7 @@ export const StartTurn = defineEvent(startTurn, function*({ game, subject, resol
     }
 })
 
-export { endTurn }
-export const EndTurn = defineEvent(endTurn, function*({ subject, resolver, game }: ConsumerArgs<>){
+export const EndTurn = defineEvent('endTurn', function*({ subject, resolver, game }: ConsumerArgs<>){
     if(subject.id == game.player.id){
         // gameState.allies.reduce((acc, ally) => {
         //     acc.appendList(new LL(ally.takeTurn({ resolver, game: gameState })))

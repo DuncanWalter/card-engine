@@ -1,5 +1,5 @@
-import type { Event } from './../events/event'
-import type { ListenerGroup } from './listener'
+import type { Event, Tag } from './../events/event'
+import type { ListenerGroup, ListenerType, Header } from './listener'
 import type { State } from '../state'
 import type { Game } from '../game/battle/battleState'
 import { Listener, ConsumerArgs, reject, EventContent } from './listener'
@@ -18,9 +18,9 @@ function any(self: any): any { return self }
 
 function testListener(event: Event<EventContent>, listener: Listener<any>): string {
     let matched = false
-    const h = listener.header
+    const h: Header<EventContent> = listener.header
     if(h.type){
-        if(h.type == event.id){
+        if((h.type.type || h.type) == event.id){
             matched = true
         } else {
             return 'Wrong Event Type'
@@ -43,7 +43,14 @@ function testListener(event: Event<EventContent>, listener: Listener<any>): stri
         }
     }
     if(h.tags){
-        if(h.tags.reduce((a, t) => event.tags.includes(t) && a, true)){
+        let tags = h.tags.map(tag => {
+            if(typeof tag == 'string'){
+                return tag
+            } else {
+                return tag.type
+            }
+        })
+        if(tags.reduce((a, t) => event.tags.includes(t) && a, true)){
             matched = true
         } else {
             return 'Wrong Tags'
@@ -111,21 +118,24 @@ export class EventResolver {
         return r
     }
 
-    registerListenerType(id: string, parents?: string[], children?: string[]){
+    registerListenerType(type: string, parents?: Tag[], children?: Tag[]): ListenerType<any> {
         if(this.initialized){
-            throw new Error(`Cannot register id ${id.toString()} with event resolver after the resolver is initialized.`)
-        } else if(this.listenerOrder.get(id)){
-            throw new Error(`Collision on name ${id}`)
+            throw new Error(`Cannot register type ${type.toString()} with event resolver after the resolver is initialized.`)
+        } else if(this.listenerOrder.get(type)){
+            throw new Error(`Collision on name ${type}`)
         } else {
-            this.listenerOrder.set(id, {
-                parents: parents || [],
-                children: children || [],
+            this.listenerOrder.set(type, {
+                // $FlowFixMe
+                parents: parents? parents.map(p => typeof p == 'string' ? p : p.type): [],
+                // $FlowFixMe
+                children: children? children.map(c => typeof c == 'string' ? c : c.type): [],
                 index: -1,
-                id: id,
+                id: type,
                 compare(e){
                     return 0
                 },
             })
+            return any(type)
         }
     }
 
@@ -173,27 +183,27 @@ function applyInternals(ls: LL<Listener<any>>): LL<Listener<any>> {
     return listeners
 }
 
-let c = []
-function aggregate(ls: ListenerGroup, event: Event<any>): LL<Listener<any>> {
+function aggregate(ls: ListenerGroup, event: Event<any>, simulating: boolean): LL<Listener<any>> {
     // $FlowFixMe
     if(ls[Symbol.iterator]){
         // $FlowFixMe
         return [...ls].reduce((a: LL<Listener<any>>, ls: ListenerGroup) => {
-            a.appendList(aggregate(ls, event))
+            a.appendList(aggregate(ls, event, simulating))
             return a
         }, new LL())
     } else if(ls instanceof Listener){
-        c.push(ls)
         let test = testListener(event, ls)
         if(test == 'Passed'){
             return new LL(ls)
         } else {
-            c.push(test)
+            if(!simulating){
+                console.log(test, ls.id, ls.header)
+            }
             return new LL()
         }
     } else {
         // $FlowFixMe
-        return aggregate(ls.listener, event)
+        return aggregate(ls.listener, event, simulating)
     } 
 }
 
@@ -210,33 +220,26 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
         game.hand,
         game.discardPile,
         game.pragmas,
-    ], event)
+    ], event, self.simulating)
     
     activeListeners.append(event)
     event.defaultListeners.forEach((listener) => {
         activeListeners.append(listener)
     })
 
-    if(!self.simulating){ 
-        console.log(event.id, event, game)
-        // console.log('active:', activeListeners.toArray().length, 'checked:', c) 
-    }
-
-    c = []
+    if(!self.simulating){ console.log(event.id, event, game) }
 
     activeListeners = applyInternals(activeListeners)
 
     const executionQueue: Listener<any>[] = activeListeners.toArray().sort((a, b) => {
         // TODO: perform checks
-        const ai = any(self.listenerOrder.get(a.id)).index
-        const bi = any(self.listenerOrder.get(b.id)).index
+        const ai = any(self.listenerOrder.get(any(a.id))).index
+        const bi = any(self.listenerOrder.get(any(b.id))).index
         return ai - bi
     })
 
     let index: number = -1
     let active: boolean = true
-
-    
 
     const continuing = (): boolean => {
         let a = ++index < executionQueue.length

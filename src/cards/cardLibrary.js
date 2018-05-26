@@ -16,6 +16,7 @@ export const CardLibrary = {
     sample(count: number, setDistro: { [set: CharacterName]: number }, rarityDistro: Distro, seed: Sequence<number>): (() => Card<>)[] {
         let result = new Set()
         while(result.size < count){
+            // $FlowFixMe // TODO: Will be an annoying bug some day
             let set = sets.get(pickKey(setDistro, seed))
             if(set){
                 result.add(...set.sample(1, rarityDistro, seed))
@@ -23,8 +24,8 @@ export const CardLibrary = {
         }
         return [...result]
     },
-    getCardMembership(fromSets: string[], card: Card<>): CardMembership {
-        return fromSets.reduce((acc: CardMembership, name: string) => {
+    getCardMembership(fromSets: CharacterName[], card: Card<>): CardMembership {
+        return fromSets.reduce((acc: CardMembership, name: CharacterName) => {
             let set = sets.get(name)
             if(set){
                 return set.members.get(card.type) || acc

@@ -10,8 +10,7 @@ type Type = {
     subject: Creature<>,
 }
 
-export const heal: string = 'heal'
-export const Heal = defineEvent(heal, function*({ data, subject, cancel }: ConsumerArgs<Type>){ 
+export const Heal = defineEvent('heal', function*({ data, subject, cancel }: ConsumerArgs<Type>){ 
     data.healing = Math.floor(data.healing)
     if(data.healing <= 0){
         cancel()

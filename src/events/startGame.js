@@ -14,9 +14,9 @@ import { Card } from "../cards/card";
 import { createEntity } from "../utils/entity";
 import { LookAhead } from "../pragmas/lookAhead";
 import { PragmaGroup } from "../pragmas/pragmaGroup";
+import { characters } from "../character";
 
-export const startGame: string = 'startGame'
-export const StartGame = defineEvent(startGame, function*({ resolver, game, data }){
+export const StartGame = defineEvent('startGame', function*({ resolver, game, data }){
     
     let seed = randomSequence(data.seed * Math.random())
 
@@ -40,7 +40,15 @@ export const StartGame = defineEvent(startGame, function*({ resolver, game, data
     game.allies.clear()
     game.pragmas = new PragmaGroup([])
     // TODO: seed this properly
-    game.pragmaSequence = new PragmaGroup([new LookAhead().id], 1000154)
+    game.pragmaSequence = new PragmaGroup([...['Adventurer', ...data.character].reduce((a, c) => {
+        const character = characters.get(c)
+        if(character){
+            character.pragmaPool.forEach(P => a.add(new P().id))
+        }
+        return a
+    }, new Set())], seed.last())
+    
+    new PragmaGroup([new LookAhead().id], )
 
     
 

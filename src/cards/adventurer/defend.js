@@ -1,6 +1,6 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { targeted } from '../../events/damage';
 
@@ -25,7 +25,7 @@ function* playDefend(self: Card<DefendData>, { actors, game, resolver }: PlayArg
                 Effect: Block,
                 stacks: self.data.block,
             },
-            block,
+            Block,
             targeted,
         ),
     )

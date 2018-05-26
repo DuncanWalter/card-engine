@@ -13,8 +13,7 @@ type Type = {
     subject: Card<> | Creature<>,
 }
 
-export const bindEffect = 'bindEffect'
-export const BindEffect = defineEvent(bindEffect, function*({ subject, data }: ConsumerArgs<Type>){
+export const BindEffect = defineEvent('bindEffect', function*({ subject, data }: ConsumerArgs<Type>){
     
     let type = (new data.Effect(1)).type
     let current = [...subject.effects].filter(effect => effect.type == type)

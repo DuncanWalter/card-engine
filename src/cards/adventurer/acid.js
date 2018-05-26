@@ -1,11 +1,11 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, damage, targeted, blockable } from './../../events/damage'
+import { Damage, targeted, blockable } from './../../events/damage'
 import { Listener, ConsumerArgs } from '../../events/listener'
 import { BindEffect } from '../../events/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
-import { block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { Poison } from '../../effects/poison'
+import { Corruption } from '../../effects/corruption'
 import { queryEnemy } from '../utils';
 
 type AcidData = { 
@@ -37,7 +37,7 @@ function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs){
             blockable,
         )
         action.defaultListeners.push(new Listener(
-            block,
+            Block.type,
             {},
             function*({ internal, data, actors, subject, resolver, next }: ConsumerArgs<>): Generator<any, any, any> {
                 const damage = data.damage
@@ -45,7 +45,7 @@ function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs){
                 const poison = (damage - data.damage)
                 yield next()
                 yield resolver.processEvent(new BindEffect(actors, subject, {
-                    Effect: Poison,
+                    Effect: Corruption,
                     stacks: poison,
                 }))
             },

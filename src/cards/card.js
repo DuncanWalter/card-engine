@@ -1,4 +1,4 @@
-import type { ListenerGroup } from '../events/listener'
+import type { ListenerGroup, ListenerType } from '../events/listener'
 import type { EventResolver } from './../events/eventResolver'
 import type { Event } from './../events/event'
 import type { Game } from "../game/battle/battleState"
@@ -112,7 +112,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         return new Card(clone.id)
     }
 
-    stacksOf(effectType: string): number {
+    stacksOf(effectType: string | ListenerType<any>): number {
         let effects: EffectState[] = [...this.effects].filter(effect =>
             effect.type == effectType
         )

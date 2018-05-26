@@ -1,7 +1,7 @@
-import type { Event } from "./event"
 import type { EventResolver } from "./eventResolver"
 import type { Game } from "../game/battle/battleState"
 import type { Player } from "../creatures/player"
+import type { EventDefinition, Tag, Event } from "./event";
 import { synchronize } from "../utils/async"
 import { Entity } from "../utils/entity"
 
@@ -11,15 +11,14 @@ export interface EventContent {
 }
 
 // TODO: major refactor including define listener function
-export /* opaque */ type ListenerType<T:EventContent> = string
-// TODO: export opaque type EventType<T:EventContent> = ListenerType<T>
+export opaque type ListenerType<T:EventContent>: string = string
 
 export type Header<T:EventContent> = {
     actors?: Entity<any>[],
-    subjects?: Entity<Subject<T>>[],
-    tags?: ListenerType<any>[],
+    subjects?: Subject<T>[],
+    tags?: Tag[],
     filter?: (event: Event<T>) => boolean,
-    type?: ListenerType<T>, // TODO: Event Type
+    type?: { type: ListenerType<any> } | ListenerType<any> | string, // TODO: Event Type
 }
 
 export type Subject<T> = $PropertyType<T, 'subject'>
@@ -44,6 +43,7 @@ export interface ConsumerArgs<T=any> {
 
 export type Consumer<T:EventContent> = (args: ConsumerArgs<T>) => Generator<Promise<any>, void, any>
 
+// TODO: give owner and self types?
 export class Listener<T:EventContent>{
 
     id: ListenerType<T>
@@ -61,11 +61,3 @@ export class Listener<T:EventContent>{
 
 export const reject: Header<any> = { filter: a => false }
 export const deafListener: Listener<any> = new Listener('DEAF_LISTENER', reject, function*(){}, false)
-
-
-
-
-
-
-
-

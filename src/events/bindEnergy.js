@@ -10,7 +10,6 @@ type Type = {
     subject: Player,
 }
 
-export const bindEnergy: string = 'bindEnergy'
-export const BindEnergy = defineEvent(bindEnergy, function*({ game, data }: ConsumerArgs<Type>){
+export const BindEnergy = defineEvent('bindEnergy', function*({ game, data }: ConsumerArgs<Type>){
     game.player.energy += Math.floor(data.quantity)
 })

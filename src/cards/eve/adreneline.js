@@ -1,6 +1,6 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { targeted } from '../../events/damage'
 import { AddToHand } from '../../events/addToHand'
@@ -27,7 +27,11 @@ export const Adrenaline: () => Card<AdrenalineData> = defineCard('Adrenaline', p
 }, [Singleton, 1])
 
 function* playAdrenaline(self: Card<AdrenalineData>, { actors, resolver, game }: PlayArgs){
-    yield resolver.processEvent(new DrawCards(actors, game.player, { count: self.data.draw }))
-    yield resolver.processEvent(new BindEnergy(actors, game.player, { quantity: self.data.reEnergize }))
+    yield resolver.processEvent(new DrawCards(actors, game.player, { 
+        count: self.data.draw 
+    }))
+    yield resolver.processEvent(new BindEnergy(actors, game.player, { 
+        quantity: self.data.reEnergize 
+    }))
     return self.data
 }

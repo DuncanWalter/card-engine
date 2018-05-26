@@ -1,6 +1,6 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { targeted } from '../../events/damage';
 import { AddToHand } from '../../events/addToHand';
@@ -18,7 +18,7 @@ export const FightersStance: () => Card<FightersStanceData> = defineCard(fighter
     energyTemplate: '#{energy}',
     color: '#551199',
     titleTemplate: 'Fighter\'s Stance',
-    textTemplate: 'Gain #{block} block. Add #{jabs} #[Jab]s to your hand.',
+    textTemplate: 'Gain #{block} block. Add #{jabs} #[Jab] to your hand.',
 })
 
 function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver }: PlayArgs): Generator<any, FightersStanceData, any> {
@@ -30,7 +30,7 @@ function* playFightersStance(self: Card<FightersStanceData>, { actors, game, res
                 Effect: Block,
                 stacks: self.data.block,
             },
-            block,
+            Block,
             targeted,
         ),
     )

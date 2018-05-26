@@ -3,7 +3,6 @@ import { Behavior, defineBehavior, primeBehavior } from "../behavior"
 import { Damage, targeted, blockable } from '../../events/damage'
 import { Block } from "../../effects/block"
 import { BindEffect } from '../../events/bindEffect'
-import { startCombat } from '../../events/startCombat'
 import { Blockade } from "../../effects/blockade"
 import { defineMonster } from "../monster"
 

@@ -6,7 +6,7 @@ import { queryEnemy } from './../utils'
 import { DrawCards } from '../../events/drawCards'
 import { defineEffect } from '../../effects/effect'
 import { BindEffect } from '../../events/bindEffect'
-import { deafListener } from '../../events/listener'
+import { deafListener, reject } from '../../events/listener'
 import { Default } from '../../effects/default';
 
 // TODO: make number of times played visible using the Rampage stacks effect
@@ -32,7 +32,7 @@ let RampageStacks = defineEffect('rampage', null, {
     delta: x => x,
     max: 999,
     min: 0,
-}, (owner, self) => deafListener,  [], [])
+}, () => reject, () => function*(){}, [], [])
 
 function* playRampage(self: Card<RampageData>, { resolver, actors }: PlayArgs): Generator<any, RampageData, any>{
     let target = yield queryEnemy(any => true)

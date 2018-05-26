@@ -12,8 +12,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const discard: string = 'discard'
-export const Discard = defineEvent(discard, function*({ data, game, subject, cancel }: ConsumerArgs<Type>){ 
+export const Discard = defineEvent('discard', function*({ data, game, subject, cancel }: ConsumerArgs<Type>){ 
     
     if(data.from){
         data.from.remove(subject)

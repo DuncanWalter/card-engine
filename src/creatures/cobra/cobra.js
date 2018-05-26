@@ -1,12 +1,12 @@
 import type { BehaviorState } from "../behavior"
 import { Behavior, defineBehavior, primeBehavior } from "../behavior"
-import { Damage, targeted, blockable, damage } from '../../events/damage'
+import { Damage, targeted, blockable } from '../../events/damage'
 import { Block } from "../../effects/block"
 import { BindEffect } from '../../events/bindEffect'
-import { startCombat } from '../../events/startCombat'
+import { StartCombat } from '../../events/startCombat'
 import { Blockade } from "../../effects/blockade"
 import { Listener } from '../../events/listener'
-import { Poison } from "../../effects/poison"
+import { Corruption } from "../../effects/corruption"
 import { Latency } from "../../effects/latency"
 import { defineMonster } from "../monster";
 
@@ -16,14 +16,14 @@ const bite: BehaviorState = defineBehavior('Cobra Bite', function*({ owner, reso
     }, targeted, blockable)
     // deals poison on-hit
     action.defaultListeners.push(new Listener(
-        damage, 
+        Damage.type, 
         {},
         function*({ data, resolver, actors, subject, internal }){
             yield internal()
             // TODO: this might not cancel properly...
             yield resolver.processEvent(new BindEffect(actors, subject, {
-                Effect: Poison,
-                stacks: 3,
+                Effect: Corruption,
+                stacks: 1,
             }))
         },
         true,

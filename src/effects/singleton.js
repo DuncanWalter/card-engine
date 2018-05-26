@@ -1,16 +1,15 @@
 import type { ListenerGroup, ConsumerArgs } from '../events/listener'
 import { defineEffect, Effect, tick } from "./effect"
-import { damage, Damage } from '../events/damage'
-import { vulnerability } from "./vulnerability"
-import { BindEffect, bindEffect } from '../events/bindEffect'
-import { playCard, PlayCard } from '../events/playCard'
+import { Damage } from '../events/damage'
+import { Vulnerability } from "./vulnerability"
+import { BindEffect } from '../events/bindEffect'
+import { PlayCard } from '../events/playCard'
 import { Listener } from '../events/listener'
-import { addToDiscardPile } from '../events/addToDiscardPile';
+import { AddToDiscardPile } from '../events/addToDiscardPile';
 import { ExhaustCard } from '../events/exhaustCard';
 import { Card } from "../cards/card";
 
-export const singleton = 'singleton'
-export const Singleton = defineEffect(singleton, {
+export const Singleton = defineEffect('singleton', {
     name: 'Singleton',
     innerColor: '#343434',
     outerColor: '#565656',
@@ -21,18 +20,13 @@ export const Singleton = defineEffect(singleton, {
     delta: x => x,
     min: 1,
     max: 1,
-}, (owner, self) => new Listener(
-    singleton,
-    {
-        subjects: [owner],
-        type: addToDiscardPile,
-        tags: [playCard],
-    },
-    function*({ game, data, resolver, cancel }: ConsumerArgs<>): * {
-        if(owner instanceof Card){
-            yield resolver.processEvent(new ExhaustCard(self, owner, {}))
-            return cancel()
-        }
-    },
-    false,  
-), [], [addToDiscardPile])
+}, (owner) => ({
+    subjects: [owner],
+    type: AddToDiscardPile,
+    tags: [PlayCard],
+}), (owner, type) => function*({ game, data, resolver, cancel }: ConsumerArgs<>): * {
+    if(owner instanceof Card){
+        yield resolver.processEvent(new ExhaustCard(self, owner, {}))
+        return cancel()
+    }
+}, [], [AddToDiscardPile])

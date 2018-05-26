@@ -51,8 +51,8 @@ export function topologicalSort<T, Id>(elements: Array<T & Elem<Id>>): Array<T &
     });
 
     elementMap.forEach((e: ElemWrapper<Id>) => {
-        e.header.parents .forEach((p: *) => { p.header.children.add(e); });
-        e.header.children.forEach((c: *) => { c.header.parents .add(e); });
+        e.header.parents .forEach((p) => { p.header.children.add(e); });
+        e.header.children.forEach((c) => { c.header.parents .add(e); });
     });
     
     let available: LL<ElemWrapper<Id>> = elements.map((e:*) => elementMap.get(e.id))

@@ -1,5 +1,5 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, damage, targeted, blockable } from './../../events/damage'
+import { Damage, targeted, blockable } from './../../events/damage'
 import { Listener } from '../../events/listener'
 import { BindEffect } from '../../events/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'
@@ -17,7 +17,7 @@ export const CheapShot: () => Card<CheapShotData> = defineCard(cheapShot, playCh
     energyTemplate: '#{energy}',
     color: '#bb4433',
     titleTemplate: 'Cheap Shot',
-    textTemplate: `Deal #{damage} damage. Apply #{vulnerability} vulnerability.`,
+    textTemplate: `Deal #{damage} damage. Apply #{vulnerability} #[Vulnerability].`,
 })
 
 function* playCheapShot(self: Card<CheapShotData>, { resolver, actors }: PlayArgs): Generator<any, CheapShotData, any> {

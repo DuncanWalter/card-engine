@@ -7,6 +7,7 @@ import { Acid } from "./acid"
 import { Cleave } from "./cleave"
 import { Character, F, D, C } from "../../character";
 import { LookAhead } from "../../pragmas/lookAhead";
+import { Snapshot } from "../../pragmas/snapshot";
 
 
 // strike
@@ -34,14 +35,7 @@ adventurer.addCard(D, Cleave)
 
 adventurer.addCard(C, Acid)
 
-adventurer.addPragma(C, LookAhead)
+adventurer.addPragma(LookAhead)
+adventurer.addPragma(Snapshot)
 
 CardLibrary.register(adventurer)
-
-
-
-
-
-
-
-

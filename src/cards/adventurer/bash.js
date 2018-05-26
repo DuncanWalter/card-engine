@@ -1,5 +1,5 @@
 import { defineCard, Card, PlayArgs } from './../card'
-import { Damage, damage, targeted, blockable } from './../../events/damage'
+import { Damage, targeted, blockable } from './../../events/damage'
 import { Listener } from '../../events/listener'
 import { BindEffect } from '../../events/bindEffect'
 import { Vulnerability } from '../../effects/vulnerability'

@@ -12,8 +12,7 @@ type Type = {
     subject: Card<>,
 }
 
-export const exhaustCard: string = 'exhaustCard'
-export const ExhaustCard = defineEvent(exhaustCard, function*({ data, game, subject, cancel }: ConsumerArgs<Type>){ 
+export const ExhaustCard = defineEvent('exhaustCard', function*({ data, game, subject, cancel }: ConsumerArgs<Type>){ 
     
     if(data.from){
         data.from.remove(subject)

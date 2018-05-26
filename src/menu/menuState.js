@@ -1,5 +1,6 @@
 import type { State } from '../state'
 import type { Reducer } from '../utils/state'
+import type { CharacterName } from '../character'
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { reducer } from "vitrarius"
@@ -88,8 +89,8 @@ export function selectCharacter(dispatch: (any) => void){
     dispatch({ type: 'selectCharacter' })
 }
 
-export function previewCharacter(dispatch: (any) => void, character: string){
-    dispatch({ type: 'previewCharacter', character })
+export function previewCharacter(dispatch: (any) => void, character: CharacterName | void){
+    dispatch({ type: 'previewCharacter', character: character || '' })
 }
 
 

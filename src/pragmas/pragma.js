@@ -1,5 +1,4 @@
 import type { ListenerGroup } from "../events/listener";
-import type { Rarity } from "../character";
 import type { Game } from "../game/battle/battleState";
 import { Entity, createEntity } from "../utils/entity";
 import { EventResolver } from "../events/eventResolver";
@@ -55,7 +54,7 @@ export class Pragma extends Entity<PragmaState> {
 
 } 
 
-export function definePragma(name: string, rarity: Rarity, acquire: (args: AcquireArgs) => Generator<Promise<any>, void, any>, ...listenerFactories: ((self: Pragma) => Listener<any>)[]): () => Pragma {
+export function definePragma(name: string, acquire: (args: AcquireArgs) => Generator<Promise<any>, void, any>, ...listenerFactories: ((self: Pragma) => Listener<any>)[]): () => Pragma {
     const givenName = pragmaName(name, {
         acquire: synchronize(acquire),
         asListener: owner => listenerFactories.map(lf => lf(owner)),

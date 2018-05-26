@@ -1,12 +1,12 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted, damage } from '../../events/damage';
+import { targeted, Damage } from '../../events/damage';
 import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
 import { defineEffect } from '../../effects/effect';
-import { endTurn } from '../../events/event';
+import { EndTurn } from '../../events/turnActions';
 import { Listener } from '../../events/listener';
 
 
@@ -38,7 +38,7 @@ function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs): 
 }
 
 const RageEffect = defineEffect('rage', {
-    description: 'Upon dealing damage, gain #{stacks} #[Block].',
+    description: 'Upon dealing damage, gain #{stacks} block.',
     innerColor: "#aacc44",
     outerColor: "#889911",
     name: "Rage",
@@ -48,16 +48,16 @@ const RageEffect = defineEffect('rage', {
     delta: n => 0,
     min: 1, 
     max: 99,
-    on: endTurn,
-}, (owner, self) => new Listener('rage', { 
+    on: EndTurn,
+}, owner => ({ 
     actors: [owner],
-    type: damage,
-}, function*({ resolver }): * {
+    type: Damage,
+}), (owner, type) => function*({ resolver }): * {
     let actors = new Set()
     actors.add(owner)
     actors.add(self)
     yield resolver.processEvent(new BindEffect(actors, owner, {
-        stacks: self.stacks,
+        stacks: owner.stacksOf(type),
         Effect: Block,
-    }, block, 'rage'))
-}, false), [], [damage])
+    }, Block, 'rage'))
+}, [], [Damage])

@@ -1,6 +1,6 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { targeted } from '../../events/damage';
 import { DrawCards } from '../../events/drawCards';
@@ -29,7 +29,7 @@ function* playBackflip(self: Card<BackflipData>, { actors, game, resolver }: Pla
                 Effect: Block,
                 stacks: self.data.block,
             },
-            block,
+            Block,
             targeted,
         ),
     )

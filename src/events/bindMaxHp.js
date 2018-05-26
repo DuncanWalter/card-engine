@@ -11,8 +11,7 @@ type Type = {
     subject: Player,
 }
 
-export const bindMaxHp: string = 'bindMaxHp'
-export const BindMaxHp = defineEvent(bindMaxHp, function* ({ data, subject, cancel }: ConsumerArgs<Type>){ 
+export const BindMaxHp = defineEvent('bindMaxHp', function* ({ data, subject, cancel }: ConsumerArgs<Type>){ 
     subject.health += Math.floor(data.points)
     subject.inner.maxHealth += Math.floor(data.points)
 })

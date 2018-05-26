@@ -95,7 +95,7 @@ export const engine = new Module('engine', ({ global, next }) => {
         navigateTo('/game/cardRemove')
     })
 
-    registerReward('Acquire a Pragma.', 4, function* acquire(self, state){
+    registerReward('Acquire a Pragma.', 1, function* acquire(self, state){
         collectReward(dispatch, self)
         const game = resolver.state.getGame()
         yield resolver.processEvent(new AcquirePragma(

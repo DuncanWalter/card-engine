@@ -9,7 +9,6 @@ type Type = {
     subject: Card<>,
 }
 
-export const addToDrawPile = 'addToDrawPile'
-export const AddToDrawPile = defineEvent(addToDrawPile, function*({ actor, subject, resolver, data, game }: ConsumerArgs<Type>){ 
+export const AddToDrawPile = defineEvent('addToDrawPile', function*({ actor, subject, resolver, data, game }: ConsumerArgs<Type>){ 
     game.drawPile.shuffleIn(subject, game.player.seed)
 })

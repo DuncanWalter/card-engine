@@ -5,7 +5,6 @@ import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 import { BindEffect } from '../../events/bindEffect';
 import { Vulnerability } from '../../effects/vulnerability';
-import { Taunt } from '../../effects/taunt';
 import { SpawnCreature } from '../../events/spawnCreature';
 import { Toad } from '../../creatures/toad/toad';
 import { Daemon as DaemonMonster } from '../../creatures/daemon/daemon'

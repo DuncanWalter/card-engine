@@ -3,7 +3,6 @@ import { Behavior, defineBehavior } from "../behavior"
 import { Damage, targeted, blockable } from '../../events/damage'
 import { Block } from "../../effects/block"
 import { BindEffect } from '../../events/bindEffect'
-import { startCombat } from '../../events/startCombat'
 import { Latency } from "../../effects/latency";
 import { Strength } from "../../effects/strength"
 import { defineMonster } from "../monster";

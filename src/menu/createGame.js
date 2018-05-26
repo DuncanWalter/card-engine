@@ -40,7 +40,7 @@ export const CreateGame = withState(({ state }) => {
                     <h2>Card Sets</h2>
                     <Col>
                         {selectingIndex!=0? <Button onClick={ click => 
-                            previewCharacter(dispatch, '')
+                            previewCharacter(dispatch, undefined)
                         }>
                             <h3>Empty</h3>
                         </Button>: null}

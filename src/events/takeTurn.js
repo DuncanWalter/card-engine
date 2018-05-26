@@ -3,9 +3,7 @@ import type { Event } from "./event"
 import { Creature } from '../creatures/creature'
 import { defineEvent } from './event'
 
-
-export const takeTurn: string = 'takeTurn'
-export const TakeTurn = defineEvent(takeTurn, function*({ game, subject, resolver }): * { 
+export const TakeTurn = defineEvent('takeTurn', function*({ game, subject, resolver }): * { 
 
     yield subject.takeTurn(resolver, game)
 

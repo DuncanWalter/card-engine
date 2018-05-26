@@ -1,7 +1,6 @@
 import type { Effect } from "../effects/effect"
-import type { ListenerGroup, ConsumerArgs } from '../events/listener'
+import type { ListenerGroup, ConsumerArgs, ListenerType } from '../events/listener'
 import type { ID } from "../utils/entity"
-import { damage } from '../events/damage'
 import { RemoveCreature } from '../events/removeCreature'
 import { Listener } from '../events/listener'
 import { resolver } from '../events/eventResolver'
@@ -71,8 +70,8 @@ export class Creature<D:Object=any> extends Entity<CreatureState & D> {
         this.inner.seed = seed.last()
     }
 
-    stacksOf(effectType: Symbol): number {
-        let effects: EffectState[] = [...this.effects].filter(effect => effect.type == effectType.toString())
+    stacksOf(effectType: string | ListenerType<any>): number {
+        let effects: EffectState[] = [...this.effects].filter(effect => effect.type == effectType)
         if(effects.length === 0){
             return 0
         } else {

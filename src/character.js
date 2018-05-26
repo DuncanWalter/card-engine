@@ -29,7 +29,7 @@ export class Character {
     +name: CharacterName
     +playable: boolean
     cardPool: CardPool
-    pragmaPool: Map<Rarity, (() => Pragma)[]>
+    pragmaPool: Set<() => Pragma>
     members: Map<string, { 
         rarity: Rarity,
         color: string,
@@ -44,13 +44,8 @@ export class Character {
         })
     }
 
-    addPragma(rarity: Rarity, factory: () => Pragma){
-        const pragmas = this.pragmaPool.get(rarity)
-        if(pragmas){
-            pragmas.push(factory)
-        } else {
-            throw new Error()
-        }
+    addPragma(factory: () => Pragma){
+        this.pragmaPool.add(factory)
     }
 
     sample(count: number, distro: Distro, seed: Sequence<number>): (() => Card<>)[] {
@@ -68,12 +63,7 @@ export class Character {
         this.color = color
         this.description = description
         this.cardPool = new CardPool(name, color, 'A', 'B', 'C', 'D', 'F')
-        this.pragmaPool = new Map()
-        this.pragmaPool.set(A, [])
-        this.pragmaPool.set(B, [])
-        this.pragmaPool.set(C, [])
-        this.pragmaPool.set(D, [])
-        this.pragmaPool.set(F, [])
+        this.pragmaPool = new Set()
         characters.set(name, this)
     }
 

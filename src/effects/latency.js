@@ -1,13 +1,12 @@
 import { defineEffect, Effect } from "./effect"
-import { damage } from '../events/damage'
+import { Damage } from '../events/damage'
 import { Listener, ConsumerArgs } from '../events/listener';
 import { blockable } from '../events/damage';
-import { vulnerability } from "./vulnerability";
+import { Vulnerability } from "./vulnerability";
 import { Card } from "../cards/card";
-import { endTurn } from '../events/event';
+import { EndTurn } from '../events/turnActions';
 
-export const latency = 'latency';
-export const Latency = defineEffect(latency, {
+export const Latency = defineEffect('latency', {
     name: 'Latency',
     innerColor: '#22ee33',
     outerColor: '#119922',
@@ -19,18 +18,13 @@ export const Latency = defineEffect(latency, {
     delta: x => x - 1,
     min: 1,
     max: 99,
-    on: endTurn,
-}, owner => new Listener(
-    latency,
-    {
-        filter: action => action.actors.has(owner),
-        tags: [blockable],
-        type: damage,
-    },
-    function*({ data }){
-        if(typeof data.damage == 'number'){
-            data.damage *= 0.75
-        }
-    },  
-    false,
-), [], [vulnerability])
+    on: EndTurn,
+}, owner => ({
+    filter: action => action.actors.has(owner),
+    tags: [blockable],
+    type: Damage,
+}), (owner, type) => function*({ data }){
+    if(typeof data.damage == 'number'){
+        data.damage *= 0.75
+    }
+}, [], [Vulnerability])

@@ -13,13 +13,11 @@ type Type = {
     subject: Player,
 }
 
-
-export const drawCards = 'drawCards'
-export const DrawCards = defineEvent(drawCards, function*({ actors, subject, resolver, data, game }: ConsumerArgs<Type>): * { 
+export const DrawCards = defineEvent('drawCards', function*({ actors, subject, resolver, data, game }: ConsumerArgs<Type>): * { 
     while(data.count-- && game.discardPile.size + game.drawPile.size){
         if(!game.drawPile.size){
-            yield resolver.processEvent(new ReclaimDiscardPile(actors, game.player, {}, drawCards))
+            yield resolver.processEvent(new ReclaimDiscardPile(actors, game.player, {}, DrawCards))
         }
-        yield resolver.processEvent(new AddToHand(actors, game.drawPile.pop(), {}, drawCards))
+        yield resolver.processEvent(new AddToHand(actors, game.drawPile.pop(), {}, DrawCards))
     }
 })

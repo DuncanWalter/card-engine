@@ -1,19 +1,60 @@
 import type { ListenerGroup } from '../events/listener'
-import { defineEffect, Effect } from "./effect"
-import { damage, blockable } from '../events/damage'
-import { vulnerability } from "./vulnerability"
+import { defineEffect, Effect, tick, defineCompoundEffect } from "./effect"
+import { Damage, blockable } from '../events/damage'
+import { Vulnerability } from "./vulnerability"
 import { BindEffect } from '../events/bindEffect'
 import { Listener, ConsumerArgs } from '../events/listener'
-import { block } from "./block";
+import { Block } from "./block";
+import { defineListener } from "../events/defineListener";
 
-export const redundancy = 'redundancy'
-export const redundancyShatter = 'redundancyShatter'
-// TODO: Make it reduce on hit when damage gets through
-export const Redundancy = defineEffect(redundancy, {
+const redundancy = 'redundancy'
+
+const RedundancyDrain = defineEffect('redundancyDrain', null, {
+    stacked: true,  
+    delta: x => 0,
+    min: 1,
+    max: 999,
+}, owner => ({
+    subjects: [owner],
+    tags: [RedundancyDrain, tick],
+    type: BindEffect,
+}), (owner, type) => function*({ resolver, actors, subject }){
+    yield resolver.processEvent(new BindEffect(actors, subject, {
+        Effect: Redundancy,
+        stacks: -owner.stacksOf(type),
+    }))
+}, [], [BindEffect])
+
+
+export const RedundancyRD = defineListener('redundancyReduceDamage', owner => ({
+    subjects: [owner],
+    tags: [blockable],
+    type: Damage,
+}), (owner, type) => function*({ data, resolver, actors, cancel }){
+    if(typeof data.damage == 'number'){
+        // TODO: do this properly
+        data.damage = Math.min(reducedDamage(data.damage, owner.stacksOf(redundancy)), data.damage)
+    } else {
+        throw new Error('Damage event has ill formated data')
+    }
+}, [Vulnerability], [Block])
+
+export const RedundancySD = defineListener('redundancyScheduleDrain', owner => ({
+    subjects: [owner],
+    tags: [blockable],
+    type: Damage,
+}), owner => function*({ data, resolver, actors, cancel }: ConsumerArgs<>){
+    yield resolver.processEvent(new BindEffect(actors, owner, {
+        Effect: RedundancyDrain,
+        stacks: reducedDamage(data.damage, owner.health),
+    }))
+}, [Damage])
+
+export const Redundancy = defineCompoundEffect(redundancy, {
     name: 'Redundancy',
-    innerColor: '#6688ee',
-    outerColor: '#2233bb',
-    description: 'Reduce incoming damage. Reduces when taking damage.',
+    innerColor: '#77bb22',
+    outerColor: '#225511',
+    description: 'Reduce incoming damage. Upon taking damage, lose stack of redundancy.',
     sides: 5,
     rotation: 0.5,
 }, {
@@ -21,27 +62,13 @@ export const Redundancy = defineEffect(redundancy, {
     delta: x => x,
     min: 1,
     max: 999,
-}, (owner, self) => new Listener(
-    redundancy,
-    {
-        subjects: [owner],
-        tags: [blockable],
-        type: damage,
-    },
-    function*({ data, resolver, actors, cancel }){
-        if(typeof data.damage == 'number'){
-            data.damage = Math.min(reducedDamage(data.damage, self.stacks))
-        } else {
-            throw new Error('Damage event has ill formated data')
-        }
-    },  
-    false,
-), [vulnerability], [block])
+}, RedundancyRD, RedundancySD)
 
+
+
+// My favorite armor equation- works for all positive armor and damage,
+// high damage attacks are more efficient, etc.
 function reducedDamage(damage: number, armor: number): number {
+    console.log('ARMOR EQ!', damage, armor)
     return Math.max(1, Math.floor(damage * damage / (damage + armor)))
 }
-
-
-
-

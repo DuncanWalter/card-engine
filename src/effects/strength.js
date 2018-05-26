@@ -1,12 +1,10 @@
 import { defineEffect, Effect } from "./effect"
-import { damage } from '../events/damage'
 import { Listener, ConsumerArgs } from '../events/listener';
-import { blockable } from '../events/damage';
-import { latency } from "./latency";
+import { blockable, Damage } from '../events/damage';
+import { Latency } from "./latency";
 import { Card } from "../cards/card";
 
-export const strength = 'strength';
-export const Strength = defineEffect(strength, {
+export const Strength = defineEffect('strength', {
     name: 'Strength',
     innerColor: '#ee4444',
     outerColor: '#aa3333',
@@ -18,17 +16,12 @@ export const Strength = defineEffect(strength, {
     delta: x => x,
     min: 1,
     max: 99,
-}, (owner, self) => new Listener(
-    strength,
-    {
-        actors: [owner],
-        tags: [blockable],
-        type: damage,
-    },
-    function*({ data }){
-        if(typeof data.damage == 'number'){
-            data.damage += self.stacks
-        }
-    },  
-    false,
-), [], [latency])
+}, (owner) => ({
+    actors: [owner],
+    tags: [blockable],
+    type: Damage,
+}), (owner, type) => function*({ data }){
+    if(typeof data.damage == 'number'){
+        data.damage += owner.stacksOf(type)
+    }
+}, [], [Latency])

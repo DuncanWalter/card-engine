@@ -9,8 +9,7 @@ type Type = {
     data: any,
 }
 
-export const removeCreature = 'removeCreature'
-export const RemoveCreature = defineEvent(removeCreature, function*({ game, actors, subject, resolver }: ConsumerArgs<Type>){ 
+export const RemoveCreature = defineEvent('removeCreature', function*({ game, actors, subject, resolver }: ConsumerArgs<Type>){ 
     let index
     switch(true){
         case game.player.id == subject.id:{

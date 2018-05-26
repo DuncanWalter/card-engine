@@ -1,12 +1,12 @@
 import { defineCard, Card, PlayArgs } from './../card'
 import { BindEffect } from '../../events/bindEffect'
-import { block, Block } from '../../effects/block'
+import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
-import { targeted, damage } from '../../events/damage';
+import { targeted } from '../../events/damage';
 import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
 import { defineEffect } from '../../effects/effect';
-import { endTurn } from '../../events/event';
+import { EndTurn } from '../../events/turnActions';
 import { Listener } from '../../events/listener';
 import { Strength } from '../../effects/strength'
 
@@ -21,7 +21,7 @@ export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
     energyTemplate: '#{energy}',
     color: '#cc6633',
     titleTemplate: 'Flex',
-    textTemplate: 'Gain #{flex} strength. Lose #{flex} strength at the end of your turn.',
+    textTemplate: 'Gain #{flex} #[Strength]. On end turn, lose #{flex} #[Strength].',
 })
 
 function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs): Generator<any, FlexData, any> {
@@ -59,16 +59,13 @@ const FlexEffect = defineEffect('flex', {
     delta: n => 0,
     min: 1, 
     max: 99,
-    on: endTurn,
-}, (owner, self) => new Listener('flex', { 
+    on: EndTurn,
+}, owner => ({ 
     subject: owner,
-    type: endTurn,
-}, function*({ resolver }){
-    let actors = new Set()
-    actors.add(owner)
-    actors.add(self)
-    yield resolver.processEvent(new BindEffect(actors, owner, {
-        stacks: -self.stacks,
+    type: EndTurn,
+}), (owner, type) => function*({ resolver }){
+    yield resolver.processEvent(new BindEffect(owner, owner, {
+        stacks: -owner.stacksOf(type),
         Effect: Strength,
-    }, block, 'flex'))
-}, false), [], [endTurn])
+    }, Block, 'flex'))
+}, [], [EndTurn])

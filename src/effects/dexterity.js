@@ -1,12 +1,11 @@
 import { defineEffect, Effect } from "./effect"
-import { damage, targeted } from '../events/damage'
-import { block, Block } from "./block"
-import { bindEffect } from '../events/bindEffect'
+import { Damage, targeted } from '../events/damage'
+import { Block } from "./block"
+import { BindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
 import { ConsumerArgs, Listener } from '../events/listener';
 
-export const dexterity = 'dexterity';
-export const Dexterity = defineEffect(dexterity, {
+export const Dexterity = defineEffect('dexterity', {
     name: 'Dexterity',
     outerColor: '#22aa88',
     innerColor: '#115544',
@@ -18,24 +17,19 @@ export const Dexterity = defineEffect(dexterity, {
     delta: x => x,
     min: 1,
     max: 99,
-}, (owner, self) => new Listener(
-    dexterity,
-    {
-        subjects: [owner],
-        filter: action => action.data.Effect == Block,
-        type: bindEffect,
-        tags: [targeted],
-    },
-    function*({ data, actors }){
-        // TODO: fix this to not boost effect blocks
-        if(true){
-            console.log('fix dexterity')
-            if(typeof data.stacks == 'number'){
-                if(data.stacks >= 0){
-                    data.stacks += self.stacks
-                }
+}, owner => ({
+    subjects: [owner],
+    filter: action => action.data.Effect == Block,
+    type: BindEffect,
+    tags: [targeted],
+}), (owner, type) => function*({ data, actors }){
+    // TODO: fix this to not boost effect blocks
+    if(true){
+        console.log('fix dexterity')
+        if(typeof data.stacks == 'number'){
+            if(data.stacks >= 0){
+                data.stacks += owner.stacksOf(type)
             }
         }
-    },  
-    false,
-), [], [bindEffect])
+    }
+}, [], [BindEffect])
