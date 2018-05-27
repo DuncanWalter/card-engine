@@ -6,9 +6,6 @@ export interface CombatState {
     queries: {
         [id: string]: {
             id: string,
-            header: {
-                category: string,
-            },
             submissions: mixed[],
         }
     },
@@ -54,18 +51,13 @@ export const combatReducer = createReducer({
             }, {}),
         }
     },
-    submitTarget(slice: CombatState, { category, entry }): CombatState {
+    submitTarget(slice: CombatState, { entry }): CombatState {
         return {
             ...slice,
             queries: Object.keys(slice.queries).reduce((acc, key) => {
-                if(slice.queries[key].header.category == category){
-                    console.log('pushing to a query')
-                    acc[key] = {
-                        ...slice.queries[key],
-                        submissions: [...slice.queries[key].submissions, entry],
-                    }
-                } else {
-                    acc[key] = slice.queries[key]
+                acc[key] = {
+                    ...slice.queries[key],
+                    submissions: [...slice.queries[key].submissions, entry],
                 }
                 return acc
             }, {}),
@@ -81,16 +73,13 @@ export const combatReducer = createReducer({
         delete ret.queries[id]
         return ret
     },
-    queryTargets(slice: CombatState, { id, category }): CombatState {
+    queryTargets(slice: CombatState, { id }): CombatState {
         let ret = {
             ...slice,
             queries: {
                 ...slice.queries,
                 [id]: {
                     id,
-                    header: {
-                        category,
-                    },
                     submissions: [],
                 },
             },
@@ -115,10 +104,9 @@ export function rejectTargets(id: string, targets: mixed[]){
     }
 }
 
-export function submitTarget(category: string, entry: mixed){
+export function submitTarget(entry: mixed){
     return {
         type: 'submitTarget',
-        category,
         entry,
     }
 }
@@ -130,11 +118,10 @@ export function collectTargets(id: string){
     }
 }
 
-export function queryTargets(id: string, category: string){
+export function queryTargets(id: string){
     return {
         type: 'queryTargets',
         id,
-        category,
     }
 }
 

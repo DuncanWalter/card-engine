@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted, blockable } from './../../events/damage'
 import { Listener, ConsumerArgs } from '../../events/listener'
 import { BindEffect } from '../../events/bindEffect'
@@ -8,15 +8,13 @@ import { Creature } from '../../creatures/creature'
 import { Corruption } from '../../effects/corruption'
 import { queryEnemy } from '../utils';
 
-type AcidData = { 
-    damage: number, 
-    energy: number,
-}
+type AcidData = BasicCardData & { damage: number }
 
 export const acid = 'acid'
 export const Acid: () => Card<AcidData> = defineCard(acid, playAcid, {
     damage: 4,
     energy: 1,
+    playable: true,
 }, {
     energyTemplate: '#{energy}',
     color: '#eeff33',
@@ -24,8 +22,8 @@ export const Acid: () => Card<AcidData> = defineCard(acid, playAcid, {
     textTemplate: 'Deal #{damage} damage. Convert blocked damage to poison.',
 })
 
-function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs){
-    let target = yield queryEnemy(any => true)
+function* playAcid(self: Card<AcidData>, { resolver, actors, energy }: PlayArgs){
+    let target = yield queryEnemy()
     if(target instanceof Creature){
         const action: Damage = new Damage(
             actors, 
@@ -52,7 +50,11 @@ function* playAcid(self: Card<AcidData>, { resolver, actors }: PlayArgs){
             true,
         ))
         yield resolver.processEvent(action)
-        return { damage: action.data.damage, energy: self.data.energy }
+        return { 
+            playable: true,
+            damage: action.data.damage, 
+            energy: energy,
+        }
     } else {
         return self.data
     }

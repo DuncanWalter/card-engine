@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { BindEffect } from '../../events/bindEffect'
 import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -7,7 +7,7 @@ import { AddToHand } from '../../events/addToHand';
 import { Jab } from './jab';
 
 
-type FightersStanceData = { block: number, energy: number, jabs: number }
+type FightersStanceData = BasicCardData & { block: number, jabs: number }
 
 export const fightersStance = 'fightersStance'
 export const FightersStance: () => Card<FightersStanceData> = defineCard(fightersStance, playFightersStance, {
@@ -21,7 +21,7 @@ export const FightersStance: () => Card<FightersStanceData> = defineCard(fighter
     textTemplate: 'Gain #{block} block. Add #{jabs} #[Jab] to your hand.',
 })
 
-function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver }: PlayArgs): Generator<any, FightersStanceData, any> {
+function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver, energy }: PlayArgs): Generator<any, FightersStanceData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
@@ -38,5 +38,5 @@ function* playFightersStance(self: Card<FightersStanceData>, { actors, game, res
     while(i-- > 0){
         yield resolver.processEvent(new AddToHand(actors, new Jab(), {}))
     }
-    return { block: action.data.stacks, energy: self.data.energy, jabs: self.data.jabs }
+    return { block: action.data.stacks, energy, jabs: self.data.jabs }
 }

@@ -1,6 +1,6 @@
 import { createStore, createReducer } from "./state";
 
-export opaque type ID<State:Object> = string
+export opaque type ID<+State:Object> = string
 
 interface EntityStoreState {
     [subset: string]: { [id: string]: any } 
@@ -47,9 +47,9 @@ export function createEntity<T:Object>(Subset: Class<Entity<T>>, state: T): ID<T
     }
 }
 
-export class Entity<State: Object = any> {
+export class Entity<+State: Object = any> {
 
-    id: ID<State>
+    +id: ID<State>
 
     get inner(): State {
         return this.unwrap()
@@ -73,7 +73,7 @@ export class Entity<State: Object = any> {
         }
     }
 
-    is(other: ID<State> | Entity<any>): boolean {
+    is(other: ID<any> | Entity<any>): boolean {
         if(other instanceof Entity){
             return other.id == this.id
         } else {
@@ -81,7 +81,7 @@ export class Entity<State: Object = any> {
         }
     }
     
-    indexIn(others: Array<ID<State>|Entity<any>>): number {
+    indexIn(others: Array<ID<any>|Entity<any>>): number {
         if(others.length){
             if(others[0] instanceof Entity){
                 return others.map(entity => entity.id).indexOf(this.id)

@@ -15,19 +15,19 @@ import { EffectGroup } from '../effects/effectGroup';
 export type CardFactory = () => Card<> 
 
 export interface PlayArgs {
-    actors: Set<Entity<any>> | Entity<any>,
-    subject: Card<any>,
-    resolver: EventResolver,
-    game: $ReadOnly<Game>,
+    +actors: Set<Entity<any>> | Entity<any>,
+    +resolver: EventResolver,
+    +game: $ReadOnly<Game>,
+    +energy: number, // energy actually spent to play, regardless of data cost
 }
 
-const cards = new Map()
+const cards: Map<string, (self: Card<any>, PlayArgs) => Promise<any>> = new Map()
 
-function registerCard(type: string, play: (self: Card<>, args: PlayArgs) => Promise<any>): void {
+function registerCard(type: string, play: (self: Card<any>, args: PlayArgs) => Promise<any>): void {
     cards.set(type, play)
 }
 
-export interface CardState<Data: Object = any> {
+export interface CardState<+Data:BasicCardData=BasicCardData> {
     type: string,
     appearance: {
         color: string,
@@ -35,13 +35,20 @@ export interface CardState<Data: Object = any> {
         titleTemplate: string,
         energyTemplate: string,
     },
-    data: Data,
+    +data: Data,
     effects: ID<EffectState>[],
     id?: string,
 }
 
+export interface BasicCardData {
+    energy: number | void | 'X',
+    upgraded?: void | 'L' | 'R',
+}
+
+
+
 // TODO: play args should have data and use another type argument
-export class Card<Data:Object=any> extends Entity<CardState<Data>> {
+export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Data>> {
 
     get appearance(): * {
         return this.inner.appearance
@@ -63,7 +70,15 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         return this.effects.asListener(this)
     }
 
-    play(ctx: PlayArgs){
+    get energy(): number | void | 'X' {
+        return this.data.energy
+    }
+
+    get playable(): boolean {
+        return this.data.energy !== undefined
+    }
+
+    play(ctx: PlayArgs): Promise<Data> {
         const cardBehavior = cards.get(this.type)
         if(cardBehavior){
             return cardBehavior(this, ctx)
@@ -72,22 +87,27 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         }
     }
 
-    simulate({ actors, subject, resolver }: PlayArgs):{
+    simulate({ actors, resolver }: PlayArgs):{
         text: string,
         color: string,
         title: string,
         energy: string,
     }{
-        let meta: Data = this.data
-        resolver.simulate(resolver => {
-            this.play({ actors, subject, resolver, game: resolver.state.getGame() }).then(v => meta = v)
-        })
 
-        Object.keys(meta).forEach(key => {
-            if(typeof meta[key] === 'number'){
-                meta[key] = Math.floor(meta[key])
-            }
-        })
+        let meta: Data = this.data
+
+        if(meta.energy !== 'X'){
+            let e = meta.energy
+            resolver.simulate(resolver => {
+                const game = resolver.state.getGame()
+                this.play({ 
+                    actors, 
+                    resolver, 
+                    game, 
+                    energy: e === undefined? game.player.energy: e 
+                }).then(v => meta = v)
+            })
+        }
 
         let ctx = createInterpolationContext(this.data, meta, {})
 
@@ -107,6 +127,7 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
         const clone = super.clone()
         const data = clone.inner
         data.appearance = { ...data.appearance }
+        // $FlowFixMe
         data.data = { ...data.data }
         data.effects = [ ...data.effects ]
         return new Card(clone.id)
@@ -124,20 +145,18 @@ export class Card<Data:Object=any> extends Entity<CardState<Data>> {
     }
 }
 
-
-
-export function defineCard<Meta:Object>(
+export function defineCard<D:BasicCardData>(
     type: string, // unique string id
-    play: (self: Card<Meta>, ctx: PlayArgs) => Generator<any, Meta, any>,
-    data: Meta,
+    play: (self: Card<D>, ctx: PlayArgs) => Generator<Promise<any>, D, any>,
+    data: $ReadOnly<D>,
     appearance: {
         color: string,
         textTemplate: string,
         titleTemplate: string,
         energyTemplate: string,
     },
-    ...effects: [(stacks: number) => Effect, number][]
-): () => Card<Meta> {
+    ...effects: [(stacks: number) => Effect<Card<>>, number][]
+): () => Card<D> {
     registerCard(type, synchronize(play))
     return function(){
         return new Card(createEntity(Card, {

@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted, blockable } from './../../events/damage'
 import { Listener } from '../../events/listener'
 import { BindEffect } from '../../events/bindEffect'
@@ -6,23 +6,24 @@ import { Vulnerability } from '../../effects/vulnerability'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from '../utils'
 
-type BashData = { damage: number, energy: number }
+type BashData = BasicCardData & { damage: number }
 
 export const bash = 'bash'
 export const Bash: () => Card<BashData> = defineCard(bash, playBash, {
     damage: 8,
     energy: 2,
+    playable: true,
 }, {
     energyTemplate: '#{energy}',
     color: '#bb4433',
     titleTemplate: 'Bash',
-    textTemplate: `Deal #{damage} damage. #[On Damage]: apply 2 #[vulnerability].`,
+    textTemplate: `Deal #{damage} damage. Upon dealing damage: apply 2 #[vulnerability].`,
 })
 
 
 // TODO: the bash vulnerability should be a default listener on the damage action
-function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs){
-    let target = yield queryEnemy(any => true)
+function* playBash(self: Card<BashData>, { resolver, actors, energy }: PlayArgs){
+    let target = yield queryEnemy()
     if(target instanceof Creature){
         const action: Damage = yield resolver.processEvent(
             new Damage(
@@ -40,7 +41,11 @@ function* playBash(self: Card<BashData>, { resolver, actors }: PlayArgs){
             Effect: Vulnerability,
             stacks: 2,
         }, blockable))
-        return { damage: action.data.damage, energy: self.data.energy }
+        return { 
+            playable: true, 
+            damage: action.data.damage, 
+            energy,
+        }
     } else {
         return self.data
     }

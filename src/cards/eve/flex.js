@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { BindEffect } from '../../events/bindEffect'
 import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -11,7 +11,7 @@ import { Listener } from '../../events/listener';
 import { Strength } from '../../effects/strength'
 
 
-type FlexData = { flex: number, energy: number }
+type FlexData = BasicCardData & { flex: number }
 
 export const flex = 'flex'
 export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
@@ -24,7 +24,7 @@ export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
     textTemplate: 'Gain #{flex} #[Strength]. On end turn, lose #{flex} #[Strength].',
 })
 
-function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs): Generator<any, FlexData, any> {
+function* playFlex(self: Card<FlexData>, { actors, resolver, game, energy }: PlayArgs): Generator<any, FlexData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
@@ -45,7 +45,7 @@ function* playFlex(self: Card<FlexData>, { actors, resolver, game }: PlayArgs): 
             },
         ),
     )
-    return { flex: action.data.stacks, energy: self.data.energy }
+    return { flex: action.data.stacks, energy } 
 }
 
 const FlexEffect = defineEffect('flex', {

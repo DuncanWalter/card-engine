@@ -16,34 +16,47 @@ type Type = {
 }
 
 export const PlayCard = defineEvent('playCard', function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Type>){ 
-
-    if(game.player.energy < subject.data.energy){
+    let energy: number
+    if(subject.data.energy === undefined){
         return cancel()
-    } else if(data.from){
+    } else if(subject.data.energy === 'X'){
+        if(!game.player.energy){
+            return cancel()
+        } else {
+            energy = game.player.energy
+        }
+    } else {
+        if(game.player.energy < subject.data.energy){
+            return cancel()
+        } else {
+            energy = subject.data.energy
+        }
+    }
+
+    if(data.from){
         data.from.remove(subject)
+        game.activeCards.push(subject) // TODO: could be safer than push pop
     }
 
     yield resolver.processEvent(new BindEnergy(actors, game.player, {
-        quantity: -subject.data.energy
+        quantity: -energy
     }, PlayCard))
     
-    game.activeCards.push(subject) // TODO: could be safer than push pop
-
     actors.add(subject)
 
     yield subject.play({ 
         resolver,
         actors,
-        subject,
-        data: subject.data,
         game,
+        energy,
     })
 
     let card: Card<> = subject
     let event = yield resolver.processEvent(new AddToDiscardPile(actors, card, {}, PlayCard))
     
-    game.activeCards.pop()
-
+    if(data.from){
+        game.activeCards.remove(subject)
+    }
 })
 
 

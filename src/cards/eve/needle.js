@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted } from './../../events/damage'
 import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
@@ -7,21 +7,21 @@ import { AddToDiscardPile } from '../../events/addToDiscardPile';
 import { Volatile } from '../../effects/volatile';
 import { Monster } from '../../creatures/monster';
 
-type AngerData = { damage: number, energy: number }
+type NeedleData = BasicCardData & { damage: number }
 
-export const anger = 'anger'
-export const Anger: () => Card<AngerData> = defineCard(anger, playAnger, {
+export const needle = 'needle'
+export const Needle: () => Card<NeedleData> = defineCard(needle, playNeedle, {
     energy: 0,
     damage: 4,
 }, {
     energyTemplate: '#{energy}',
     color: '#ee4422',
-    titleTemplate: 'Anger',
-    textTemplate: 'Deal #{damage} damage. Add a copy of Anger to the discard pile. #[Volatile].',
+    titleTemplate: 'Needle',
+    textTemplate: 'Deal #{damage} damage. Add a copy of Needle to the discard pile. #[Volatile].',
 }, [Volatile, 1])
 
-function* playAnger(self, { resolver, actors }: PlayArgs): Generator<any, AngerData, any>{
-    let target: Monster = yield queryEnemy(any => true)
+function* playNeedle(self, { resolver, actors, energy }: PlayArgs): Generator<any, NeedleData, any>{
+    let target: Monster = yield queryEnemy()
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,
@@ -34,5 +34,5 @@ function* playAnger(self, { resolver, actors }: PlayArgs): Generator<any, AngerD
         ),
     )
     yield resolver.processEvent(new AddToDiscardPile(self, self.clone(), {}))
-    return { damage: action.data.damage, energy: self.data.energy }
+    return { damage: action.data.damage, energy }
 }

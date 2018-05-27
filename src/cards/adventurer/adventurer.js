@@ -20,7 +20,6 @@ import { Snapshot } from "../../pragmas/snapshot";
 
 // finesse
 // flash of steel
-
 // enlightenment
 // apotheosis
 

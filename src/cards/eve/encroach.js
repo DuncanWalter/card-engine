@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { BindEffect } from '../../events/bindEffect'
 import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
@@ -10,38 +10,38 @@ import { EndTurn } from '../../events/turnActions';
 import { Listener } from '../../events/listener';
 
 
-type RageData = { rage: number, energy: number }
+type EncroachData = BasicCardData & { rage: number }
 
-export const rage = 'rage'
-export const Rage: () => Card<RageData> = defineCard(rage, playRage, {
+export const encroach = 'encroach'
+export const Encroach: () => Card<EncroachData> = defineCard(encroach, playEncroach, {
     rage: 3,
     energy: 0,
 }, {
     energyTemplate: '#{energy}',
     color: '#88aa33',
-    titleTemplate: 'Rage',
+    titleTemplate: 'Encroach',
     textTemplate: 'Gain #{block} block whenever you deal damage until the end of your turn.',
 })
 
-function* playRage(self: Card<RageData>, { actors, resolver, game }: PlayArgs): Generator<any, RageData, any> {
+function* playEncroach(self: Card<EncroachData>, { actors, resolver, game, energy }: PlayArgs): Generator<any, EncroachData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
             game.player,
             {
-                Effect: RageEffect,
+                Effect: EncroachEffect,
                 stacks: self.data.rage,
             },
         ),
     )
-    return { rage: action.data.stacks, energy: self.data.energy }
+    return { rage: action.data.stacks, energy, }
 }
 
-const RageEffect = defineEffect('rage', {
+const EncroachEffect = defineEffect(encroach, {
     description: 'Upon dealing damage, gain #{stacks} block.',
     innerColor: "#aacc44",
     outerColor: "#889911",
-    name: "Rage",
+    name: "Encroach",
     sides: 6,
 }, {
     stacked: true,

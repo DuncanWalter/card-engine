@@ -1,10 +1,10 @@
-import { defineCard, Card, PlayArgs, CardState } from './../card'
+import { defineCard, Card, PlayArgs, CardState, BasicCardData } from './../card'
 import { Damage, targeted } from './../../events/damage'
 import { blockable } from '../../events/damage'
 import { queryEnemy } from './../utils'
 import { Creature } from '../../creatures/creature'
 
-type StrikeData = { damage: number, energy: number }
+type StrikeData = BasicCardData & { damage: number }
 
 export const Strike: () => Card<StrikeData> = defineCard('Strike', playStrike, {
     energy: 1,
@@ -16,8 +16,8 @@ export const Strike: () => Card<StrikeData> = defineCard('Strike', playStrike, {
     textTemplate: 'Deal #{damage} damage.',
 })
 
-function* playStrike(self: Card<StrikeData>, { resolver, actors }: PlayArgs) {
-    let target = yield queryEnemy(any => true)
+function* playStrike(self: Card<StrikeData>, { resolver, actors, energy }: PlayArgs) {
+    let target = yield queryEnemy()
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(
             new Damage(
@@ -30,7 +30,7 @@ function* playStrike(self: Card<StrikeData>, { resolver, actors }: PlayArgs) {
                 blockable,
             ),
         )
-        return { damage: action.data.damage, energy: self.data.energy }
+        return { damage: action.data.damage, energy }
     } else {
         return self.data
     }

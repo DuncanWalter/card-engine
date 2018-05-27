@@ -1,11 +1,11 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { BindEffect } from '../../events/bindEffect'
 import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { Dexterity } from '../../effects/dexterity'
 import { Singleton } from '../../effects/singleton'
 
-type FootworkData = { dexterity: number, energy: number }
+type FootworkData = BasicCardData & { dexterity: number }
 
 export const footwork = 'footwork'
 export const Footwork: () => Card<FootworkData> = defineCard(footwork, playFootwork, {
@@ -18,7 +18,7 @@ export const Footwork: () => Card<FootworkData> = defineCard(footwork, playFootw
     textTemplate: 'Gain #{dexterity} dexterity. #[Singleton]',
 }, [Singleton, 1])
 
-function* playFootwork(self: Card<FootworkData>, { actors, game, resolver }: PlayArgs): Generator<any, FootworkData, any> {
+function* playFootwork(self: Card<FootworkData>, { actors, game, resolver, energy }: PlayArgs): Generator<any, FootworkData, any> {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
@@ -30,5 +30,5 @@ function* playFootwork(self: Card<FootworkData>, { actors, game, resolver }: Pla
             Dexterity,
         ),
     )
-    return { dexterity: action.data.stacks, energy: self.data.energy }
+    return { dexterity: action.data.stacks, energy, playable: true }
 }

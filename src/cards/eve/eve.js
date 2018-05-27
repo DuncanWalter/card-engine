@@ -1,19 +1,19 @@
 import { CardLibrary } from "../cardLibrary"
 import { CardPool } from "../cardPool"
 import { PalmStrike } from "./palmStrike";
-import { Anger } from "./anger";
+import { Needle } from "./needle";
 import { FightersStance } from "./fightersStance";
-import { Rage } from "./rage";
 import { DoubleStrike } from "./doubleStrike";
 import { Adrenaline } from "./adreneline";
 import { FlashOfSteel } from "./flashOfSteel"
 import { Rampage } from "./rampage";
 import { TripleStrike } from "./tripleStrike";
 import { Flex } from "./flex";
-import { LegReap } from "./LegReap";
+// import { LegReap } from "./LegReap";
 import { CheapShot } from "./cheapShot";
 import { Character, F, D, C, B, A } from "../../character";
 import { Strike } from "../adventurer/strike";
+import { Encroach } from "./encroach";
 
 // motion blur
 // momentum
@@ -46,15 +46,15 @@ let eve = new Character('Eve', true, '#7a190b', 'Espionage software designed by 
 
 eve.addCard(F, Strike)
 
-eve.addCard(D, Anger)
 eve.addCard(D, CheapShot)
 eve.addCard(D, FightersStance)
+eve.addCard(D, Needle)
 eve.addCard(D, PalmStrike)
 
 eve.addCard(C, DoubleStrike)
+eve.addCard(C, Encroach)
 eve.addCard(C, Flex)
-eve.addCard(C, LegReap)
-eve.addCard(C, Rage)
+// eve.addCard(C, LegReap)
 eve.addCard(C, Rampage)
 
 eve.addCard(B, Adrenaline)

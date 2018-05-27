@@ -1,10 +1,10 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted } from './../../events/damage'
 import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from './../utils'
 
-type DoubleStrikeData = { damage: number, energy: number }
+type DoubleStrikeData = BasicCardData & { damage: number }
 
 export const doubleStrike = 'doubleStrike'
 export const DoubleStrike: () => Card<DoubleStrikeData> = defineCard(doubleStrike, playDoubleStrike, {
@@ -17,33 +17,30 @@ export const DoubleStrike: () => Card<DoubleStrikeData> = defineCard(doubleStrik
     textTemplate: 'Deal #{damage} damage twice.',
 })
 
-function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors }: PlayArgs): Generator<any, DoubleStrikeData, any>{
-    let target = yield queryEnemy(any => true)
-    if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processEvent(
-            new Damage(
-                actors,
-                target,
-                {
-                    damage: self.data.damage,
-                },
-                targeted, 
-                blockable,
-            ),
-        )
-        yield resolver.processEvent(
-            new Damage(
-                actors,
-                target,
-                {
-                    damage: self.data.damage,
-                },
-                targeted, 
-                blockable,
-            ),
-        )
-        return { damage: action.data.damage, energy: self.data.energy }
-    } else {
-        return self.data
-    }
+function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors, energy }: PlayArgs): Generator<any, DoubleStrikeData, any>{
+    let target = yield queryEnemy()
+    const action: Damage = yield resolver.processEvent(
+        new Damage(
+            actors,
+            target,
+            {
+                damage: self.data.damage,
+            },
+            targeted, 
+            blockable,
+        ),
+    )
+    yield resolver.processEvent(
+        new Damage(
+            actors,
+            target,
+            {
+                damage: self.data.damage,
+            },
+            targeted, 
+            blockable,
+        ),
+    )
+    return { damage: action.data.damage, energy }
+   
 }

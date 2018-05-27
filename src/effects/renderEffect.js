@@ -26,7 +26,7 @@ const Body = styled.div`
     };
 `
 
-type Props = { effect: Effect }
+type Props = { effect: Effect<any> }
 export const renderEffect = ({ effect }: Props) => {
     return effect.appearance? <Wrapper appearance={ effect.appearance }>
         <Body appearance={ effect.appearance }>
@@ -48,7 +48,7 @@ export const renderEffect = ({ effect }: Props) => {
 
 
 
-function renderData(effect: Effect){
+function renderData(effect: Effect<any>){
 
     let a = effect.appearance
     if(!a)return

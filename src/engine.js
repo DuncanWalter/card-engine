@@ -18,6 +18,8 @@ import './cards/adventurer/adventurer'
 import './cards/eve/eve'
 import './cards/prometheus/prometheus'
 import './cards/jekyll/jekyll'
+import './cards/argus/argus'
+import './cards/anansi/anansi'
 import { Game, emit, liftState } from './game/battle/battleState';
 import { AcquirePragma } from './events/acquirePragma';
 
@@ -77,7 +79,7 @@ export const engine = new Module('engine', ({ global, next }) => {
         navigateTo('/game/cardDraft')
     }, (self, level, seed) => {
         let cards = CardLibrary.sample(Math.floor(3 + level / 6.5), {
-            Eve: 1.0,
+            ['Eve']: 1.0,
         }, {
             F: 0.5,
             D: 0.9,

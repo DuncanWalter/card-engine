@@ -33,19 +33,19 @@ interface Appearance {
     rotation?: number,
 }
 
-export interface EffectDefinition {
+export interface EffectDefinition<O:Card<> | Creature<>> {
     stackBehavior: StackBehavior,
     appearance: Appearance | void | null,
-    listenerFactory: (owner: Card<> | Creature<>) => ListenerGroup,
-    effectFactory: { type: ListenerType<any> } & (stacks: number) => Effect,
+    listenerFactory: (owner: O) => ListenerGroup,
+    effectFactory: { type: ListenerType<any> } & (stacks: number) => Effect<any>,
 }
 
-const definedEffects: Map<string, EffectDefinition> = new Map()
+const definedEffects: Map<string, EffectDefinition<any>> = new Map()
 
 export const tick = resolver.registerListenerType('tick', [{ type: startTurn }, { type: endTurn }], [])
 
 
-export class Effect extends Entity<EffectState> {
+export class Effect<O:Creature<>|Card<>> extends Entity<EffectState> {
 
     get type(): string { 
         return this.inner.type 
@@ -55,7 +55,7 @@ export class Effect extends Entity<EffectState> {
         return this.inner.stacks 
     }
 
-    get def(): EffectDefinition {
+    get def(): EffectDefinition<O> {
         const def = definedEffects.get(this.inner.type)
         if(def){
             return def
@@ -73,7 +73,7 @@ export class Effect extends Entity<EffectState> {
         return this.def.appearance
     }
 
-    asListener(owner: Card<>|Creature<>): ListenerGroup {
+    asListener(owner: O): ListenerGroup {
         const def = definedEffects.get(this.inner.type)
         let self = this
         if(def){
@@ -105,16 +105,16 @@ export class Effect extends Entity<EffectState> {
 }
 
 
-export function defineEffect<T:EventContent>(
+export function defineEffect<T:EventContent, O:Creature<>|Card<>>(
     name: string,
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
-    header: (Creature<>|Card<>) => Header<T>,
-    consumer: (Creature<>|Card<>, ListenerType<T>) => Consumer<T>,
+    header: (owner: O) => Header<T>,
+    consumer: (owner: O, type: ListenerType<T>) => Consumer<T>,
     parents?: Tag[],
     children?: Tag[],
 ){
-    const listener: ListenerDefinition<T, Creature<>|Card<> > = defineListener(name, header, consumer, parents, children)
+    const listener: ListenerDefinition<T, O> = defineListener(name, header, consumer, parents, children)
 
     const factory = function(stacks: number){
         return new Effect(createEntity(Effect, {
@@ -139,12 +139,12 @@ export function defineEffect<T:EventContent>(
     return factory
 }
 
-export function defineCompoundEffect(
+export function defineCompoundEffect<O:Creature<>|Card<>>(
     type: string, 
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
-    ...listeners: ListenerDefinition<any, Creature<>|Card<> >[]
-): (stacks: number) => Effect {
+    ...listeners: ListenerDefinition<any, O>[]
+): (stacks: number) => Effect<O> {
 
     const factory = function(stacks){
         return new Effect(createEntity(Effect, {

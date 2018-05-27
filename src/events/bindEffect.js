@@ -7,7 +7,7 @@ import { ConsumerArgs } from "./listener"
 
 type Type = {
     data: {
-        Effect: (stacks: number) => Effect,
+        Effect: (stacks: number) => Effect<any>,
         stacks: number,
     },
     subject: Card<> | Creature<>,
@@ -17,7 +17,7 @@ export const BindEffect = defineEvent('bindEffect', function*({ subject, data }:
     
     let type = (new data.Effect(1)).type
     let current = [...subject.effects].filter(effect => effect.type == type)
-    let effect: Effect = current[0]
+    let effect: Effect<any> = current[0]
     // TODO: verify that floor is symmetric
     let stacks = Math.floor(data.stacks)
 
@@ -29,7 +29,7 @@ export const BindEffect = defineEvent('bindEffect', function*({ subject, data }:
             subject.effects.remove(effect)
         }
     } else {
-        let effect: Effect = new data.Effect(stacks)
+        let effect: Effect<any> = new data.Effect(stacks)
         subject.effects.add(effect)
     }
 

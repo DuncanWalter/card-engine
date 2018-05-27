@@ -48,7 +48,7 @@ const ToolTipWrapper = Col.extend`
     }
 `
 
-export const ToolTip = ({ effect }: { effect: Effect }) => {
+export const ToolTip = ({ effect }: { effect: Effect<any> }) => {
     let appearance = effect.appearance
     return appearance? <Block>
         <ToolTipWrapper>

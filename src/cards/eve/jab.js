@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted } from './../../events/damage'
 import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
@@ -6,7 +6,7 @@ import { queryEnemy } from './../utils'
 import { Discard } from '../../events/discard';
 import { Singleton } from '../../effects/singleton';
 
-type JabData = { damage: number, energy: number }
+type JabData = BasicCardData & { damage: number }
 
 export const jab = 'jab'
 export const Jab: () => Card<JabData> = defineCard(jab, playJab, {
@@ -19,22 +19,18 @@ export const Jab: () => Card<JabData> = defineCard(jab, playJab, {
     textTemplate: 'Deal #{damage} damage. #[Singleton].',
 }, [Singleton, 1])
 
-function* playJab(self: Card<JabData>, { resolver, actors }: PlayArgs): Generator<any, JabData, any>{
-    let target = yield queryEnemy(any => true)
-    if(target && target instanceof Creature){
-        const action: Damage = yield resolver.processEvent(
-            new Damage(
-                actors,
-                target,
-                {
-                    damage: self.data.damage,
-                },
-                targeted, 
-                blockable,
-            ),
-        )
-        return { damage: action.data.damage, energy: self.data.energy }
-    } else {
-        return self.data
-    }
+function* playJab(self: Card<JabData>, { resolver, actors, energy }: PlayArgs): Generator<any, JabData, any>{
+    let target = yield queryEnemy()
+    const action: Damage = yield resolver.processEvent(
+        new Damage(
+            actors,
+            target,
+            {
+                damage: self.data.damage,
+            },
+            targeted, 
+            blockable,
+        ),
+    )
+    return { damage: action.data.damage, energy }
 }

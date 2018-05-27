@@ -8,6 +8,21 @@ import { stream, withState, dispatch } from '../../state';
 import { withAnimation, overStream } from '../../components/withAnimation';
 import { submitTarget, setFocus, unsetFocus } from '../combatState';
 import { Player } from '../../creatures/player';
+import { queryHand } from '../../cards/utils';
+import { PlayCard } from '../../events/playCard';
+
+(function playLoop(){
+    queryHand().then(card => {
+        console.log('receiving a card from hand')
+        let game = resolver.state.getGame()
+        if(!resolver.processing){
+            resolver.enqueueEvents(new PlayCard(game.player, card, {
+                from: game.hand,
+            }))
+        }
+        playLoop()
+    })
+})()
 
 export const Battle = withState(({ state }) => {
 
@@ -18,7 +33,7 @@ export const Battle = withState(({ state }) => {
         <Row style={{ flex: 3 }}>
             <Shim/>
             {[...game.allies, game.player].map(c => <div 
-                onClick={ click => dispatch(submitTarget('monster', c.id)) }
+                onClick={ click => dispatch(submitTarget(c.id)) }
                 onMouseEnter={ event => dispatch(setFocus(c)) }
                 onMouseLeave={ event => dispatch(unsetFocus(c)) }
             >
@@ -26,7 +41,7 @@ export const Battle = withState(({ state }) => {
             </div>)}
             <Shim/>
             {[...game.enemies].map(c => <div 
-                onClick={ click => dispatch(submitTarget('monster', c.id)) }
+                onClick={ click => dispatch(submitTarget(c.id)) }
                 onMouseEnter={ event => dispatch(setFocus(c)) }
                 onMouseLeave={ event => dispatch(unsetFocus(c)) }
             >

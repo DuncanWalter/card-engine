@@ -8,6 +8,7 @@ import { dispatch, withState, stream } from '../../state'
 import { resolver } from '../../events/eventResolver';
 import { PlayCard } from '../../events/playCard';
 import { Shim } from '../../utility';
+import { submitTarget } from '../combatState';
 
 const sty = {
     hand: {
@@ -25,9 +26,6 @@ const CardSlot = ({ slot }: CardSlotProps) => {
     const card = new CardObject(slot.card)
     const game = resolver.state.getGame()
 
-    function onClick(click){
-        resolver.enqueueEvents(new PlayCard(game.player, card, { from: game.hand }))
-    }
     return <Transform 
         x={ slot.pos.x } 
         y={ isFocus? -220: slot.pos.y } 
@@ -36,7 +34,7 @@ const CardSlot = ({ slot }: CardSlotProps) => {
     >
         <CenterPoint content={
             <div
-                onClick={ onClick }
+                onClick={ click => dispatch(submitTarget(card.id)) }
                 onMouseEnter={ click => dispatch(setFocus(card)) }
                 onMouseLeave={ click => dispatch(unsetFocus(card)) }
             >

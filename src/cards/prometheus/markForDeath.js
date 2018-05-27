@@ -1,4 +1,4 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted } from './../../events/damage'
 import { blockable } from '../../events/damage'
 import { Creature } from '../../creatures/creature'
@@ -6,7 +6,7 @@ import { queryEnemy } from './../utils'
 import { BindEffect } from '../../events/bindEffect';
 import { Vulnerability } from '../../effects/vulnerability';
 
-type MarkForDeathData = { taunt: number, energy: number, vulnerability: number }
+type MarkForDeathData = BasicCardData & { taunt: number, vulnerability: number }
 
 export const markForDeath = 'markForDeath'
 export const MarkForDeath: () => Card<MarkForDeathData> = defineCard(markForDeath, playMarkForDeath, {
@@ -20,9 +20,9 @@ export const MarkForDeath: () => Card<MarkForDeathData> = defineCard(markForDeat
     textTemplate: 'Apply #{taunt} #[taunt] and #{vulnerability} #[vulnerability].',
 })
 
-function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors }: PlayArgs): Generator<any, MarkForDeathData, any>{
+function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors, energy }: PlayArgs): Generator<any, MarkForDeathData, any>{
     // TODO: query creature
-    let target = yield queryEnemy(any => true)
+    let target = yield queryEnemy()
     // yield resolver.processEvent(new BindEffect(actors, target, {
     //     Effect: Taunt,
     //     stacks: self.data.taunt,
@@ -34,6 +34,6 @@ function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors }: P
     return {
         taunt: self.data.taunt, 
         vulnerability: self.data.vulnerability, 
-        energy: self.data.energy,
+        energy,
     }
 }

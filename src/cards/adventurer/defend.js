@@ -1,14 +1,15 @@
-import { defineCard, Card, PlayArgs } from './../card'
+import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { BindEffect } from '../../events/bindEffect'
 import { Block } from '../../effects/block'
 import { Creature } from '../../creatures/creature'
 import { targeted } from '../../events/damage';
 
-type DefendData = { block: number, energy: number }
+type DefendData = BasicCardData & { block: number }
 
 export const Defend: () => Card<DefendData> = defineCard('Defend', playDefend, {
     block: 5,
     energy: 1,
+    playable: true,
 }, {
     energyTemplate: '#{energy}',
     color: '#223399',
@@ -16,7 +17,7 @@ export const Defend: () => Card<DefendData> = defineCard('Defend', playDefend, {
     textTemplate: 'Gain #{block} block.',
 })
 
-function* playDefend(self: Card<DefendData>, { actors, game, resolver }: PlayArgs) {
+function* playDefend(self: Card<DefendData>, { actors, game, resolver, energy }: PlayArgs) {
     const action: BindEffect = yield resolver.processEvent(
         new BindEffect(
             actors, 
@@ -29,5 +30,9 @@ function* playDefend(self: Card<DefendData>, { actors, game, resolver }: PlayArg
             targeted,
         ),
     )
-    return { block: action.data.stacks, energy: self.data.energy }
+    return { 
+        block: action.data.stacks,
+        playable: true,
+        energy,
+    }
 }

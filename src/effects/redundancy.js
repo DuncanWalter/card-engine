@@ -6,6 +6,7 @@ import { BindEffect } from '../events/bindEffect'
 import { Listener, ConsumerArgs } from '../events/listener'
 import { Block } from "./block";
 import { defineListener } from "../events/defineListener";
+import { Creature } from "../creatures/creature";
 
 const redundancy = 'redundancy'
 
@@ -30,7 +31,7 @@ export const RedundancyRD = defineListener('redundancyReduceDamage', owner => ({
     subjects: [owner],
     tags: [blockable],
     type: Damage,
-}), (owner, type) => function*({ data, resolver, actors, cancel }){
+}), (owner, type) => function*({ data, resolver, actors, cancel }: ConsumerArgs<> ){
     if(typeof data.damage == 'number'){
         // TODO: do this properly
         data.damage = Math.min(reducedDamage(data.damage, owner.stacksOf(redundancy)), data.damage)
@@ -43,7 +44,7 @@ export const RedundancySD = defineListener('redundancyScheduleDrain', owner => (
     subjects: [owner],
     tags: [blockable],
     type: Damage,
-}), owner => function*({ data, resolver, actors, cancel }: ConsumerArgs<>){
+}), (owner: Creature<>) => function*({ data, resolver, actors, cancel }: ConsumerArgs<>){
     yield resolver.processEvent(new BindEffect(actors, owner, {
         Effect: RedundancyDrain,
         stacks: reducedDamage(data.damage, owner.health),
@@ -69,6 +70,5 @@ export const Redundancy = defineCompoundEffect(redundancy, {
 // My favorite armor equation- works for all positive armor and damage,
 // high damage attacks are more efficient, etc.
 function reducedDamage(damage: number, armor: number): number {
-    console.log('ARMOR EQ!', damage, armor)
     return Math.max(1, Math.floor(damage * damage / (damage + armor)))
 }

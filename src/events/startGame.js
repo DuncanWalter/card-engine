@@ -43,10 +43,10 @@ export const StartGame = defineEvent('startGame', function*({ resolver, game, da
     game.pragmaSequence = new PragmaGroup([...['Adventurer', ...data.character].reduce((a, c) => {
         const character = characters.get(c)
         if(character){
-            character.pragmaPool.forEach(P => a.add(new P().id))
+            character.pragmaPool.forEach(P => a.add(P))
         }
         return a
-    }, new Set())], seed.last())
+    }, new Set())].map(P => new P().id), seed.last())
     
     new PragmaGroup([new LookAhead().id], )
 
