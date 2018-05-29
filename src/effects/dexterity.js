@@ -5,7 +5,7 @@ import { BindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
 import { ConsumerArgs, Listener } from '../events/listener';
 
-export const Dexterity = defineEffect('dexterity', {
+export const Dexterity: * = defineEffect('dexterity', {
     name: 'Dexterity',
     outerColor: '#22aa88',
     innerColor: '#115544',
@@ -23,13 +23,7 @@ export const Dexterity = defineEffect('dexterity', {
     type: BindEffect,
     tags: [targeted],
 }), (owner, type) => function*({ data, actors }){
-    // TODO: fix this to not boost effect blocks
-    if(true){
-        console.log('fix dexterity')
-        if(typeof data.stacks == 'number'){
-            if(data.stacks >= 0){
-                data.stacks += owner.stacksOf(type)
-            }
-        }
+    if(data.stacks >= 0){
+        data.stacks += owner.stacksOf(type)
     }
 }, [], [BindEffect])

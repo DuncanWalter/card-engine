@@ -1,7 +1,7 @@
 import { CardLibrary } from "../cardLibrary"
 import { CardPool } from "../cardPool"
-import { Strike } from "./strike"
-import { Defend } from "./defend"
+import { Strike, StrikeL, StrikeR } from "./strike"
+import { Defend, DefendL, DefendR } from "./defend"
 import { Bash } from "./bash"
 import { Acid } from "./acid"
 import { Cleave } from "./cleave"
@@ -26,8 +26,8 @@ import { Snapshot } from "../../pragmas/snapshot";
 
 let adventurer = new Character('Adventurer', false, '#6f6f76', 'Basic set of cards available to all adventurers.')
 
-adventurer.addCard(F, Defend)
-adventurer.addCard(F, Strike)
+adventurer.addCard(F, Defend, DefendL, DefendR)
+adventurer.addCard(F, Strike, StrikeL, StrikeR)
 
 adventurer.addCard(D, Bash)
 adventurer.addCard(D, Cleave)

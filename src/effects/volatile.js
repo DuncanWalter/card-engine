@@ -10,7 +10,7 @@ import { EndTurn } from '../events/turnActions'
 import { ExhaustCard } from '../events/exhaustCard'
 import { Card } from "../cards/card";
 
-export const Volatile = defineEffect('volatile', {
+export const Volatile: * = defineEffect('volatile', {
     name: 'Volatile',
     innerColor: '#343467',
     outerColor: '#56569a',

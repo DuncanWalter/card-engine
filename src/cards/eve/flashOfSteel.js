@@ -12,10 +12,10 @@ export const FlashOfSteel: () => Card<FlashOfSteelData> = defineCard(flashOfStee
     energy: 0,
     damage: 4,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#cccc44',
-    titleTemplate: 'Flash Of Steel',
-    textTemplate: 'Deal #{damage} damage. Draw a card.',
+    title: 'Flash Of Steel',
+    text: 'Deal #{damage} damage. Draw a card.',
 })
 
 function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors, game, energy }: PlayArgs): Generator<any, FlashOfSteelData, any>{

@@ -64,7 +64,7 @@ const runDevWindow = createConfig => options => {
     }, (err, stat) => {
         if(window && !err){
             console.log('refreshing')
-            window.loadURL(`file://${__dirname}/../dist/index.bundle.html`);
+            window.loadURL(`file:///${__dirname}/../dist/index.bundle.html`);
         }
     })
 
@@ -75,7 +75,7 @@ const runProdBuild = createConfig => options => {
     webpack(createConfig(options), () => {
         console.log("> Completed production build!");
         if(window){
-            window.loadURL(`file://${__dirname}/../dist/index.bundle.html`);
+            window.loadURL(`file:///${__dirname}/../dist/index.bundle.html`);
         }
     });
 

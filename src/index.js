@@ -22,12 +22,12 @@ const Anchor = styled.div`
     background-color: black;
     display: flex;
     font-size: 1.6rem;
-    text-shadow:
+    /* text-shadow:
         -1px -1px 3px #222,  
         1px -1px 3px #222,
         -1px 1px 3px #222,
-        1px 1px 3px #222;
-    color: #eeeeee;
+        1px 1px 3px #222; */
+    color: rgba(240, 240, 240, 0.94);
     font-family: Earth;
 `
 

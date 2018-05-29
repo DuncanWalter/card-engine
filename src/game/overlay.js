@@ -1,0 +1,5 @@
+
+// registerOverlay(name: string)
+
+
+

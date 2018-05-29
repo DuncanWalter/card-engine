@@ -6,7 +6,7 @@ import type { ID } from '../utils/entity';
 import { PlayCard } from '../events/playCard'
 import { synchronize } from '../utils/async'
 import { resolver } from '../events/eventResolver'
-import { Effect, EffectState } from '../effects/effect'
+import { Effect, EffectState, type EffectType } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
 import { Entity, createEntity } from '../utils/entity';
@@ -31,9 +31,8 @@ export interface CardState<+Data:BasicCardData=BasicCardData> {
     type: string,
     appearance: {
         color: string,
-        textTemplate: string,
-        titleTemplate: string,
-        energyTemplate: string,
+        text: string,
+        title: string,
     },
     +data: Data,
     effects: ID<EffectState>[],
@@ -91,7 +90,7 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
         text: string,
         color: string,
         title: string,
-        energy: string,
+        energy: string | number | void,
     }{
 
         let meta: Data = this.data
@@ -112,9 +111,9 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
         let ctx = createInterpolationContext(this.data, meta, {})
 
         return {
-            energy: interpolate(this.appearance.energyTemplate, ctx),
-            title: interpolate(this.appearance.titleTemplate, ctx),
-            text: interpolate(this.appearance.textTemplate, ctx),
+            energy: meta.energy,
+            title: interpolate(this.appearance.title, ctx),
+            text: interpolate(this.appearance.text, ctx),
             color: this.appearance.color,
         }
     }
@@ -133,10 +132,14 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
         return new Card(clone.id)
     }
 
-    stacksOf(effectType: string | ListenerType<any>): number {
-        let effects: EffectState[] = [...this.effects].filter(effect =>
-            effect.type == effectType
-        )
+    stacksOf(effectType: EffectType | { +type: EffectType }): number {
+        let effects: EffectState[] = [...this.effects].filter(effect => {
+            if(effectType instanceof Object){
+                return effect.type === effectType.type
+            } else {
+                return effect.type === effectType
+            }
+        })
         if(effects.length === 0){
             return 0
         } else {
@@ -151,9 +154,8 @@ export function defineCard<D:BasicCardData>(
     data: $ReadOnly<D>,
     appearance: {
         color: string,
-        textTemplate: string,
-        titleTemplate: string,
-        energyTemplate: string,
+        text: string,
+        title: string,
     },
     ...effects: [(stacks: number) => Effect<Card<>>, number][]
 ): () => Card<D> {

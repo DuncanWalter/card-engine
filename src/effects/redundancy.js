@@ -10,7 +10,7 @@ import { Creature } from "../creatures/creature";
 
 const redundancy = 'redundancy'
 
-const RedundancyDrain = defineEffect('redundancyDrain', null, {
+const RedundancyDrain: * = defineEffect('redundancyDrain', null, {
     stacked: true,  
     delta: x => 0,
     min: 1,
@@ -27,7 +27,7 @@ const RedundancyDrain = defineEffect('redundancyDrain', null, {
 }, [], [BindEffect])
 
 
-export const RedundancyRD = defineListener('redundancyReduceDamage', owner => ({
+export const RedundancyRD: * = defineListener('redundancyReduceDamage', owner => ({
     subjects: [owner],
     tags: [blockable],
     type: Damage,
@@ -40,7 +40,7 @@ export const RedundancyRD = defineListener('redundancyReduceDamage', owner => ({
     }
 }, [Vulnerability], [Block])
 
-export const RedundancySD = defineListener('redundancyScheduleDrain', owner => ({
+export const RedundancySD: * = defineListener('redundancyScheduleDrain', owner => ({
     subjects: [owner],
     tags: [blockable],
     type: Damage,
@@ -51,7 +51,7 @@ export const RedundancySD = defineListener('redundancyScheduleDrain', owner => (
     }))
 }, [Damage])
 
-export const Redundancy = defineCompoundEffect(redundancy, {
+export const Redundancy: * = defineCompoundEffect(redundancy, {
     name: 'Redundancy',
     innerColor: '#77bb22',
     outerColor: '#225511',

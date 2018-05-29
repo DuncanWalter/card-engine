@@ -9,12 +9,10 @@ type CleaveData = BasicCardData & { damage: number }
 export const Cleave: () => Card<CleaveData> = defineCard('Cleave', playCleave, {
     energy: 1,
     damage: 7,
-    playable: true,
-}, {
-    energyTemplate: '#{energy}',
+}, { 
     color: '#ee5511',
-    titleTemplate: 'Cleave',
-    textTemplate: 'Deal #{damage} damage to each enemy.',
+    title: 'Cleave',
+    text: 'Deal #{damage} damage to each enemy.',
 })
 
 function* playCleave(self: Card<CleaveData>, { resolver, game, actors, energy }: PlayArgs){

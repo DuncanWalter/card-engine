@@ -12,10 +12,9 @@ import { queryHand } from '../../cards/utils';
 import { PlayCard } from '../../events/playCard';
 
 (function playLoop(){
-    queryHand().then(card => {
-        console.log('receiving a card from hand')
+    queryHand(true).then(card => {
         let game = resolver.state.getGame()
-        if(!resolver.processing){
+        if(!resolver.processing && card){
             resolver.enqueueEvents(new PlayCard(game.player, card, {
                 from: game.hand,
             }))

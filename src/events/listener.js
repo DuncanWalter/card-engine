@@ -14,11 +14,11 @@ export interface EventContent {
 export opaque type ListenerType<T:EventContent>: string = string
 
 export type Header<T:EventContent> = {
-    actors?: Entity<any>[],
-    subjects?: Subject<T>[],
-    tags?: Tag[],
-    filter?: (event: Event<T>) => boolean,
-    type?: { type: ListenerType<any> } | ListenerType<any> | string, // TODO: Event Type
+    +actors?: Entity<any>[],
+    +subjects?: Subject<T>[],
+    +tags?: Tag[],
+    +filter?: (event: Event<T>) => boolean,
+    +type?: { +type: ListenerType<any> } | ListenerType<any> | string, // TODO: Event Type
 }
 
 export type Subject<T> = $PropertyType<T, 'subject'>

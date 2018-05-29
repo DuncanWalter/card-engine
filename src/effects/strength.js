@@ -4,7 +4,7 @@ import { blockable, Damage } from '../events/damage';
 import { Latency } from "./latency";
 import { Card } from "../cards/card";
 
-export const Strength = defineEffect('strength', {
+export const Strength: * = defineEffect('strength', {
     name: 'Strength',
     innerColor: '#ee4444',
     outerColor: '#aa3333',

@@ -20,6 +20,6 @@ import { Character } from "../../character";
 // get rid of vulnerability and latency, gain 2 ward, singleton
 
 
-const argus = new Character('Argus', true, '#3e4484', 'Government sponsored security software.')
+const argus = new Character('Argus', true, '#e8880b', 'Government sponsored security software.')
 
 CardLibrary.register(argus)

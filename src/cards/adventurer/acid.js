@@ -16,10 +16,10 @@ export const Acid: () => Card<AcidData> = defineCard(acid, playAcid, {
     energy: 1,
     playable: true,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#eeff33',
-    titleTemplate: 'Acid',
-    textTemplate: 'Deal #{damage} damage. Convert blocked damage to poison.',
+    title: 'Acid',
+    text: 'Deal #{damage} damage. Convert blocked damage to poison.',
 })
 
 function* playAcid(self: Card<AcidData>, { resolver, actors, energy }: PlayArgs){

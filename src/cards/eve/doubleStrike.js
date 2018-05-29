@@ -10,11 +10,10 @@ export const doubleStrike = 'doubleStrike'
 export const DoubleStrike: () => Card<DoubleStrikeData> = defineCard(doubleStrike, playDoubleStrike, {
     energy: 1,
     damage: 5,
-}, {
-    energyTemplate: '#{energy}',
+}, { 
     color: '#dd4466',
-    titleTemplate: 'Double Strike',
-    textTemplate: 'Deal #{damage} damage twice.',
+    title: 'Double Strike',
+    text: 'Deal #{damage} damage twice.',
 })
 
 function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors, energy }: PlayArgs): Generator<any, DoubleStrikeData, any>{

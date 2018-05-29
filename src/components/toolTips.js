@@ -20,7 +20,6 @@ const ToolTipsStack = styled.div`
     max-height: 700px;
     z-index: 3;
     transition: opacity 0.2s;
-
 `
 
 const ToolTipsWrapper = styled.div`

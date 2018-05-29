@@ -16,10 +16,10 @@ export const daemon = 'daemon'
 export const Daemon: () => Card<DaemonData> = defineCard(daemon, playDaemon, {
     energy: 0,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#aa11aa',
-    titleTemplate: 'Daemon',
-    textTemplate: 'Spawn a Daemon.',
+    title: 'Daemon',
+    text: 'Spawn a Daemon.',
 })
 
 function* playDaemon(self: Card<DaemonData>, { resolver, actors, energy }: PlayArgs): Generator<any, DaemonData, any>{

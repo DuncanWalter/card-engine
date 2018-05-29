@@ -6,7 +6,7 @@ import { Vulnerability } from "./vulnerability";
 import { Card } from "../cards/card";
 import { EndTurn } from '../events/turnActions';
 
-export const Latency = defineEffect('latency', {
+export const Latency: * = defineEffect('latency', {
     name: 'Latency',
     innerColor: '#22ee33',
     outerColor: '#119922',

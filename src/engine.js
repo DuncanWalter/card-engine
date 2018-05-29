@@ -15,11 +15,14 @@ import { activateReward, collectReward } from './paths/pathState'
 import { BindMaxHp } from './events/bindMaxHp'
 
 import './cards/adventurer/adventurer'
+
 import './cards/eve/eve'
 import './cards/prometheus/prometheus'
 import './cards/jekyll/jekyll'
+import './cards/alonzo/alonzo'
 import './cards/argus/argus'
 import './cards/anansi/anansi'
+
 import { Game, emit, liftState } from './game/battle/battleState';
 import { AcquirePragma } from './events/acquirePragma';
 
@@ -92,12 +95,12 @@ export const engine = new Module('engine', ({ global, next }) => {
         return self
     })
 
-    registerReward('Remove a Card.', 3, function* remove(self, state){
+    registerReward('Remove a Card.', 4, function* remove(self, state){
         activateReward(dispatch, self)
         navigateTo('/game/cardRemove')
     })
 
-    registerReward('Acquire a Pragma.', 1, function* acquire(self, state){
+    registerReward('Acquire a Pragma.', 5, function* acquire(self, state){
         collectReward(dispatch, self)
         const game = resolver.state.getGame()
         yield resolver.processEvent(new AcquirePragma(
@@ -105,6 +108,11 @@ export const engine = new Module('engine', ({ global, next }) => {
             game.pragmaSequence.next(), 
             {},
         ))
+    })
+
+    registerReward('Improve a Card', 3, function* improve(self, state){
+        activateReward(dispatch, self)
+        navigateTo('/game/cardImprove')
     })
 
     // registerReward('Gain 1 fame point.', 2, function* remove(self, state): * {

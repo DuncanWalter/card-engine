@@ -13,10 +13,10 @@ export const PalmStrike: () => Card<PalmStrikeData> = defineCard(palmStrike, pla
     damage: 9,
     draw: 1,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#ee4422',
-    titleTemplate: 'Palm Strike',
-    textTemplate: 'Deal #{damage} damage. Draw #{draw} cards.',
+    title: 'Palm Strike',
+    text: 'Deal #{damage} damage. Draw #{draw} cards.',
 })
 
 function* playPalmStrike(self: Card<PalmStrikeData>, { energy, game, resolver, actors }: PlayArgs): Generator<any, PalmStrikeData, any>{

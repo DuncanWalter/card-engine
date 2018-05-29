@@ -13,10 +13,10 @@ export const Jab: () => Card<JabData> = defineCard(jab, playJab, {
     energy: 0,
     damage: 5,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#662222',
-    titleTemplate: 'Jab',
-    textTemplate: 'Deal #{damage} damage. #[Singleton].',
+    title: 'Jab',
+    text: 'Deal #{damage} damage. #[Singleton].',
 }, [Singleton, 1])
 
 function* playJab(self: Card<JabData>, { resolver, actors, energy }: PlayArgs): Generator<any, JabData, any>{

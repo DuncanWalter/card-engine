@@ -11,10 +11,10 @@ export const TripleStrike: () => Card<TripleStrikeData> = defineCard(tripleStrik
     energy: 1,
     damage: 4,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#dd6688',
-    titleTemplate: 'Triple Strike',
-    textTemplate: 'Deal #{damage} damage thrice.',
+    title: 'Triple Strike',
+    text: 'Deal #{damage} damage thrice.',
 })
 
 function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors, energy }: PlayArgs): Generator<any, TripleStrikeData, any>{

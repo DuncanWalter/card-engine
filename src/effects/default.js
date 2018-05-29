@@ -9,7 +9,7 @@ import { AddToDiscardPile } from '../events/addToDiscardPile';
 import { Card } from "../cards/card";
 import { AddToDrawPile } from '../events/addToDrawPile';
 
-export const Default = defineEffect('default', {
+export const Default: * = defineEffect('default', {
     name: 'Default',
     innerColor: '#343434',
     outerColor: '#565656',

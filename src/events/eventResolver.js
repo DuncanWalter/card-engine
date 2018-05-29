@@ -20,7 +20,7 @@ function testListener(event: Event<EventContent>, listener: Listener<any>): stri
     let matched = false
     const h: Header<EventContent> = listener.header
     if(h.type){
-        if((h.type.type || h.type) == event.id){
+        if((h.type.type || h.type) === event.id){
             matched = true
         } else {
             return 'Wrong Event Type'
@@ -197,7 +197,7 @@ function aggregate(ls: ListenerGroup, event: Event<any>, simulating: boolean): L
             return new LL(ls)
         } else {
             if(!simulating){
-                console.log(test, ls.id, ls.header)
+                // console.log(test, ls.id, ls.header)
             }
             return new LL()
         }

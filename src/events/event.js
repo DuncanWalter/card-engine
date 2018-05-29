@@ -12,7 +12,7 @@ export const endTurn: ListenerType<{ subject: Creature<>, data: any }> = any('en
 
 function any(any: any): any { return any }
 
-export type Tag = { type: ListenerType<any> } | string | ListenerType<any>
+export type Tag = { +type: ListenerType<any> } | string | ListenerType<any>
 
 export class Event<T:EventContent> extends Listener<T> {
     id: ListenerType<T>
@@ -28,10 +28,10 @@ export class Event<T:EventContent> extends Listener<T> {
         this.subject = subject
         this.defaultListeners = []
         this.tags = tags.map(tag => {
-            if(typeof tag == 'string'){
-                return tag
-            } else {
+            if(tag instanceof Object){
                 return tag.type
+            } else {
+                return tag.toString()
             }
         })
 
@@ -44,7 +44,7 @@ export class Event<T:EventContent> extends Listener<T> {
     }
 }
 
-export type EventDefinition<T:EventContent> = { type: ListenerType<T> } & (actor: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: Tag[]) => Event<T>
+export type EventDefinition<T:EventContent> = { +type: ListenerType<T> } & (actor: Set<Entity<any>> | Entity<any>, subject: Subject<T>, data: Data<T>, ...tags: Tag[]) => Event<T>
 
 export function defineEvent<T:EventContent>(type: string, consumer: Consumer<T>): EventDefinition<T> {
     

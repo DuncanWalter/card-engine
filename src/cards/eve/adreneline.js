@@ -19,10 +19,10 @@ export const Adrenaline: () => Card<AdrenalineData> = defineCard('Adrenaline', p
     energy: 0,
     reEnergize: 1,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#99aa22',
-    titleTemplate: 'Adrenaline',
-    textTemplate: 'Gain #{reEnergize} energy. Draw #{draw} cards. #[Singleton].',
+    title: 'Adrenaline',
+    text: 'Gain #{reEnergize} energy. Draw #{draw} cards. #[Singleton].',
 }, [Singleton, 1])
 
 function* playAdrenaline(self: Card<AdrenalineData>, { actors, resolver, game, energy }: PlayArgs){

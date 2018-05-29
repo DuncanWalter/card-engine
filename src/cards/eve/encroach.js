@@ -17,10 +17,10 @@ export const Encroach: () => Card<EncroachData> = defineCard(encroach, playEncro
     rage: 3,
     energy: 0,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#88aa33',
-    titleTemplate: 'Encroach',
-    textTemplate: 'Gain #{block} block whenever you deal damage until the end of your turn.',
+    title: 'Encroach',
+    text: 'Gain #{block} block whenever you deal damage until the end of your turn.',
 })
 
 function* playEncroach(self: Card<EncroachData>, { actors, resolver, game, energy }: PlayArgs): Generator<any, EncroachData, any> {
@@ -52,12 +52,9 @@ const EncroachEffect = defineEffect(encroach, {
 }, owner => ({ 
     actors: [owner],
     type: Damage,
-}), (owner, type) => function*({ resolver }): * {
-    let actors = new Set()
-    actors.add(owner)
-    actors.add(self)
+}), (owner, type) => function*({ resolver, actors }): * {
     yield resolver.processEvent(new BindEffect(actors, owner, {
         stacks: owner.stacksOf(type),
         Effect: Block,
-    }, Block, 'rage'))
+    }, Block, type))
 }, [], [Damage])

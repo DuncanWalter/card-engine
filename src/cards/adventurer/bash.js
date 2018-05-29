@@ -14,10 +14,10 @@ export const Bash: () => Card<BashData> = defineCard(bash, playBash, {
     energy: 2,
     playable: true,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#bb4433',
-    titleTemplate: 'Bash',
-    textTemplate: `Deal #{damage} damage. Upon dealing damage: apply 2 #[vulnerability].`,
+    title: 'Bash',
+    text: `Deal #{damage} damage. Upon dealing damage: apply 2 #[vulnerability].`,
 })
 
 

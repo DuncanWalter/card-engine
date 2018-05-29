@@ -8,7 +8,7 @@ import { Listener, ConsumerArgs } from '../events/listener'
 import { EffectGroup } from "./effectGroup"
 import { Creature } from "../creatures/creature";
 
-export const Blockade = defineEffect('blockade', {
+export const Blockade: * = defineEffect('blockade', {
     name: 'Blockade',
     innerColor: '#2233bb',
     outerColor: '#6688ee',

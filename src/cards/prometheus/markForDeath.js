@@ -14,10 +14,10 @@ export const MarkForDeath: () => Card<MarkForDeathData> = defineCard(markForDeat
     vulnerability: 1,
     energy: 0,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#dd2244',
-    titleTemplate: 'MarkForDeath',
-    textTemplate: 'Apply #{taunt} #[taunt] and #{vulnerability} #[vulnerability].',
+    title: 'MarkForDeath',
+    text: 'Apply #{taunt} #[taunt] and #{vulnerability} #[vulnerability].',
 })
 
 function* playMarkForDeath(self: Card<MarkForDeathData>, { resolver, actors, energy }: PlayArgs): Generator<any, MarkForDeathData, any>{

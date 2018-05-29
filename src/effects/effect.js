@@ -11,9 +11,12 @@ import { defineListener } from '../events/defineListener'
 
 // TODO: put setters on stacks
 // TODO: should be name, not type?
+
+export opaque type EffectType: ListenerType<any> = ListenerType<any>
+
 export interface EffectState {
     stacks: number,
-    type: string,
+    type: EffectType,
 }
 
 interface StackBehavior {
@@ -37,7 +40,7 @@ export interface EffectDefinition<O:Card<> | Creature<>> {
     stackBehavior: StackBehavior,
     appearance: Appearance | void | null,
     listenerFactory: (owner: O) => ListenerGroup,
-    effectFactory: { type: ListenerType<any> } & (stacks: number) => Effect<any>,
+    effectFactory: { type: EffectType } & (stacks: number) => Effect<any>,
 }
 
 const definedEffects: Map<string, EffectDefinition<any>> = new Map()
@@ -113,12 +116,12 @@ export function defineEffect<T:EventContent, O:Creature<>|Card<>>(
     consumer: (owner: O, type: ListenerType<T>) => Consumer<T>,
     parents?: Tag[],
     children?: Tag[],
-){
+): ({ +type: ListenerType<any> } & (stacks: number) => Effect<O>) {
     const listener: ListenerDefinition<T, O> = defineListener(name, header, consumer, parents, children)
 
     const factory = function(stacks: number){
         return new Effect(createEntity(Effect, {
-            type: name,
+            type: listener.type,
             stacks,
         }))
     }
@@ -140,26 +143,29 @@ export function defineEffect<T:EventContent, O:Creature<>|Card<>>(
 }
 
 export function defineCompoundEffect<O:Creature<>|Card<>>(
-    type: string, 
+    name: string, 
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
     ...listeners: ListenerDefinition<any, O>[]
-): (stacks: number) => Effect<O> {
+): ({ +type: ListenerType<any> } & (stacks: number) => Effect<O>) {
+
+
+    const type = resolver.registerListenerType(name)
 
     const factory = function(stacks){
         return new Effect(createEntity(Effect, {
-            type: type,
+            type,
             stacks,
         }))
     }
 
-    factory.type = deafListener.id
+    factory.type = type
 
-    if(definedEffects.get(type)){
-        throw Error('ID collision on ' + type)
+    if(definedEffects.get(name)){
+        throw Error('ID collision on ' + name)
     }
 
-    definedEffects.set(type, {
+    definedEffects.set(name, {
         appearance,
         stackBehavior,
         effectFactory: factory,

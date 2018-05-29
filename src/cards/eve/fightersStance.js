@@ -15,10 +15,10 @@ export const FightersStance: () => Card<FightersStanceData> = defineCard(fighter
     energy: 1,
     jabs: 1,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#551199',
-    titleTemplate: 'Fighter\'s Stance',
-    textTemplate: 'Gain #{block} block. Add #{jabs} #[Jab] to your hand.',
+    title: 'Fighter\'s Stance',
+    text: 'Gain #{block} block. Add #{jabs} #[Jab] to your hand.',
 })
 
 function* playFightersStance(self: Card<FightersStanceData>, { actors, game, resolver, energy }: PlayArgs): Generator<any, FightersStanceData, any> {

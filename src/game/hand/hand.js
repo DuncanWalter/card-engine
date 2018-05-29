@@ -42,6 +42,7 @@ const CardSlot = ({ slot }: CardSlotProps) => {
                     glow={ isFocus } 
                     card={ new CardObject(slot.card) } 
                     sets={ game.player.sets }
+                    playEnergy={ game.player.energy }
                 />
             </div>
         }/>

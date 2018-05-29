@@ -3,11 +3,11 @@ import type { Event } from "./event"
 import type { Effect, EffectState } from "../effects/effect"
 import type { Creature } from "../creatures/creature"
 import { defineEvent } from "./event"
-import { ConsumerArgs } from "./listener"
+import { ConsumerArgs, type ListenerType } from "./listener"
 
 type Type = {
     data: {
-        Effect: (stacks: number) => Effect<any>,
+        Effect: { +type: ListenerType<any> } & (stacks: number) => Effect<any>,
         stacks: number,
     },
     subject: Card<> | Creature<>,

@@ -11,6 +11,8 @@ export const C: Rarity = 'C'
 export const D: Rarity = 'D'
 export const F: Rarity = 'F'
 
+type Upgrade = (upgraded: void | 'L' | 'R') => void | Card<any>
+
 export interface Distro {
     A?: number,
     B?: number,
@@ -33,14 +35,16 @@ export class Character {
     members: Map<string, { 
         rarity: Rarity,
         color: string,
+        upgrades: Upgrade[],
     }>
     +description: string
 
-    addCard(rarity: Rarity, CC: () => Card<>){
+    addCard(rarity: Rarity, CC: () => Card<>, ...upgrades: Upgrade[]){
         this.cardPool.add(rarity, CC)
         this.members.set(new CC().type, {
             rarity,
             color: this.color,
+            upgrades,
         })
     }
 

@@ -14,8 +14,8 @@ export const Footwork: () => Card<FootworkData> = defineCard(footwork, playFootw
 }, {
     energyTemplate:'#{energy}',
     color: '#228866',
-    titleTemplate: 'Footwork',
-    textTemplate: 'Gain #{dexterity} dexterity. #[Singleton]',
+    title: 'Footwork',
+    text: 'Gain #{dexterity} dexterity. #[Singleton]',
 }, [Singleton, 1])
 
 function* playFootwork(self: Card<FootworkData>, { actors, game, resolver, energy }: PlayArgs): Generator<any, FootworkData, any> {

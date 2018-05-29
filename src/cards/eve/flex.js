@@ -9,19 +9,20 @@ import { defineEffect } from '../../effects/effect';
 import { EndTurn } from '../../events/turnActions';
 import { Listener } from '../../events/listener';
 import { Strength } from '../../effects/strength'
+import { upgrade } from '../utils';
 
 
-type FlexData = BasicCardData & { flex: number }
+type FlexData = BasicCardData & { flex: number, keep: boolean }
 
 export const flex = 'flex'
 export const Flex: () => Card<FlexData> = defineCard(flex, playFlex, {
-    flex: 3,
+    flex: 2,
     energy: 0,
+    keep: 0,
 }, {
-    energyTemplate: '#{energy}',
     color: '#cc6633',
-    titleTemplate: 'Flex',
-    textTemplate: 'Gain #{flex} #[Strength]. On end turn, lose #{flex} #[Strength].',
+    title: 'Flex',
+    text: 'Gain #{flex} #[Strength]. On end turn, lose #{flex} #[Strength].',
 })
 
 function* playFlex(self: Card<FlexData>, { actors, resolver, game, energy }: PlayArgs): Generator<any, FlexData, any> {
@@ -45,11 +46,18 @@ function* playFlex(self: Card<FlexData>, { actors, resolver, game, energy }: Pla
             },
         ),
     )
-    return { flex: action.data.stacks, energy } 
+    return { ...self.data, flex: action.data.stacks, energy } 
 }
 
+
+
+export const FlexPermanent = upgrade('L', Flex, { keep: true, flex: 1 }, { text: 'Gain #{flex} #[Strength].' })
+export const FlexImproved = upgrade('R', Flex, { flex: 4 })
+
+
+
 const FlexEffect = defineEffect('flex', {
-    description: 'Lose #{stacks} #[Strength] at the end of the turn.',
+    description: 'On end turn, lose #{stacks} #[Strength].',
     innerColor: "#aacc44",
     outerColor: "#889911",
     name: "Flex",

@@ -1,8 +1,10 @@
-import { Character, F, D, C } from "../../character";
+import { Character, F, D, C, B, A } from "../../character";
 import { CardLibrary } from "../cardLibrary";
 import { Footwork } from "./footwork";
 import { Backflip } from "./backflip";
 import { Defend } from "../adventurer/defend";
+import { FightersStance } from "../eve/fightersStance";
+import { Adrenaline } from "../eve/adreneline";
 
 // gain block now and next turn
 // gain block, do not lose it next turn
@@ -31,12 +33,15 @@ import { Defend } from "../adventurer/defend";
 
 
 
-let jekyll = new Character('Jekyll', true, '#0b197a', 'An intelligence created by anonymous (and evidently talented) hackers to oversee distributed network tasks and preserve operational secrecy. Copycat software backed by academics is now used almost ubiquitously, though the original is still used to protect secrets in the darker corners of the web.')
+let jekyll = new Character('Jekyll', true, '#0ebaa0', 'An intelligence created by anonymous (and evidently talented) hackers to oversee distributed network tasks and preserve operational secrecy. Copycat software backed by academics is now used almost ubiquitously, though the original is still used to protect secrets in the darker corners of the web.')
 
 jekyll.addCard(F, Defend)
 
 jekyll.addCard(D, Backflip)
+jekyll.addCard(D, FightersStance)
 
 jekyll.addCard(C, Footwork)
+
+jekyll.addCard(A, Adrenaline)
 
 CardLibrary.register(jekyll)

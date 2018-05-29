@@ -2,25 +2,25 @@ import { defineCard, Card, PlayArgs, BasicCardData } from './../card'
 import { Damage, targeted, blockable } from './../../events/damage'
 import { Listener } from '../../events/listener'
 import { BindEffect } from '../../events/bindEffect'
-import { Vulnerability } from '../../effects/vulnerability'
+import { Frailty } from '../../effects/frailty'
 import { Creature } from '../../creatures/creature'
 import { queryEnemy } from '../utils'
 
-type CheapShotData = BasicCardData & { damage: number, vulnerability: number }
+type ChipShotData = BasicCardData & { damage: number, frailty: number }
 
-export const cheapShot = 'cheapShot'
-export const CheapShot: () => Card<CheapShotData> = defineCard(cheapShot, playCheapShot, {
+export const chipShot = 'chipShot'
+export const ChipShot: () => Card<ChipShotData> = defineCard(chipShot, playChipShot, {
     damage: 8,
     energy: 1,
-    vulnerability: 1,
+    frailty: 2,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#bb4433',
-    titleTemplate: 'Cheap Shot',
-    textTemplate: `Deal #{damage} damage. Apply #{vulnerability} #[Vulnerability].`,
+    title: 'Chip Shot',
+    text: `Deal #{damage} damage. On damage, apply #{frailty} #[Frailty].`,
 })
 
-function* playCheapShot(self: Card<CheapShotData>, { resolver, actors, energy }: PlayArgs): Generator<any, CheapShotData, any> {
+function* playChipShot(self: Card<ChipShotData>, { resolver, actors, energy }: PlayArgs): Generator<any, ChipShotData, any> {
     let target = yield queryEnemy()
     const action: Damage = yield resolver.processEvent(
         new Damage(
@@ -34,9 +34,9 @@ function* playCheapShot(self: Card<CheapShotData>, { resolver, actors, energy }:
         ),
     )
     const binding: BindEffect = yield resolver.processEvent(new BindEffect(self, target, {
-        Effect: Vulnerability,
-        stacks: self.data.vulnerability,
-    }, blockable))
-    return { damage: action.data.damage, energy, vulnerability: binding.data.stacks }
+        Effect: Frailty,
+        stacks: self.data.frailty,
+    }, targeted))
+    return { damage: action.data.damage, energy, frailty: binding.data.stacks }
 }
 

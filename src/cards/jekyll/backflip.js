@@ -14,10 +14,10 @@ export const Backflip: () => Card<BackflipData> = defineCard(backflip, playBackf
     energy: 1,
     draw: 2,
 }, {
-    energyTemplate: '#{energy}',
+    
     color: '#223399',
-    titleTemplate: 'Backflip',
-    textTemplate: 'Gain #{block} block. Draw #{draw} cards.',
+    title: 'Backflip',
+    text: 'Gain #{block} block. Draw #{draw} cards.',
 })
 
 function* playBackflip(self: Card<BackflipData>, { actors, game, resolver, energy }: PlayArgs): Generator<any, BackflipData, any> {
