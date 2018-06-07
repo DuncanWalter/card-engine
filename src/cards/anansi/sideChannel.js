@@ -17,9 +17,9 @@ export const SideChannel = defineCard('SideChannel', playSideChannel, {
     text: 'Deal #{damage} damage. Add an #[Interrupt] to the discard pile.',
 })
 
-function* playSideChannel(self: Card<SideChannelData>, { resolver, actors, energy }: PlayArgs) {
+function* playSideChannel(self: Card<SideChannelData>, { game, resolver, actors, energy }: PlayArgs) {
     
-    let target = yield queryEnemy()
+    let target = yield queryEnemy(game)
 
     const action = new Damage(actors, target, {
         damage: self.data.damage,

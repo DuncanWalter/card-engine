@@ -1,18 +1,42 @@
-This is the nucleus of a deck-building game based heavily on Megacrit's Slay the Spire (go buy it; it's great and they deserve the support). The purpose of the project is to make something as mod-friendly and flexible as possible using modern JavaScript. I'm a weirdo, so that means using FlowType, Preact, custom state management, etc. At the heart of the code, there is also a lot of generator shenanigans and some meta classing. It's been a learning process so far...
+# SIGTERM
 
-//TODO:
+This is the nucleus of a deck-building game based heavily on Megacrit's Slay the Spire. It's built with modern JS strategies. 
 
-* Switch to another theme/lore for the game (to force originality and get away from STS a bit)
-* opaque type identifiers behind non-dup functions (didn't know this was an option before)
 
-* Find someone to help out
-* Make some documentation
+## Contribution Docs
 
-* make state serializable (plain obj representations w/ data and function services)
-* make action creators instead of HOF that take dispatch as a parameter
 
-* add taunt (must be targeted)
-* add ward (can't apply new effects)
-* add phantom (untargetable)
 
-* add Raise Dead (card to spawn an ally)
+
+
+
+
+## Tasks
+
+### Content
+* Make more cards- many idea are already listed in character files. 
+* Make more pragmas- Also, I need to upload a list of pragmas to implement.
+* Create ? style encounters for combat rewards
+* Create system permission and restriction system
+* Create more creatures
+* Upload final boss idea and make it
+* Make more creatures / encounters
+* Upload the flavor texts/story stuff
+* Figure out how I want to handle scoring modifiers
+
+### Gameplay
+* Redo the hand animations and interactions
+* Make the main menu pretty
+* Make tool-tips more flexible (and pretty)
+* Add in game menu
+* Implement save/load
+* Implement profile w/ locked characters and character slots
+* Implement chaos w/ random character
+
+### Code
+* Clean out old code artifact directly referencing StS.
+* Clean out the current encounter and reward generation system. It's a hot mess.
+* Opaque type identifiers behind non-dup functions (didn't know this was an option before)
+* remove battleState from the state store- it just doesn't belong there. Use the serialize and lift features only for saving and loading the game. This also solves Entity store issues.
+* Move files out of the game directory that dont belong there
+* I'm considering a sample-enabled split tree implementation to make all the random/procedural stuff easier.

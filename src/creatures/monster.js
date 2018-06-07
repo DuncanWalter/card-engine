@@ -8,7 +8,7 @@ import { Listener } from '../events/listener'
 import { synchronize, SyncPromise } from "../utils/async"
 import { EventResolver, resolver } from '../events/eventResolver'
 import { Sequence, randomSequence } from "../utils/random";
-import { createEntity } from "../utils/entity";
+import { toExtractor } from "../utils/entity";
 
 interface MonsterData {
     behavior: BehaviorState,
@@ -60,7 +60,7 @@ export function defineMonster(
         throw new Error(`MonsterType collision on ${name}.`)
     }
 
-    return function(seed: Sequence<number>){
+    return function(game: $ReadOnly<Game>, seed: Sequence<number>){
         const base: MonsterState = { 
             type: name, 
             health,
@@ -69,9 +69,11 @@ export function defineMonster(
             seed: seed.next(),
             behavior: primeBehavior,
         }
-        const id = createEntity(Monster, base)
-        const self = onCreate? onCreate(new Monster(id), seed): new Monster(id)
-        self.takeTurn(resolver, resolver.state.getGame())
+        const self = new Monster(base, toExtractor({ }))
+        if(onCreate){
+            onCreate(self, seed)
+        }
+        self.takeTurn(resolver, game)
         return self
     }
 }

@@ -5,25 +5,26 @@ export const Col = styled.div`
     flex-direction: column;
     align-items: stretch;
     ${ props => 
-        props.shim? 'flex: 1': ''
+        props.shim? 'flex: 1' : ''
     };
 `
 
 export const Row = styled.div`
     display: flex;
     flex-direction: row;
+    justify-content: center;
     align-items: stretch;
     ${ props => 
-        props.shim? 'flex: 1': ''
+        props.shim? 'flex: 1' : ''
     };
 `
 
 export const Material = styled.div`
+    text-align: center;
     border-radius: 4px;
-    transition: 0.4s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25),
-                0 2px 8px rgba(0, 0, 0, 0.25),
-                0 0 4px rgba(0, 0, 0, 0.50);
+    transition: 0.25s;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35),
+                0 0 8px rgba(0, 0, 0, 0.35);
 
     & > ${Col} > *:first-child {
         border-top-left-radius: 4px;
@@ -86,7 +87,8 @@ const ModalBlock = Material.extend`
     display: flex;
     align-items: stretch;
     flex-direction: column;
-    background-color: #22222b;
+    background-color: #262432;
+    padding: 16px;
 `
 
 export const Modal: Component<> = props => <ModalWrapper>
@@ -96,20 +98,41 @@ export const Modal: Component<> = props => <ModalWrapper>
 </ModalWrapper>
 
 
-export const Button = styled.div`
+export const Button = Material.extend`
     cursor: pointer;
-    background-color: ${ props => 
-        props.primary ? '#44444f' : '#22222b'
-    };
+    background-color: ${ props => {
+        switch(true){
+            case props.danger:{
+                return '#cc2222'
+            }
+            case props.primary:{
+                return '#22cc22'
+            }
+            default:{
+                return '#22222b'
+            }
+        }
+    }};
     &:hover {
-        background-color: ${ props => 
-            props.primary ? '#22222b' : '#44444f'
-        };
+        background-color: rgba(240, 240, 240, 0.95);
+        color: ${ props => {
+            switch(true){
+                case props.danger:{
+                    return '#cc2222'
+                }
+                case props.primary:{
+                    return '#22cc22'
+                }
+                default:{
+                    return '#22222b'
+                }
+            }
+        }};
     };
-    margin: 4px;
-    border: solid #44444f 2px;
+    margin: 8px;
+    /* border: solid #44444f 2px; */
     text-align: center;
-    padding: 8px 12px 8px;
+    padding: 8px 16px 8px;
 `
 
 export const Shim = styled.div`

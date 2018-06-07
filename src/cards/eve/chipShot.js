@@ -20,8 +20,8 @@ export const ChipShot: () => Card<ChipShotData> = defineCard(chipShot, playChipS
     text: `Deal #{damage} damage. On damage, apply #{frailty} #[Frailty].`,
 })
 
-function* playChipShot(self: Card<ChipShotData>, { resolver, actors, energy }: PlayArgs): Generator<any, ChipShotData, any> {
-    let target = yield queryEnemy()
+function* playChipShot(self: Card<ChipShotData>, { game, resolver, actors, energy }: PlayArgs): Generator<any, ChipShotData, any> {
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors, 

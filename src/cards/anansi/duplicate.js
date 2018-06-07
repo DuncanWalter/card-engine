@@ -15,7 +15,7 @@ export const Duplicate = defineCard('Duplicate', playDuplicate, {
 
 function* playDuplicate(self: Card<DuplicateData>, { game, energy, actors, resolver }: PlayArgs){
 
-    const target: Card<> | void = yield queryHand()
+    const target: Card<> | void = yield queryHand(game)
     let ii = self.data.copies
 
     while(ii-- && target){

@@ -1,5 +1,5 @@
-import { Card } from "./card"
-import { CardStack } from "./cardStack"
+import type { Card } from "./card"
+import type { CardStack } from "./cardStack"
 import { Sequence } from "../utils/random"
 
 export function pickKey(distro: { [string]: number }, seed: Sequence<number>): string {

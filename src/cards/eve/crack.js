@@ -23,7 +23,7 @@ export const Crack: () => Card<CrackData> = defineCard(crack, playCrack, {
 }, [Cache, 1])
 
 function* playCrack(self, { resolver, game, actors, energy }: PlayArgs): Generator<any, CrackData, any>{
-    let target: Monster = yield queryEnemy()
+    let target: Monster = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,
@@ -50,7 +50,10 @@ const BoostCache = defineEvent('boostCache', function*({ game }){
         ...game.activeCards
     ].forEach(card => {
         if(card.stacksOf(Cache)){
-            card.data.damage += card.stacksOf(Cache)
+            if('damage' in card.data === true){
+                // $FlowFixMe
+                card.data.damage += card.stacksOf(Cache)
+            }
         }
     })
 })

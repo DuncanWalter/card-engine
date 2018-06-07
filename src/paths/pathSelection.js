@@ -9,38 +9,42 @@ import { Turtle } from '../creatures/turtle/turtle'
 import { Cobra } from '../creatures/cobra/cobra'
 import { resolver } from '../events/eventResolver'
 import { withState, dispatch } from '../state'
-import { selectFreedom, generateFreedoms } from './pathState';
+import { Path } from './path';
 import { Monster } from '../creatures/monster';
 import { Entity } from '../utils/entity';
 import { Player } from '../creatures/player';
+import { Game, withGame } from '../game/battle/battleState';
 
-type Props = { state: State }
-export const PathSelection = withState(({ state }: Props) => {
-    return <Modal>
-        <h1>Select Path</h1>
-        <Row>
-            <Shim/>
-            { state.path.freedoms.map(path => 
-                <Route render={({ history }) => 
-                    <Button onClick={ click => {
-                        selectFreedom(dispatch, path)
-                        generateFreedoms(dispatch)
-                        history.push('/game/battle')
-                        let player = new Player(state.battle.player)
-                        resolver.enqueueEvents(new SetupCombat(player, player, {
-                            enemies: path.enemies.map(enemy => new Monster(enemy)),
-                            seed: path.seed.fork(),
-                        }))
-                        resolver.enqueueEvents(new StartCombat(player, player, {}))
-                    }}>
-                        <Col style={{ width: '500px', height: '700px' }}>
-                            <h1>{path.challengeRating - state.path.level - 10}</h1>
-                            { path.rewards.map(p => <Block><p>{p.description}</p></Block>) }
-                        </Col>
-                    </Button>
-                }/>
-            ) }
-            <Shim/>
-        </Row>
-    </Modal>
+type Props = { game: Game }
+export const PathSelection = withGame(({ game }: Props) => {
+    if(game.path.children){
+        const children = game.path.children
+        return <Modal>
+            <h1>Select Path</h1>
+            <Row>
+                <Shim/>
+                { game.path.children.map(path => 
+                    <Route render={({ history }) => 
+                        <Button onClick={ click => {
+                            game.path.generateChildren()
+                            history.push('/game/battle')
+                            let player = game.player
+                            resolver.enqueueEvents(new SetupCombat(player, player, {
+                                enemies: path.enemies,
+                                seed: path.seed.fork(),
+                            }))
+                            resolver.enqueueEvents(new StartCombat(player, player, {}))
+                        }}>
+                            <Col style={{ width: '500px', height: '700px' }}>
+                                <h1>{path.challengeRating - game.path.level - 10}</h1>
+                                { path.rewards.map(p => <Block><p>{p.description}</p></Block>) }
+                            </Col>
+                        </Button>
+                    }/>
+                ) }
+                <Shim/>
+            </Row>
+        </Modal>
+    }
+    
 })

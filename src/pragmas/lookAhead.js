@@ -10,7 +10,7 @@ import { StartCombat } from "../events/startCombat";
 
 const lookAhead = defineListener('LookAhead', owner => ({
     type: StartTurn,
-    subjects: [resolver.state.getGame().player],
+    subjects: [owner],
     tags: [StartCombat],
 }), owner => function*({ game, resolver }: ConsumerArgs<>){
     yield resolver.processEvent(new BindEnergy(owner, game.player, {

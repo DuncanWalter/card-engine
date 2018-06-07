@@ -1,6 +1,6 @@
 import type { ListenerGroup } from "../events/listener";
 import type { Game } from "../game/battle/battleState";
-import { Entity, createEntity } from "../utils/entity";
+import { Entity, toExtractor } from "../utils/entity";
 import { EventResolver } from "../events/eventResolver";
 import { synchronize } from "../utils/async";
 import { Listener } from "../events/listener";
@@ -33,7 +33,7 @@ function pragmaName(name: string, def: PragmaDefinition): PragmaName {
     }
 }
 
-export class Pragma extends Entity<PragmaState> {
+export class Pragma extends Entity<PragmaState, PragmaState> {
 
     get listener(): ListenerGroup {
         return this.definition.asListener(this)
@@ -60,8 +60,8 @@ export function definePragma(name: string, acquire: (args: AcquireArgs) => Gener
         asListener: owner => listenerFactories.map(lf => lf(owner)),
     })
     return function(){
-        return new Pragma(createEntity(Pragma, {
+        return new Pragma({
             name: givenName,
-        }))
+        }, toExtractor({ }))
     }
 }

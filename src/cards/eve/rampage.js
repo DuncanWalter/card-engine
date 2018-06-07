@@ -28,8 +28,8 @@ export const Rampage: () => Card<RampageData> = defineCard(rampage, playRampage,
     text: 'Deal #{damage} damage. Gain 1 #[Cache]. Deals #{scaling} more damage for each #[Cache]',
 })
 
-function* playRampage(self: Card<RampageData>, { resolver, actors, energy }: PlayArgs): Generator<any, RampageData, any>{
-    let target = yield queryEnemy()
+function* playRampage(self: Card<RampageData>, { game, resolver, actors, energy }: PlayArgs): Generator<any, RampageData, any>{
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,

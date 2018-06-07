@@ -16,8 +16,8 @@ export const Strike: () => Card<StrikeData> = defineCard('Strike', playStrike, {
     text: 'Deal #{damage} damage.',
 })
 
-function* playStrike(self: Card<StrikeData>, { resolver, actors, energy }: PlayArgs) {
-    let target = yield queryEnemy()
+function* playStrike(self: Card<StrikeData>, { game, resolver, actors, energy }: PlayArgs) {
+    let target = yield queryEnemy(game)
 
     const action = new Damage(actors, target, {
         damage: self.data.damage,
@@ -29,7 +29,7 @@ function* playStrike(self: Card<StrikeData>, { resolver, actors, energy }: PlayA
 }
 
 export const StrikeR = upgrade('R', Strike, { damage: 9 })
-export const StrikeL = upgrade('L', Strike, { energy: 1 })
+export const StrikeL = upgrade('L', Strike, { energy: 0 })
 
 
 

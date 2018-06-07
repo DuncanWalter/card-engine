@@ -22,8 +22,8 @@ export const Bash: () => Card<BashData> = defineCard(bash, playBash, {
 
 
 // TODO: the bash vulnerability should be a default listener on the damage action
-function* playBash(self: Card<BashData>, { resolver, actors, energy }: PlayArgs){
-    let target = yield queryEnemy()
+function* playBash(self: Card<BashData>, { game, resolver, actors, energy }: PlayArgs){
+    let target = yield queryEnemy(game)
     if(target instanceof Creature){
         const action: Damage = yield resolver.processEvent(
             new Damage(

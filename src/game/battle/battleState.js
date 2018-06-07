@@ -1,21 +1,21 @@
 import type { PlayerState } from "../../creatures/player"
 import type { State } from "../../state"
 import type { Reducer } from "../../utils/state"
-import type { MonsterState } from '../../creatures/monster';
+import type { MonsterState } from '../../creatures/monster'
 import type { ID } from '../../utils/entity'
-import type { PragmaState } from '../../pragmas/pragma';
-
+import type { PragmaState } from '../../pragmas/pragma'
 import { randomSequence, Sequence } from '../../utils/random'
-
 import { Card, CardState } from "../../cards/card"
 import { CardStack } from "../../cards/cardStack"
 import { createReducer } from "../../utils/state"
-import { Monster } from '../../creatures/monster';
-import { Player } from '../../creatures/player';
-import { MonsterGroup } from '../../creatures/monsterGroup';
-import { createEntity } from '../../utils/entity';
-import { PragmaGroup } from '../../pragmas/pragmaGroup';
-
+import { Monster } from '../../creatures/monster'
+import { Player } from '../../creatures/player'
+import { MonsterGroup } from '../../creatures/monsterGroup'
+import { PragmaGroup } from '../../pragmas/pragmaGroup'
+import { Path, PathState } from '../../paths/path'
+import { toExtractor, toBundler, type EntityStore, toEntity } from '../../utils/entity'
+import { EntityGroup } from '../../utils/entityGroup'
+import { Entity } from '../../utils/entity'
 
 // function any(any: any): any { return any }
 
@@ -25,6 +25,14 @@ import { PragmaGroup } from '../../pragmas/pragmaGroup';
 // inspiration points
 
 export interface Game {
+
+    bossSeed: Sequence<number>,
+
+    root: Path,
+    path: Path,
+    pragmaSequence: PragmaGroup,
+    pragmaSeed: Sequence<number>,
+
     dummy: Monster,
     hand: CardStack,
     drawPile: CardStack,
@@ -32,15 +40,18 @@ export interface Game {
     enemies: MonsterGroup,
     allies: MonsterGroup,
     player: Player,
-    equipment: Array<any>,
     deck: CardStack,
-    exhaustPile: CardStack,
     activeCards: CardStack,
     pragmas: PragmaGroup,
-    pragmaSequence: PragmaGroup,
+
+    exhaustPile: CardStack,
 }
 
 export interface GameState {
+    entities: EntityStore,
+
+    bossSeed: number,
+
     dummy: ID<MonsterState>,
     hand: ID<CardState<>>[],
     drawPile: ID<CardState<>>[],
@@ -48,65 +59,84 @@ export interface GameState {
     enemies: ID<MonsterState>[],
     allies: ID<MonsterState>[],
     player: ID<PlayerState>,
-    equipment: Array<any>,
     deck: ID<CardState<>>[],
     exhaustPile: ID<CardState<>>[],
     activeCards: ID<CardState<>>[],
+
     pragmas: ID<PragmaState>[],
     pragmaSequence: ID<PragmaState>[],
-    pragmaSequenceSeed: number,
+    pragmaSeed: number,
+
+    root: ID<PathState>,
+    path: ID<PathState>,
 }
 
-export function liftState(state: GameState): Game {
+function liftState(state: GameState): Game {
+
+    const extract = toExtractor(state.entities)
+
     return {
-        dummy: new Monster(state.dummy),
-        hand: new CardStack(state.hand),
-        enemies: new MonsterGroup(state.enemies),
-        allies: new MonsterGroup(state.allies),
-        player: new Player(state.player),
-        equipment: state.equipment,
-        activeCards: new CardStack(state.activeCards),
-        exhaustPile: new CardStack(state.exhaustPile),
-        discardPile: new CardStack(state.discardPile),
-        drawPile: new CardStack(state.drawPile),
-        deck: new CardStack(state.deck),
-        pragmas: new PragmaGroup(state.pragmas),
-        pragmaSequence: new PragmaGroup(state.pragmaSequence, state.pragmaSequenceSeed),
+        dummy: extract(Monster, state.dummy),
+        hand: CardStack.from(extract, state.hand),
+        enemies: MonsterGroup.from(extract, state.enemies),
+        allies: MonsterGroup.from(extract, state.allies),
+        player: extract(Player, state.player),
+        activeCards: CardStack.from(extract, state.activeCards),
+        exhaustPile: CardStack.from(extract, state.exhaustPile),
+        discardPile: CardStack.from(extract, state.discardPile),
+        drawPile: CardStack.from(extract, state.drawPile),
+        deck: CardStack.from(extract, state.deck),
+
+        pragmas: PragmaGroup.from(extract, state.pragmas),
+        pragmaSequence: PragmaGroup.from(extract, state.pragmaSequence),
+        pragmaSeed: randomSequence(state.pragmaSeed),
+
+        path: extract(Path, state.path),
+        root: extract(Path, state.root),
+
+        bossSeed: randomSequence(state.bossSeed),
     }
 }
 
 function serializeGame(game: Game): GameState {
-
-    let state = {
-        dummy: game.dummy.id,
-        hand: game.hand.ids,
-        enemies: game.enemies.ids,
-        allies: game.allies.ids,
-        player: game.player.id,
-        equipment: game.equipment,
-        activeCards: game.activeCards.ids,
-        exhaustPile: game.exhaustPile.ids,
-        discardPile: game.discardPile.ids,
-        drawPile: game.drawPile.ids,
-        deck: game.deck.ids,
-        pragmas: game.pragmas.ids,
-        pragmaSequence: game.pragmaSequence.ids,
-        pragmaSequenceSeed: game.pragmaSequence.seed || 0,
+    const entities: EntityStore = { }
+    const bundle = toBundler(entities)
+    const bundleAll = function<T: Object>(eg: any): ID<T>[]{ 
+        return [...eg].map(e => bundle(e)) 
     }
+    let state: GameState = {
+        entities,
 
-    console.log(JSON.parse(JSON.stringify(state)))
+        bossSeed: game.bossSeed.last(),
 
+        dummy: bundle(game.dummy),
+        hand: bundleAll(game.hand),
+        enemies: bundleAll(game.enemies),
+        allies: bundleAll(game.allies),
+        player: bundle(game.player),
+        activeCards: bundleAll(game.activeCards),
+        exhaustPile: bundleAll(game.exhaustPile),
+        discardPile: bundleAll(game.discardPile),
+        drawPile: bundleAll(game.drawPile),
+        deck: bundleAll(game.deck),
+        pragmas: bundleAll(game.pragmas),
+        pragmaSequence: bundleAll(game.pragmaSequence),
+        pragmaSeed: game.pragmaSeed.last(),
+        path: bundle(game.path),
+        root: bundle(game.root),
+    }
+    // console.log(JSON.parse(JSON.stringify(state)))
     return state
 }
 
-export const battleInitial: GameState = {
-    hand: [],
-    drawPile: [],
-    discardPile: [],
-    deck: [],
-    exhaustPile: [],
-    equipment: [],
-    player: createEntity(Player, {
+const game: Game = {
+    entities: {},
+    hand: new CardStack([]),
+    drawPile: new CardStack([]),
+    discardPile: new CardStack([]),
+    deck: new CardStack([]),
+    exhaustPile:new CardStack([]),
+    player: toEntity(Player, {
         health: 65,
         maxHealth: 65,
         type: 'Player',
@@ -116,10 +146,10 @@ export const battleInitial: GameState = {
         energy: 3,
         isActive: true,
     }),
-    allies: [],
-    enemies: [],
-    activeCards: [],
-    dummy: createEntity(Monster, {
+    allies: new MonsterGroup([]),
+    enemies: new MonsterGroup([]),
+    activeCards: new CardStack([]),
+    dummy: toEntity(Monster, {
         health: 10,
         maxHealth: 10,
         type: 'TrainingDummy',
@@ -127,23 +157,26 @@ export const battleInitial: GameState = {
         behavior: 'PRIME_BEHAVIOR',
         seed: 1234125151,
     }),
-    pragmas: [],
-    pragmaSequence: [],
-    pragmaSequenceSeed: 0,
+    pragmas: new PragmaGroup([]),
+    pragmaSequence: new PragmaGroup([]),
+    pragmaSeed: randomSequence(0),
+    bossSeed: randomSequence(0),
+    path: Path.generate(-1, ({}:any), randomSequence(0)),
+    root: Path.generate(-1, ({}:any), randomSequence(0)),
 }
 
-export const battleReducer: Reducer<GameState, mixed> = createReducer({
-    emitBattleState(slice: GameState, { game }: { game: Game }){
-        return serializeGame(game)
-    },
-})
+export function saveGame(){
 
-export function emit(game: Game){
-    return {
-        type: 'emitBattleState',
-        game,
+}
+
+export function loadGame(){
+
+}
+
+export function withGame<T: { game: Game }, R>(fun: T => R): (args: $Diff<T, { game: Game }>) => R {
+    return function(args: $Diff<T, { game: Game }>){
+        return fun({ ...args, game })
     }
 }
-
 
 

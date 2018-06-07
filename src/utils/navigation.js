@@ -1,12 +1,8 @@
 
 
 // TODO: find clean way to get rid of this
-let hist: any = undefined
+export let history: any = undefined
 
-export function useHistory(history: any){
-    hist = history
-}
-
-export function navigateTo(path: string){
-    hist.push(path)
+export function useHistory(h: any){
+    history = h
 }

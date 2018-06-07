@@ -6,7 +6,7 @@ import { Listener, ConsumerArgs, EventContent, deafListener } from '../events/li
 import { startTurn, endTurn, type Tag } from '../events/event'
 import { BindEffect } from '../events/bindEffect'
 import { resolver } from '../events/eventResolver'
-import { Entity, createEntity } from '../utils/entity';
+import { Entity } from '../utils/entity';
 import { defineListener } from '../events/defineListener'
 
 // TODO: put setters on stacks
@@ -14,9 +14,9 @@ import { defineListener } from '../events/defineListener'
 
 export opaque type EffectType: ListenerType<any> = ListenerType<any>
 
-export interface EffectState {
+export interface Effect<+O: Card<>|Creature<> = any> {
     stacks: number,
-    type: EffectType,
+    +type: EffectType,
 }
 
 interface StackBehavior {
@@ -36,11 +36,11 @@ interface Appearance {
     rotation?: number,
 }
 
-export interface EffectDefinition<O:Card<> | Creature<>> {
+interface EffectDefinition<O:Card<> | Creature<>> {
     stackBehavior: StackBehavior,
     appearance: Appearance | void | null,
     listenerFactory: (owner: O) => ListenerGroup,
-    effectFactory: { type: EffectType } & (stacks: number) => Effect<any>,
+    effectFactory: { type: EffectType, (stacks: number): Effect<any> },
 }
 
 const definedEffects: Map<string, EffectDefinition<any>> = new Map()
@@ -48,65 +48,47 @@ const definedEffects: Map<string, EffectDefinition<any>> = new Map()
 export const tick = resolver.registerListenerType('tick', [{ type: startTurn }, { type: endTurn }], [])
 
 
-export class Effect<O:Creature<>|Card<>> extends Entity<EffectState> {
-
-    get type(): string { 
-        return this.inner.type 
+function definitionOf<O:*>(effect: Effect<O>): EffectDefinition<O> {
+    const def = definedEffects.get(effect.type)
+    if(def){
+        return def
+    } else {
+        throw new Error(`Unrecognized Effect type ${effect.type}`)
     }
-
-    get stacks(): number { 
-        return this.inner.stacks 
-    }
-
-    get def(): EffectDefinition<O> {
-        const def = definedEffects.get(this.inner.type)
-        if(def){
-            return def
-        } else {
-            throw new Error(`Unrecognized Effect type ${this.type}`)
-        }
-    }
-
-    // TODO: check for stack ranges
-    set stacks(n: number){  
-        this.inner.stacks = n 
-    }
-
-    get appearance(): Appearance | void | null {
-        return this.def.appearance
-    }
-
-    asListener(owner: O): ListenerGroup {
-        const def = definedEffects.get(this.inner.type)
-        let self = this
-        if(def){
-            return [
-                new Listener(
-                    tick,
-                    {
-                        subjects: [owner],
-                        type: def.stackBehavior.on || startTurn,
-                    },
-                    function*({ subject, resolver }){
-                        const change = def.stackBehavior.delta(self.stacks) - self.stacks
-                        if(change){
-                            resolver.pushEvents(new BindEffect(owner, owner, {
-                                Effect: def.effectFactory,
-                                stacks: change,
-                            }, { type: tick }, def.effectFactory))
-                        }
-                    },
-                    false,
-                ),
-                def.listenerFactory(owner),
-            ]
-        } else {
-            throw new Error(`Unrecognized Effect type ${this.type}`)
-        } 
-    }
-
 }
 
+export function appearanceOf<O:*>(effect: Effect<O>): Appearance | void | null {
+    return this.def.appearance
+}
+
+export function toListener<O:*>(owner: O, effect: Effect<O>): ListenerGroup {
+    const def = definedEffects.get(this.type)
+    let self = this
+    if(def){
+        return [
+            new Listener(
+                tick,
+                {
+                    subjects: [owner],
+                    type: def.stackBehavior.on || startTurn,
+                },
+                function*({ subject, resolver }){
+                    const change = def.stackBehavior.delta(self.stacks) - self.stacks
+                    if(change){
+                        resolver.pushEvents(BindEffect(owner, owner, {
+                            Effect: def.effectFactory,
+                            stacks: change,
+                        }, { type: tick }, def.effectFactory))
+                    }
+                },
+                false,
+            ),
+            def.listenerFactory(owner),
+        ]
+    } else {
+        throw new Error(`Unrecognized Effect type ${this.type}`)
+    } 
+}
 
 export function defineEffect<T:EventContent, O:Creature<>|Card<>>(
     name: string,
@@ -116,14 +98,14 @@ export function defineEffect<T:EventContent, O:Creature<>|Card<>>(
     consumer: (owner: O, type: ListenerType<T>) => Consumer<T>,
     parents?: Tag[],
     children?: Tag[],
-): ({ +type: ListenerType<any> } & (stacks: number) => Effect<O>) {
+): { +type: EffectType, (stacks: number): Effect<O> } {
     const listener: ListenerDefinition<T, O> = defineListener(name, header, consumer, parents, children)
 
     const factory = function(stacks: number){
-        return new Effect(createEntity(Effect, {
+        return {
             type: listener.type,
             stacks,
-        }))
+        }
     }
 
     factory.type = listener.type
@@ -147,16 +129,16 @@ export function defineCompoundEffect<O:Creature<>|Card<>>(
     appearance: Appearance | void | null,
     stackBehavior: StackBehavior,
     ...listeners: ListenerDefinition<any, O>[]
-): ({ +type: ListenerType<any> } & (stacks: number) => Effect<O>) {
+): { +type: EffectType, (stacks: number): Effect<O> } {
 
 
     const type = resolver.registerListenerType(name)
 
     const factory = function(stacks){
-        return new Effect(createEntity(Effect, {
+        return {
             type,
             stacks,
-        }))
+        }
     }
 
     factory.type = type
@@ -175,5 +157,3 @@ export function defineCompoundEffect<O:Creature<>|Card<>>(
     return factory
 
 }
-
-

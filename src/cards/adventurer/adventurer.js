@@ -24,7 +24,7 @@ import { Snapshot } from "../../pragmas/snapshot";
 // apotheosis
 
 
-let adventurer = new Character('Adventurer', false, '#6f6f76', 'Basic set of cards available to all adventurers.')
+export const adventurer = new Character('Adventurer', false, '#6f6f76', 'Basic set of cards available to all adventurers.')
 
 adventurer.addCard(F, Defend, DefendL, DefendR)
 adventurer.addCard(F, Strike, StrikeL, StrikeR)

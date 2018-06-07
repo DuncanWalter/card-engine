@@ -19,8 +19,8 @@ export const Jab: () => Card<JabData> = defineCard(jab, playJab, {
     text: 'Deal #{damage} damage. #[Singleton].',
 }, [Singleton, 1])
 
-function* playJab(self: Card<JabData>, { resolver, actors, energy }: PlayArgs): Generator<any, JabData, any>{
-    let target = yield queryEnemy()
+function* playJab(self: Card<JabData>, { game, resolver, actors, energy }: PlayArgs): Generator<any, JabData, any>{
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,

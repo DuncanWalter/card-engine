@@ -11,8 +11,8 @@ export const Main = (props: any) => <Col shim>
     <Block fill><h1>Deck Dawdle</h1></Block>
     <Route render={({ history }) => 
         <Button onClick={click => {
-            reset(dispatch)
-            history.push('/menu/createGame')
+            dispatch(reset())
+            history.push('/menu/createGame/')
         }}>Begin</Button>
     }/>
     <Shim/>

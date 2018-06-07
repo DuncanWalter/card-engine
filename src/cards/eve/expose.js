@@ -19,8 +19,8 @@ export const Expose = defineCard('expose', playExpose, {
     text: 'Apply #{frailty} #[Frailty].'
 })
 
-function* playExpose(self: Card<ExposeData>, { energy, actors, resolver }: PlayArgs){
-    const target: Monster = yield queryEnemy()
+function* playExpose(self: Card<ExposeData>, { game, energy, actors, resolver }: PlayArgs){
+    const target: Monster = yield queryEnemy(game)
     const binding = new BindEffect(actors, target, {
         Effect: Frailty,
         stacks: self.data.frailty,

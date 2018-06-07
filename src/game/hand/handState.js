@@ -3,6 +3,8 @@ import type { Reducer } from "../../utils/state"
 import { createReducer } from "../../utils/state"
 import { CardState, Card } from "../../cards/card";
 import { type ID } from '../../utils/entity'
+import { Game } from "../battle/battleState";
+import { CardStack } from "../../cards/cardStack";
 
 export interface HandState {
     focus: ID<CardState<>> | void,
@@ -21,6 +23,7 @@ export interface HandState {
 
 export interface CardSlot {
     card: ID<CardState<>>,
+    cardState: CardState<>,
     pos: {
         x: number,
         y: number,
@@ -79,7 +82,7 @@ function easeTo(from, to, delta, speed){
 
 export const handReducer: Reducer<HandState, State> = createReducer({
     setFocus(slice: HandState, { focus }, { battle }: State){
-        if(focus.id == slice.focus){
+        if(focus == slice.focus){
             return slice
         } else {
             return {
@@ -89,7 +92,7 @@ export const handReducer: Reducer<HandState, State> = createReducer({
         }
     },
     unsetFocus(slice: HandState, { focus }, { battle }: State){
-        if(focus.id == slice.focus){
+        if(focus == slice.focus){
             return {
                 ...slice,
                 focus: undefined,
@@ -98,54 +101,94 @@ export const handReducer: Reducer<HandState, State> = createReducer({
             return slice
         }
     },
-    updateHand: (slice: HandState, data, { battle }: State) => {
-        let visibleCards: ID<CardState<>>[] = [...battle.hand, ...battle.activeCards]
+    updateHand: (slice: HandState, { game, delta }: { game: Game, delta: number }) => {
 
-        let preservedSlots = slice.cardSlots.filter(slot => {
-            return new Card(slot.card).indexIn(visibleCards) >= 0
-        }).map((slot, index) => {
+        let slots = [...slice.cardSlots]
+        const slottedIds = slots.map(slot => slot.card)
 
-            let card = visibleCards[visibleCards.indexOf(slot.card)]
+        const visibleCards = [...game.hand, ...game.activeCards]
+        const visibleIds = visibleCards.map(card => card.id)
 
-            let isActive = new Card(card).indexIn(battle.activeCards) >= 0
-            let isDragging = false
-            let isFocus = slice.focus == slot.card
+        const activeIds = [...game.activeCards].map(card => card.id)
 
-            let target = targetLocation(isActive, isFocus, index, visibleCards.length)
-
-            let angle = target.a
-            target = easeTo(slot.pos, target, 0.0166, 900)
-            target.a = angle
-
+        // First, add any cards appearing in the hand
+        const newSlotIds = visibleCards.map(card => 
+            card.id
+        ).filter(id => 
+            !slottedIds.includes(id)
+        )
+        slots.push(...newSlotIds.map((id, index) => {
+            const isActive = activeIds.includes(id)
+            const isFocus = id == slice.focus
             return {
-                card,
-                pos: target,
+                card: id,
+                cardState: any(undefined),
+                pos: targetLocation(isActive, isFocus, index + slottedIds.length, newSlotIds.length + slottedIds.length),
                 isActive,
+                isDragging: false,
                 isFocus,
-                isDragging,
+            }
+        }))
+
+        // Then remove cards which are no longer visible
+        slots = slots.filter(slot => visibleIds.includes(slot.card))
+
+        // Then determine real target locations
+        slots.forEach((slot, index) => {
+            const target = targetLocation(slot.isActive, slot.isFocus, index, slots.length)
+            slot.pos = easeTo(slot.pos, target, delta, 900)
+
+            const card: Card<> = visibleCards[visibleIds.indexOf(slot.card)]
+
+            slot.cardState = {
+                type: card.type,
+                data: card.data,
+                effects: card.effects,
+                appearance: card.appearance,
             }
         })
 
-        let newSlots = visibleCards.filter(card => 
-            !preservedSlots.filter(slot => slot.card == card).length 
-        ).map((card, subIndex) => {
 
-            let index = preservedSlots.length + subIndex
+        // const slots = visibleCards.map(card => {
+        //     let isActive = activeIds.includes(slot.card)
+        //     let isDragging = false
+        //     let isFocus = slice.focus == card.id
+        //     let target = targetLocation(isActive, isFocus, index, visibleCards.length)
 
-            let isActive = new Card(card).indexIn(battle.activeCards) >= 0
-            let isDragging = false
-            let isFocus = card == slice.focus
+        //     if(slottedIds.includes(card.id)){
+        //         let angle = target.a
+        //         target = easeTo(slot.pos, target, 0.0166, 900)
+        //         target.a = angle
 
-            let target = targetLocation(isActive, isFocus, index, visibleCards.length)
+        //         return {
+        //             card: slot.card,
+        //             pos: target,
+        //             isActive,
+        //             isFocus,
+        //             isDragging,
+        //         }
+        //     } else {
+        //         let index = preservedSlots.length + subIndex
+        //         let target = targetLocation(isActive, isFocus, index, visibleCards.length)
+                
+        //         return {
+        //             card,
+        //             pos: target,
+        //             isActive,
+        //             isFocus,
+        //             isDragging,
+        //         }
+        //     }
             
-            return {
-                card,
-                pos: target,
-                isActive,
-                isFocus,
-                isDragging,
-            }
-        })
+            
+        // })
+
+        // let newSlots = visibleCards.filter(card => 
+        //     !preservedSlots.filter(slot => slot.card == card).length 
+        // ).map((card, subIndex) => {
+
+            
+        // })
 
         // visibleCards = [...battle.hand, ...battle.activeCards]
         // slice.cardSprites.push(...slice.cardSlots.filter(slot => {
@@ -170,12 +213,11 @@ export const handReducer: Reducer<HandState, State> = createReducer({
         //     }
         // }).filter(sprite => sprite.pos != sprite.trg)
 
-
         return {
-            cursor: { x: Math.random(), y: 3 },
+            cursor: { x: 0, y: 0 },
             dragging: false,
             anchor: slice.anchor,
-            cardSlots: [...preservedSlots, ...newSlots],
+            cardSlots: slots,
             focus: slice.focus,
         }
     },
@@ -200,16 +242,20 @@ export function updateHand(){
     return { type: 'updateHand' }
 }
 
-export function setFocus(card: Card<>){
+export function setFocus(card: ID<CardState<>>){
     return {
         type: 'setFocus',
         focus: card,
     }
 }
 
-export function unsetFocus(card: Card<>){
+export function unsetFocus(card: ID<CardState<>>){
     return {
         type: 'unsetFocus',
         focus: card,
     }
 }
+
+
+
+function any(any: any): any { return any }

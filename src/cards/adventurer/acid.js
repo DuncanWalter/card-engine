@@ -22,8 +22,8 @@ export const Acid: () => Card<AcidData> = defineCard(acid, playAcid, {
     text: 'Deal #{damage} damage. Convert blocked damage to poison.',
 })
 
-function* playAcid(self: Card<AcidData>, { resolver, actors, energy }: PlayArgs){
-    let target = yield queryEnemy()
+function* playAcid(self: Card<AcidData>, { game, resolver, actors, energy }: PlayArgs){
+    let target = yield queryEnemy(game)
     if(target instanceof Creature){
         const action: Damage = new Damage(
             actors, 

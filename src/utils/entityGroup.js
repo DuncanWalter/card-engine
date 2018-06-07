@@ -5,66 +5,64 @@ type State<T> = $Call<<S>(Entity<S>) => S, T>
 // type Cons<T> = $Call<<S>(Class<S>) => S, T>
 
 // TODO: T should be the T where it is now Class<T>
+
 // $FlowFixMe
-export class EntityGroup<T:Entity<Object>> implements Iterable<Cons<T>> {
+export class EntityGroup<T:Entity<Object>> implements Iterable<T> {
 
-    ids: ID<State<T>>[]
-    Subset: Class<T>
+    entities: T[]
+    static Subset: Class<T>
 
-    constructor(Subset: Class<T>, ids: ID<State<T>>[]){
-        this.ids = ids
-        this.Subset = Subset
+    constructor(entities: T[]){
+        this.entities = entities
+    }
+
+    static from(extract: (Class<T>, ID<State<T>>) => T, ids: ID<State<T>>[]): * {
+        return new this.constructor(ids.map(id => extract(this.Subset, id)))
     }
 
     get size(): number {
-        return this.ids.length
-    }
-
-    unwrap(): State<T>[] {
-        return this.ids.map(id => new this.Subset(id).unwrap())
+        return this.entities.length
     }
 
     pop(): T {
-        return new this.Subset(this.ids.pop())
+        return this.entities.pop()
     }
 
     take(count: number): T[] {
         let rr: T[] = []
-        while(rr.length < count && this.ids.length){
-            rr.push(new this.Subset(this.ids.pop()))
+        while(rr.length < count && this.entities.length){
+            rr.push(this.entities.pop())
         }
         return rr
     }
 
     push(entity: T): void {
-        this.ids.push(entity.id)
+        this.entities.push(entity)
     }
 
     add(...entities: T[]){
-        this.ids.splice(0, 0, ...entities.map(entity => entity.id))
+        this.entities.splice(0, 0, ...entities)
     }
 
     shallowClone(): EntityGroup<T> {
-        return new EntityGroup(this.Subset, [...this.ids])
+        return new EntityGroup([...this.entities])
     }
 
     deepClone(): EntityGroup<T> {
-        return new EntityGroup(this.Subset, [...this.ids.map(id => 
-            (new this.Subset(id)).clone().id
-        )])
+        return new EntityGroup(this.entities.map(entity => entity.clone()))
     }
 
     clear(): void {
-        this.ids.splice(0, this.ids.length)
+        this.entities.splice(0, this.entities.length)
     }
 
     includes(entity: Entity<any>): boolean {
-        return this.ids.includes(entity.id)
+        return this.entities.includes(entity.id)
     }
 
     // TODO: make a boolean for safety...
     remove(entity: Entity<any>){
-        this.ids.splice(this.ids.indexOf(entity.id), 1)
+        this.entities.splice(this.entities.indexOf(entity), 1)
     }
 
     // $FlowFixMe

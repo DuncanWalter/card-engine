@@ -19,7 +19,7 @@ export const FlashOfSteel: () => Card<FlashOfSteelData> = defineCard(flashOfStee
 })
 
 function* playFlashOfSteel(self: Card<FlashOfSteelData>, { resolver, actors, game, energy }: PlayArgs): Generator<any, FlashOfSteelData, any>{
-    let target = yield queryEnemy()
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,

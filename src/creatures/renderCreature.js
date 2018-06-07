@@ -63,7 +63,7 @@ export const renderCreature = withState(({ isEnemy, creature, state }: Props) =>
     return <CreatureWrapper>
         <div style={sty.effectBar}>{
             behaviors.map(b => 
-                <Behavior data={ b.simulate(any(creature), resolver, resolver.state.getGame()) }/>
+                <Behavior data={ b.simulate(any(creature), resolver) }/>
             )
         }</div>
         <CreaturePortrait style={{ backgroundColor: '#338888' }}>

@@ -1,7 +1,7 @@
 import type { Effect } from './effect'
 import { interpolate } from '../utils/textTemplate'
-import { EffectGroup } from './effectGroup';
 import { ToolTips } from '../components/toolTips';
+import { appearanceOf } from '../effects/effect'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -28,12 +28,13 @@ const Body = styled.div`
 
 type Props = { effect: Effect<any> }
 export const renderEffect = ({ effect }: Props) => {
-    return effect.appearance? <Wrapper appearance={ effect.appearance }>
-        <Body appearance={ effect.appearance }>
+    const appearance = appearanceOf(effect)
+    return appearance ? <Wrapper appearance={ appearance }>
+        <Body appearance={ appearance }>
             { effect.stacks }
         </Body>
-        <ToolTips effects={ new EffectGroup([effect.id]) }/>
-    </Wrapper>: null
+        <ToolTips effects={ [effect] }/>
+    </Wrapper> : null
     // let styles = renderData(effect)
     // return styles ? <div style={styles.border}>
     //     <div style={styles.base}> appearance={ effect.appearance }
@@ -50,7 +51,7 @@ export const renderEffect = ({ effect }: Props) => {
 
 function renderData(effect: Effect<any>){
 
-    let a = effect.appearance
+    let a = appearanceOf(effect)
     if(!a)return
     let seg = 2 * 3.1415 / a.sides
     let theta = seg * (a.rotation ? a.rotation : 0)

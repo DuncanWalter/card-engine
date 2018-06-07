@@ -3,10 +3,11 @@ import { state } from '../state'
 import { Sequence } from "../utils/random";
 import { Monster } from "./monster";
 import { Player } from "./player";
+import { Game } from "../game/battle/battleState";
 
-export function pickTarget(self: Monster): Creature<> {
-    if(state.battle.enemies.includes(self)){
-        return new Player(state.battle.player)
+export function pickTarget(game: $ReadOnly<Game>, self: Monster): Creature<> {
+    if(game.enemies.includes(self)){
+        return game.player
 
         // TODO: taunt and phantom
 
@@ -21,8 +22,8 @@ export function pickTarget(self: Monster): Creature<> {
         //     return battle.player
         // }
     } else {
-        const enemies = state.battle.enemies
-        return new Monster(enemies[Math.floor(self.seed.next() * enemies.length)])
+        const enemies = game.enemies.entities
+        return enemies[Math.floor(self.seed.next() * enemies.length)]
     }
 }
 

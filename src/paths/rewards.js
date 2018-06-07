@@ -1,34 +1,48 @@
 import type { Reward as RewardT } from ".rewardLibrary"
-import { Modal, Block, Col, Button } from "../utility";
+import { Modal, Block, Col, Button, Row, Shim } from "../utility";
 import { withState, stream } from "../state"
-import { navigateTo } from "../utils/navigation";
+import { history } from "../utils/navigation";
 import { overStream } from "../components/withAnimation";
+import { resolver } from "../events/eventResolver";
+import { OverlayContext } from "../game/overlay";
+
+import './improveCard'
+import './removeCard'
+import './draftCard'
+import { withGame } from "../game/battle/battleState";
+// import './aquirePragma'
+// import './heal'
 
 type Props = { state: *, match: any }
 
 export const Rewards = withState(({ state, match }) => {
-    return <div>
-        <Modal>
-            <h1>Combat Rewards</h1>
-            <Col>{
-                state.path.rewards.filter(reward => 
-                    !reward.collected
-                ).map(reward => 
-                    <Reward reward={ reward }/>
-                )
-            }</Col>
-            <Button onClick={ () => navigateTo(`/game/pathSelection`) }>Continue</Button>
-        </Modal>
-    </div>
+    return <Modal>
+        <OverlayContext match={ match }>
+            <Col shim>
+                <h1>Combat Rewards</h1>
+                <Row shim>
+                    <Shim/>
+                    <Col shim>{
+                        state.path.rewards.filter(reward => 
+                            !reward.collected
+                        ).map(reward => 
+                            <Reward reward={ reward }/>
+                        )
+                    }</Col>
+                    <Shim/>
+                </Row>
+                <Button onClick={ () => history.push(`/game/pathSelection`) }>Continue</Button>
+            </Col>
+        </OverlayContext> 
+    </Modal>
 })
 
-const Reward: Component<{ reward: RewardT, state: * }> = withState(({ reward, state }) => {
-    return <Block>
-        <Button 
-            style={{ width: '430px', height: '60px' }}
-            onClick={e => reward.collect(reward, state)}
-        >
-            <p>{ reward.description }</p>
-        </Button>
-    </Block>
+const Reward = withGame(({ reward, game }) => {
+    return <Button 
+        style={{ height: '60px' }}
+        onClick={e => reward.collect(reward, resolver, game)}
+    >
+        {/* TODO: would interpolation help me here? */}
+        <p>{ reward.description }</p>
+    </Button>
 })

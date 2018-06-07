@@ -33,7 +33,7 @@ import { Adrenaline } from "../eve/adreneline";
 
 
 
-let jekyll = new Character('Jekyll', true, '#0ebaa0', 'An intelligence created by anonymous (and evidently talented) hackers to oversee distributed network tasks and preserve operational secrecy. Copycat software backed by academics is now used almost ubiquitously, though the original is still used to protect secrets in the darker corners of the web.')
+let jekyll = new Character('Jekyll', true, '#08aa90', 'An intelligence created by anonymous (and evidently talented) hackers to oversee distributed network tasks and preserve operational secrecy. Copycat software backed by academics is now used almost ubiquitously, though the original is still used to protect secrets in the darker corners of the web.')
 
 jekyll.addCard(F, Defend)
 

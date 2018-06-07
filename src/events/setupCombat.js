@@ -19,7 +19,7 @@ export const SetupCombat = defineEvent('setupCombat', function*({ game, resolver
     game.discardPile.clear()
     game.exhaustPile.clear()
     game.activeCards.clear()
-    game.player.effects.clear()
+    game.player.effects.splice(0, game.player.effects.length)
     game.player.seed = data.seed
     game.enemies.clear()
     game.enemies.add(...data.enemies)

@@ -20,7 +20,7 @@ export const Penetrate: () => Card<PenetrateData> = defineCard('penetrate', play
 })
 
 function* playPenetrate(self: Card<PenetrateData>, { resolver, actors, energy, game }: PlayArgs): Generator<any, PenetrateData, any> {
-    let target = yield queryEnemy()
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(actors, target, {
             damage: self.data.damage,

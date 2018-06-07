@@ -9,6 +9,7 @@ import { resolver } from '../../events/eventResolver';
 import { PlayCard } from '../../events/playCard';
 import { Shim } from '../../utility';
 import { submitTarget } from '../combatState';
+import { Game, withGame } from '../battle/battleState';
 
 const sty = {
     hand: {
@@ -19,35 +20,35 @@ const sty = {
     },
 }
 
-type CardSlotProps = { slot: CardSlotT }
-const CardSlot = ({ slot }: CardSlotProps) => {
-
+type CardSlotProps = { slot: CardSlotT, game: Game }
+const CardSlot = withGame(({ slot, game }: CardSlotProps) => {
+    
+    // TODO: snag the legitimate Card
     const isFocus = slot.isFocus
-    const card = new CardObject(slot.card)
-    const game = resolver.state.getGame()
+    const card = slot.card
 
     return <Transform 
         x={ slot.pos.x } 
         y={ isFocus? -220: slot.pos.y } 
         a={ isFocus? 0: slot.pos.a } 
-        style={{ zIndex: isFocus? 3: 'auto' }}
+        style={{ zIndex: isFocus ? 3 : 'auto' }}
     >
         <CenterPoint content={
             <div
-                onClick={ click => dispatch(submitTarget(card.id)) }
+                onClick={ click => dispatch(submitTarget(card)) }
                 onMouseEnter={ click => dispatch(setFocus(card)) }
                 onMouseLeave={ click => dispatch(unsetFocus(card)) }
             >
                 <Card 
                     glow={ isFocus } 
-                    card={ new CardObject(slot.card) } 
+                    card={ card } 
                     sets={ game.player.sets }
                     playEnergy={ game.player.energy }
                 />
             </div>
         }/>
     </Transform>
-}
+})
 
 export const Hand: Component<> = withState(withAnimation(({ state, delta }) => {
     dispatch(updateHand(/* TODO: delta */))

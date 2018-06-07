@@ -57,9 +57,9 @@ export class Behavior {
         }
     }
 
-    simulate(owner: Monster, resolver: EventResolver, game: $ReadOnly<Game>): Intent {
+    simulate(owner: Monster, resolver: EventResolver): Intent {
         let data: Intent = baseIntent
-        resolver.simulate(resolver => {
+        resolver.simulate((resolver, game) => {
             this.perform({ owner, resolver, game }).then(val => data = val)
         })
         if(data != baseIntent){

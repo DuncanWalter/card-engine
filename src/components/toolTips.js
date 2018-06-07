@@ -1,7 +1,6 @@
 import styled from "styled-components";
-import { EffectGroup } from "../effects/effectGroup";
 import { interpolate } from "../utils/textTemplate";
-import { Effect } from "../effects/effect";
+import { Effect, appearanceOf } from "../effects/effect";
 import { Col, Block } from '../utility'
 
 // TODO: if I make ToolTips an absolute postioned elem that takes up the space of the parent, it can automatically add the hover support and animate the tooltips
@@ -48,7 +47,7 @@ const ToolTipWrapper = Col.extend`
 `
 
 export const ToolTip = ({ effect }: { effect: Effect<any> }) => {
-    let appearance = effect.appearance
+    let appearance = appearanceOf(effect)
     return appearance? <Block>
         <ToolTipWrapper>
             <p>
@@ -59,7 +58,7 @@ export const ToolTip = ({ effect }: { effect: Effect<any> }) => {
     </Block>: null
 }
 
-export const ToolTips = ({ effects }: { effects: EffectGroup }) => {
+export const ToolTips = ({ effects }: { effects: Effect<>[] }) => {
     return <ToolTipsWrapper>
         <ToolTipsStack>
             { [...effects].map(effect => <ToolTip effect={ effect }/>) }

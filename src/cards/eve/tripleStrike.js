@@ -17,8 +17,8 @@ export const TripleStrike: () => Card<TripleStrikeData> = defineCard(tripleStrik
     text: 'Deal #{damage} damage thrice.',
 })
 
-function* playTripleStrike(self: Card<TripleStrikeData>, { resolver, actors, energy }: PlayArgs): Generator<any, TripleStrikeData, any>{
-    let target = yield queryEnemy()
+function* playTripleStrike(self: Card<TripleStrikeData>, { game, resolver, actors, energy }: PlayArgs): Generator<any, TripleStrikeData, any>{
+    let target = yield queryEnemy(game)
     if(target && target instanceof Creature){
         const action: Damage = yield resolver.processEvent(
             new Damage(

@@ -28,7 +28,7 @@ export const Deduce: () => Card<DeduceData> = defineCard('deduce', playDeduce, {
 
 function* playDeduce(self: Card<DeduceData>, { resolver, actors, energy, game }: PlayArgs): Generator<any, DeduceData, any>{
     
-    let target = yield queryEnemy()
+    let target = yield queryEnemy(game)
 
     const caches = [
         ...game.hand, 

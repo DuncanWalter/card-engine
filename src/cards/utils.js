@@ -7,34 +7,36 @@ import { MonsterGroup } from "../creatures/monsterGroup";
 import { Creature } from "../creatures/creature";
 import { Entity } from "../utils/entity";
 import { Card, BasicCardData } from "./card";
+import { Game } from "../game/battle/battleState";
 
 function any(any: any): any { return any }
 
 // Allows cards to request targets from players while being played
-export function queryEnemy<T>(): Promise<Monster> {
+export function queryEnemy<T>(game: $ReadOnly<Game>): Promise<Monster> {
     // TODO: technically needs to refresh this every time
-    let game = resolver.state.getGame()
     let enemies: MonsterGroup = game.enemies
     return new SyncPromise(resolve => {
-        if(enemies.ids.length == 1){
-            resolve(new Monster(enemies.ids[0])) 
+        if(enemies.size == 1){
+            resolve(enemies.entities[0]) 
         } else if(resolver.simulating){
-            if(state.combat.focus && enemies.ids.includes(state.combat.focus)){
-                // $FlowFixMe
-                resolve(new Monster(state.combat.focus))
+            if(state.combat.focus && enemies.includes(state.combat.focus)){ // TODO: wont work
+                resolve(state.combat.focus) // TODO: won't work
             } else {
                 resolve(game.dummy)
             }
         } else {
             query(val => {
-                return enemies.includes(new Entity(any(val)))
-            }, val => resolve(new Monster(any(val))))
+                if(val instanceof Monster){
+                    return enemies.includes(val)
+                } else {
+                    return false
+                }
+            }, resolve)
         }
     })
 }
 
-export function getEnemies(): Monster[] {
-    let game = resolver.state.getGame()
+export function getEnemies(game: $ReadOnly<Game>): Monster[] {
     if(resolver.simulating){
         if(game.enemies.size == 1){
             return [...game.enemies]
@@ -54,26 +56,25 @@ export let awaitAll = synchronize(function*anon<I>(items: Promise<I>[]): * {
     return res
 })
 
-export function queryHand(prompted?: boolean): Promise<Card<> | void> {
-    const battle = state.battle
+export function queryHand(game: $ReadOnly<Game>, prompted?: boolean): Promise<Card<> | void> {
     return new SyncPromise(resolve => {
-        if(!prompted && battle.hand.length <= 1){
-            const id = battle.hand[0]
-            const card = id ? new Card(id) : undefined
+        if(!prompted && game.hand.size <= 1){
+            const card = game.hand.entities[0]
             resolve(card)
         } else if(resolver.simulating && !prompted){
             resolve(undefined)
         } else {
             query(card => {
-                return battle.hand.includes(card)
+                if(card instanceof Card){
+                    return game.hand.includes(card)
+                } else {
+                    return false
+                }
                 // return resolver.state.getGame().hand.includes(new Card(any(card)))
-            }, val => resolve(new Card(any(val))))
+            }, resolve)
         }
     })
 }
-
-
-
 
 
 type Mask<D: Object> = $Shape<D>

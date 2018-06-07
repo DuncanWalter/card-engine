@@ -16,8 +16,8 @@ export const DoubleStrike: () => Card<DoubleStrikeData> = defineCard(doubleStrik
     text: 'Deal #{damage} damage twice.',
 })
 
-function* playDoubleStrike(self: Card<DoubleStrikeData>, { resolver, actors, energy }: PlayArgs): Generator<any, DoubleStrikeData, any>{
-    let target = yield queryEnemy()
+function* playDoubleStrike(self: Card<DoubleStrikeData>, { game, resolver, actors, energy }: PlayArgs): Generator<any, DoubleStrikeData, any>{
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,

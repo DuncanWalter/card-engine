@@ -17,7 +17,7 @@ export const Cleave: () => Card<CleaveData> = defineCard('Cleave', playCleave, {
 
 function* playCleave(self: Card<CleaveData>, { resolver, game, actors, energy }: PlayArgs){
     // TODO: get nested simulations up so that aoe can list damages correctly    
-    let actions = yield awaitAll(getEnemies().map(enemy =>
+    let actions = yield awaitAll(getEnemies(game).map(enemy =>
         resolver.processEvent(
             new Damage(
                 actors,

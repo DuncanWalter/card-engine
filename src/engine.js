@@ -7,11 +7,10 @@ import { registerEncounter } from './paths/encounterLibrary'
 import { Turtle } from './creatures/turtle/turtle'
 import { Cobra } from './creatures/cobra/cobra'
 import { Toad } from './creatures/toad/toad'
-import { registerReward } from './paths/rewardLibrary'
+import { registerReward } from './paths/reward'
 import { Heal } from './events/heal'
-import { navigateTo } from './utils/navigation'
+import { history } from './utils/navigation'
 import { CardLibrary } from './cards/cardLibrary'
-import { activateReward, collectReward } from './paths/pathState'
 import { BindMaxHp } from './events/bindMaxHp'
 
 import './cards/adventurer/adventurer'
@@ -22,9 +21,17 @@ import './cards/jekyll/jekyll'
 import './cards/alonzo/alonzo'
 import './cards/argus/argus'
 import './cards/anansi/anansi'
+import './cards/kubera/kubera'
 
-import { Game, emit, liftState } from './game/battle/battleState';
+import { Game } from './game/battle/battleState';
 import { AcquirePragma } from './events/acquirePragma';
+import { registerOverlay } from './game/overlay';
+import { Col, Row, Shim, Button } from './utility';
+import { RemoveCard } from './events/removeCard';
+import { Player } from './creatures/player';
+import { CardPanel } from './game/cardPanel';
+import { CardFan } from './game/cardFan';
+import { ImproveCard } from './events/improveCard';
 
 // how many creatures?
 
@@ -62,85 +69,25 @@ export const engine = new Module('engine', ({ global, next }) => {
     registerEncounter(21, Cobra, Cobra, Toad)
     registerEncounter(22, Cobra, Cobra, Turtle)
 
-    registerReward('Heal 5 health points.', 1, function* heal(self, state){
-        collectReward(dispatch, self)
-        yield resolver.processEvent(new Heal(resolver.state.getGame().player, resolver.state.getGame().player, {
+    registerReward('Heal', 'Heal 5 health points.', 1, function* heal(self, resolver, game){
+        self.collected = true
+        yield resolver.processEvent(new Heal(game.player, game.player, {
             healing: 5,
         }))
     })
 
-    registerReward('Gain 1 max hp.', 1, function* heal(self, state): * {
-        collectReward(dispatch, self)
-        yield resolver.processEvent(new BindMaxHp(resolver.state.getGame().player, resolver.state.getGame().player, {
-            points: 1,
-        }))
-    })
-
-    // TODO: make rewards respond to player classes
-    registerReward('Draft a Card.', 2, function* draft(self, state): * {
-        activateReward(dispatch, self)
-        navigateTo('/game/cardDraft')
-    }, (self, level, seed) => {
-        let cards = CardLibrary.sample(Math.floor(3 + level / 6.5), {
-            ['Eve']: 1.0,
-        }, {
-            F: 0.5,
-            D: 0.9,
-            C: 0.6,
-            B: 0.2,
-            A: 0.1,
-        }, seed).map(CC => new CC())
-        // $FlowFixMe
-        self.cards = cards
-        return self
-    })
-
-    registerReward('Remove a Card.', 4, function* remove(self, state){
-        activateReward(dispatch, self)
-        navigateTo('/game/cardRemove')
-    })
-
-    registerReward('Acquire a Pragma.', 5, function* acquire(self, state){
-        collectReward(dispatch, self)
-        const game = resolver.state.getGame()
+    registerReward('Pragma', 'Acquire a Pragma.', 5, function* acquire(self, resolver, game){
+        self.collected = true
         yield resolver.processEvent(new AcquirePragma(
             game.player, 
-            game.pragmaSequence.next(), 
+            game.pragmaSequence.next(game.pragmaSeed), 
             {},
         ))
     })
 
-    registerReward('Improve a Card', 3, function* improve(self, state){
-        activateReward(dispatch, self)
-        navigateTo('/game/cardImprove')
-    })
-
-    // registerReward('Gain 1 fame point.', 2, function* remove(self, state): * {
-    //     collectReward(dispatch, self)
-    //     yield resolver.processEvent(new BindFamePoints({}, state.battle.player, {
-    //         points: 1,
-    //     }))
-    // })
-
     next()
 
-    let cachedGameState = state.battle
-    let cachedGame: Game = liftState(cachedGameState)
-
-
-    resolver.initialize({
-        getGame(): Game {
-            if(state.battle != cachedGameState){
-                cachedGameState = state.battle
-                // TODO: is it better to not lift state?
-                cachedGame = liftState(cachedGameState)
-            }
-            return cachedGame
-        },
-        setGame(game: Game){
-            dispatch(emit(game))
-        },
-    })
+    resolver.initialize()
     
 }, [], [])
 

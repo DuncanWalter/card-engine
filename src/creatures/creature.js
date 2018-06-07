@@ -1,13 +1,11 @@
-import type { Effect, EffectType } from "../effects/effect"
 import type { ListenerGroup, ConsumerArgs, ListenerType } from '../events/listener'
 import type { ID } from "../utils/entity"
+import { Effect, toListener, type EffectType } from "../effects/effect"
 import { RemoveCreature } from '../events/removeCreature'
 import { Listener } from '../events/listener'
 import { resolver } from '../events/eventResolver'
 import { Entity } from "../utils/entity"
 import { randomSequence, Sequence } from "../utils/random"
-import { EffectGroup } from '../effects/effectGroup'
-import { EffectState } from '../effects/effect'
 
 export type CreatureType = string
 
@@ -15,14 +13,14 @@ export interface CreatureState {
     type: CreatureType,
     health: number,
     maxHealth: number,
-    effects: ID<EffectState>[],
+    effects: Effect<Creature<any>>[],
     seed: number,
 }
 
 export class Creature<D:Object=any> extends Entity<CreatureState & D> {
 
-    get effects(): EffectGroup {
-        return new EffectGroup(this.inner.effects)
+    get effects(): Effect<any>[] {
+        return this.inner.effects
     }
 
     get type(): CreatureType {
@@ -45,7 +43,7 @@ export class Creature<D:Object=any> extends Entity<CreatureState & D> {
     }
 
     get listener(): ListenerGroup {
-        return this.effects.asListener(this)
+        return this.effects.map(effect => toListener(this, effect))
     }
 
     get seed(): Sequence<number> {
@@ -71,7 +69,7 @@ export class Creature<D:Object=any> extends Entity<CreatureState & D> {
     }
 
     stacksOf(effectType: EffectType | { +type: EffectType }): number {
-        let effects: EffectState[] = [...this.effects].filter(effect => {
+        let effects: Effect<Creature<>>[] = [...this.effects].filter(effect => {
             if(effectType instanceof Object){
                 return effect.type === effectType.type
             } else {

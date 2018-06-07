@@ -20,7 +20,7 @@ export const Dispose: () => Card<DisposeData> = defineCard('Dispose', playDispos
 })
 
 function* playDispose(self: Card<DisposeData>, { actors, game, resolver, energy }: PlayArgs) {
-    const target: Card<> | void = yield queryHand()
+    const target: Card<> | void = yield queryHand(game)
 
     const action = new BindEffect(actors, game.player, {
         Effect: Block,

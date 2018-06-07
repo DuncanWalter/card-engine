@@ -21,10 +21,10 @@ export const Needle: () => Card<NeedleData> = defineCard(needle, playNeedle, {
     color: '#ee4422',
     title: 'Needle',
     text: 'Deal #{damage} damage. Add a copy of Needle to the discard pile. #[Volatile].',
-}, [Volatile, 1], [Cache, 1])
+}, [Volatile, 1])
 
-function* playNeedle(self, { resolver, actors, energy }: PlayArgs): Generator<any, NeedleData, any>{
-    let target: Monster = yield queryEnemy()
+function* playNeedle(self, { game, resolver, actors, energy }: PlayArgs): Generator<any, NeedleData, any>{
+    let target: Monster = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,
@@ -43,6 +43,6 @@ function* playNeedle(self, { resolver, actors, energy }: PlayArgs): Generator<an
 
 
 
-export const NeedleWithCache = upgrade('R', Needle, {}, {}, card => card.effects.add(new Cache(1)))
+export const NeedleWithCache = upgrade('R', Needle, {}, {}, card => card.effects.push(Cache(1)))
 export const NeedleOnDraw = upgrade('R', Needle, { onDraw: true }, { text: '' })
-// export const NeedleTripple = upgrade('L')
+// export const NeedleTriple = upgrade('L')

@@ -22,10 +22,10 @@ export const Daemon: () => Card<DaemonData> = defineCard(daemon, playDaemon, {
     text: 'Spawn a Daemon.',
 })
 
-function* playDaemon(self: Card<DaemonData>, { resolver, actors, energy }: PlayArgs): Generator<any, DaemonData, any>{
+function* playDaemon(self: Card<DaemonData>, { game, resolver, actors, energy }: PlayArgs): Generator<any, DaemonData, any>{
     // TODO: query creature
-    let target = yield queryEnemy()
-    yield resolver.processEvent(new SpawnCreature(actors, new DaemonMonster(randomSequence(1)), {
+    let target = yield queryEnemy(game)
+    yield resolver.processEvent(new SpawnCreature(actors, new DaemonMonster(game, randomSequence(1)), {
         isAlly: true,
     }))
     return { energy }

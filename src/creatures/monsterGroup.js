@@ -6,10 +6,11 @@ import { EntityGroup } from "../utils/entityGroup";
 
 export class MonsterGroup extends EntityGroup<Monster> {
 
+    static Subset = Monster
     monsters: ID<MonsterState>[]
 
-    constructor(monsters: ID<MonsterState>[]){
-        super(Monster, monsters)
+    constructor(monsters: Monster[]){
+        super(monsters)
     }
 
 }

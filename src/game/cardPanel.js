@@ -9,12 +9,14 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
     overflow-y: scroll;
+    overflow-x: hidden;
     position: relative;
     flex: 1;
-    margin: 4px;
-    border: solid #44444f 2px;
+    box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.35),
+                inset 0 0 8px rgba(0, 0, 0, 0.35);
+    margin: 12px;
     background: rgba(0, 0, 0, 0.18);
-    border-radius: 12px;
+    border-radius: 4px;
 `
 
 const Canvas = styled.div`
@@ -30,14 +32,15 @@ const Canvas = styled.div`
 
 const Panel = styled.div`
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: center;
     display: flex;
     max-width: 85%;
+    padding: 12px;
 `
 
 const CardHolder = styled.div`
     width: 280px;
-    margin: 12px 4px 12px;
+    margin: 12px;
 `
 
 type CardPanelProps = { 

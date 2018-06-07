@@ -5,8 +5,8 @@ import { CreateGame } from "./createGame"
 
 export const Menu = ({ match, state }: *) => <Switch>
     <Route path={`${match.path}/main`} component={ Main }/>
-    <Route path={`${match.path}/createGame`} component={ CreateGame }/>
-    <Route render={() => { throw new Error('WTF') }}/>
+    <Route path={`${match.path}/createGame/`} component={ CreateGame }/>
+    <Route render={() => { throw new Error('') }}/>
 </Switch>
 
 

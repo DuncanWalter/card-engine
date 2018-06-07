@@ -1,5 +1,6 @@
 import { CreatureState, Creature } from "./creature"
 import { Sequence, randomSequence } from "../utils/random";
+import type { CharacterName } from "../character"
 
 interface PlayerData {
     energy: number,
@@ -19,7 +20,7 @@ export class Player extends Creature<PlayerData> {
         return this.inner.energy
     }
 
-    get sets(): string[] {
+    get sets(): CharacterName[] {
         return this.inner.sets
     }
 

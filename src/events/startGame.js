@@ -5,23 +5,23 @@ import { CardLibrary } from "../cards/cardLibrary"
 import { ConsumerArgs } from "./listener"
 import { TrainingDummy } from "../creatures/trainingDummy"
 import { dispatch } from "../state"
-import { startPath, generateFreedoms } from "../paths/pathState"
+import { Path } from "../paths/path"
 import { Sequence, randomSequence } from "../utils/random"
 import { Strike } from "../cards/adventurer/strike";
 import { Defend } from "../cards/adventurer/defend";
 import { Monster } from "../creatures/monster";
 import { Card } from "../cards/card";
-import { createEntity } from "../utils/entity";
 import { LookAhead } from "../pragmas/lookAhead";
 import { PragmaGroup } from "../pragmas/pragmaGroup";
 import { characters } from "../character";
+import { toExtractor } from "../utils/entity";
 
-export const StartGame = defineEvent('startGame', function*({ resolver, game, data }){
+export const StartGame = defineEvent('startGame', function*({ resolver, game, data }: ConsumerArgs<>){
     
     let seed = randomSequence(data.seed * Math.random())
 
-    game.dummy = new TrainingDummy(randomSequence(1))
-    game.player = new Player(createEntity(Player, {
+    game.dummy = new TrainingDummy(game, randomSequence(1))
+    game.player = new Player({
         type: 'Player',
         health: 65,
         maxHealth: 65,
@@ -30,7 +30,7 @@ export const StartGame = defineEvent('startGame', function*({ resolver, game, da
         energy: 3,
         isActive: true,
         sets: [...data.character],
-    }))
+    }, toExtractor({}))
     game.deck.clear()
     game.drawPile.clear()
     game.hand.clear()
@@ -46,10 +46,7 @@ export const StartGame = defineEvent('startGame', function*({ resolver, game, da
             character.pragmaPool.forEach(P => a.add(P))
         }
         return a
-    }, new Set())].map(P => new P().id), seed.last())
-    
-    new PragmaGroup([new LookAhead().id], )
-
+    }, new Set())].map(P => new P().id))
     
 
     let cards = CardLibrary.sample(5, data.character.reduce((acc, set) => {
@@ -76,7 +73,6 @@ export const StartGame = defineEvent('startGame', function*({ resolver, game, da
 
     game.deck.add(...cards.map(CC => new CC()))
 
-    startPath(dispatch, data.seed)
-    generateFreedoms(dispatch)
+    game.root = game.path = new Path.generate(0, game, seed)
 
 })

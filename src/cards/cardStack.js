@@ -6,26 +6,24 @@ import { EntityGroup } from "../utils/entityGroup";
 
 export class CardStack extends EntityGroup<Card<>> {
 
-    constructor(cards: ID<CardState<>>[]){
-        super(Card, cards)
-    }
+    static Subset = Card
 
     shuffle(seed: Sequence<number>): void {
         let swap = (a, b) => {
-            let temp = this.ids[a]
-            this.ids[a] = this.ids[b]
-            this.ids[b] = temp
+            let temp = this.entities[a]
+            this.entities[a] = this.entities[b]
+            this.entities[b] = temp
         }
-        let size = this.ids.length
+        let size = this.entities.length
         let floor = Math.floor
-        this.ids.forEach((__, index) => 
+        this.entities.forEach((__, index) => 
             swap(index, floor(seed.next()*size))
         )
     }
 
     
     shuffleIn(card: Card<>, seed: Sequence<number>): void {
-        this.ids.splice(Math.floor(this.ids.length * seed.next()), 0, card.id)
+        this.entities.splice(Math.floor(this.entities.length * seed.next()), 0, card)
     }
 
 }

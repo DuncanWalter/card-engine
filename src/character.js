@@ -1,6 +1,6 @@
+import type { Card } from "./cards/card"
 import { CardPool } from "./cards/cardPool"
 import { Sequence } from "./utils/random"
-import { Card } from "./cards/card"
 import { Pragma } from "./pragmas/pragma";
 
 export opaque type CharacterName = string
@@ -11,7 +11,7 @@ export const C: Rarity = 'C'
 export const D: Rarity = 'D'
 export const F: Rarity = 'F'
 
-type Upgrade = (upgraded: void | 'L' | 'R') => void | Card<any>
+export type Upgrade = (upgraded: void | 'L' | 'R') => void | Card<any>
 
 export interface Distro {
     A?: number,
@@ -21,7 +21,7 @@ export interface Distro {
     F?: number,
 }
 
-export const characters: Map<string, Character> = new Map()
+export const characters: Map<CharacterName, Character> = new Map()
 
 function any(any: any): any { return any }
 

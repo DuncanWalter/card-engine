@@ -20,7 +20,7 @@ export const PalmStrike: () => Card<PalmStrikeData> = defineCard(palmStrike, pla
 })
 
 function* playPalmStrike(self: Card<PalmStrikeData>, { energy, game, resolver, actors }: PlayArgs): Generator<any, PalmStrikeData, any>{
-    let target = yield queryEnemy()
+    let target = yield queryEnemy(game)
     const action: Damage = yield resolver.processEvent(
         new Damage(
             actors,

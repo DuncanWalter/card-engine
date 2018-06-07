@@ -5,7 +5,6 @@ import { Block } from "./block"
 import { BindEffect } from '../events/bindEffect'
 import { Card } from "../cards/card"
 import { Listener, ConsumerArgs } from '../events/listener'
-import { EffectGroup } from "./effectGroup"
 import { Creature } from "../creatures/creature";
 
 export const Blockade: * = defineEffect('blockade', {

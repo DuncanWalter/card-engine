@@ -37,6 +37,7 @@ const Root = props => <Anchor>
             <Route path={'/menu'} component={ Menu }/>
             <Route path={'/game'} component={ Game }/>
             <Route render={({ history }) => {
+                history.listen(console.log)
                 useHistory(history)
                 return <Redirect to={'/menu/main'}/>
             }}/>

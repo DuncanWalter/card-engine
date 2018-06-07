@@ -9,6 +9,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
     overflow-y: scroll;
+    overflow-x: hidden;
     position: relative;
     flex: 1;
     margin: 4px;
@@ -38,7 +39,7 @@ const Fan = styled.div`
 
 const CardHolder = styled.div`
     width: 280px;
-    margin: 12px 4px 12px;
+    margin: 12px 12px 12px;
 `
 
 type CardPanelProps = { 

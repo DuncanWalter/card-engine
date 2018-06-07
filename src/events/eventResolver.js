@@ -1,18 +1,13 @@
 import type { Event, Tag } from './../events/event'
 import type { ListenerGroup, ListenerType, Header } from './listener'
 import type { State } from '../state'
-import type { Game } from '../game/battle/battleState'
+import { type Game, withGame } from '../game/battle/battleState'
 import { Listener, ConsumerArgs, reject, EventContent } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
 import { synchronize } from '../utils/async'
 import { Animation } from '../animations/animation'
 import { Entity } from '../utils/entity';
-
-interface GameTransducer {
-    +getGame: () => Game,
-    +setGame: (game: Game) => void,
-}
 
 function any(self: any): any { return self }
 
@@ -36,6 +31,7 @@ function testListener(event: Event<EventContent>, listener: Listener<any>): stri
         }
     }
     if(h.subjects){
+        // $FlowFixMe
         if(event.subject.indexIn(h.subjects) >= 0){
             matched = true
         } else {
@@ -68,7 +64,6 @@ function testListener(event: Event<EventContent>, listener: Listener<any>): stri
 
 export class EventResolver {
 
-    state: GameTransducer
     initialized: boolean
     processing: boolean
     simulating: boolean
@@ -111,9 +106,9 @@ export class EventResolver {
         if (!this.processing) this.processQueue()
     }
 
-    simulate<R>(use: (trap: EventResolver) => R): R {
+    simulate<R>(use: (trap: EventResolver, game: Game) => R): R {
         this.simulating = true
-        const r: R = use(this)
+        const r: R = withGame(({ game }) => use(this, game))({})
         this.simulating = false
         return r
     }
@@ -140,7 +135,7 @@ export class EventResolver {
     }
 
     // TODO: take a state context from hell
-    initialize(game: GameTransducer){
+    initialize(){
         if(this.initialized){
             throw new Error('Event Resolver initialized twice. Event Resolvers may only be initialized once.')
         }
@@ -150,7 +145,6 @@ export class EventResolver {
         order.forEach((e, i) => {
             e.index = i
         })
-        this.state = game
         this.initialized = true
     }
 }
@@ -207,7 +201,7 @@ function aggregate(ls: ListenerGroup, event: Event<any>, simulating: boolean): L
     } 
 }
 
-
+// $FlowFixMe
 const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<any>): Generator<Promise<any>, Event<any>, any> {
     let game = self.state.getGame()    
     

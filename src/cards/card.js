@@ -6,11 +6,11 @@ import type { ID } from '../utils/entity';
 import { PlayCard } from '../events/playCard'
 import { synchronize } from '../utils/async'
 import { resolver } from '../events/eventResolver'
-import { Effect, EffectState, type EffectType } from '../effects/effect'
+import { Effect, toListener, type EffectType } from '../effects/effect'
 import { renderEffect as EffectC } from '../effects/renderEffect'
 import { createInterpolationContext, interpolate } from '../utils/textTemplate'
-import { Entity, createEntity } from '../utils/entity';
-import { EffectGroup } from '../effects/effectGroup';
+import { Entity, toExtractor, type Extractor, type Bundler } from '../utils/entity';
+import { characters, type CharacterName, Character } from '../character';
 
 export type CardFactory = () => Card<> 
 
@@ -35,8 +35,7 @@ export interface CardState<+Data:BasicCardData=BasicCardData> {
         title: string,
     },
     +data: Data,
-    effects: ID<EffectState>[],
-    id?: string,
+    effects: Effect<Card<>>[],
 }
 
 export interface BasicCardData {
@@ -44,10 +43,8 @@ export interface BasicCardData {
     upgraded?: void | 'L' | 'R',
 }
 
-
-
 // TODO: play args should have data and use another type argument
-export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Data>> {
+export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Data>, CardState<Data>> {
 
     get appearance(): * {
         return this.inner.appearance
@@ -57,8 +54,8 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
         return this.inner.data
     }
 
-    get effects(): EffectGroup {
-        return new EffectGroup(this.inner.effects)
+    get effects(): Effect< Card<> >[] {
+        return this.inner.effects
     }
 
     get type(): string {
@@ -66,7 +63,7 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
     }
 
     get listener(): ListenerGroup {
-        return this.effects.asListener(this)
+        return this.effects.map(effect => toListener(this, effect))
     }
 
     get energy(): number | void | 'X' {
@@ -75,6 +72,19 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
 
     get playable(): boolean {
         return this.data.energy !== undefined
+    }
+
+    wrap(state: CardState<>, extract: Extractor){
+        return state
+    }
+
+    unwrap(inner: CardState<any>, bundle: Bundler): CardState<Data> {
+        return {
+            ...inner,
+            data: { ...inner.data },
+            appearance: { ...inner.appearance },
+            effects: inner.effects.map((effect: Effect<any>) => ({ ...effect })),
+        }
     }
 
     play(ctx: PlayArgs): Promise<Data> {
@@ -97,18 +107,17 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
 
         if(meta.energy !== 'X'){
             let e = meta.energy
-            resolver.simulate(resolver => {
-                const game = resolver.state.getGame()
+            resolver.simulate((resolver, game) => {
                 this.play({ 
                     actors, 
                     resolver, 
                     game, 
-                    energy: e === undefined? game.player.energy: e 
+                    energy: e === undefined ? game.player.energy : e 
                 }).then(v => meta = v)
             })
         }
 
-        let ctx = createInterpolationContext(this.data, meta, {})
+        const ctx = createInterpolationContext(this.data, meta, {})
 
         return {
             energy: meta.energy,
@@ -118,22 +127,22 @@ export class Card<+Data:BasicCardData=BasicCardData> extends Entity<CardState<Da
         }
     }
 
-    upgrade(): Card<>[] {
-        return []
-    }
-
-    clone(): Card<Data>{
-        const clone = super.clone()
-        const data = clone.inner
-        data.appearance = { ...data.appearance }
-        // $FlowFixMe
-        data.data = { ...data.data }
-        data.effects = [ ...data.effects ]
-        return new Card(clone.id)
+    upgrades(sets: CharacterName[]): Card<>[] {
+        return [...new Set(sets.map(set => 
+            characters.get(set)
+        ).filter(i => i).map((character: any) => 
+            character.members.get(this.type)
+        ).filter(i => i).map(membership => 
+            membership.upgrades
+        ).reduce((acc, ups) => 
+            acc.concat(ups), []
+        ))].map(upgrade => 
+            upgrade(this.data.upgraded)
+        ).filter(i => i)
     }
 
     stacksOf(effectType: EffectType | { +type: EffectType }): number {
-        let effects: EffectState[] = [...this.effects].filter(effect => {
+        let effects: Effect<any>[] = [...this.effects].filter(effect => {
             if(effectType instanceof Object){
                 return effect.type === effectType.type
             } else {
@@ -161,12 +170,12 @@ export function defineCard<D:BasicCardData>(
 ): () => Card<D> {
     registerCard(type, synchronize(play))
     return function(){
-        return new Card(createEntity(Card, {
+        return new Card({
             appearance,
-            effects: effects.map(([E, s]) => new E(s).id),
+            effects: effects.map(([E, s]) => new E(s)),
             type,
             data: { ...data },
-        }))
+        }, toExtractor({ }))
     }
 }
 

@@ -8,9 +8,9 @@ import { defineMonster } from "./monster"
 let rest: BehaviorState = defineBehavior('Training Dummy Rest', function*(){ return {} })
 
 export const TrainingDummy = defineMonster('Training Dummy', 10, () => rest, self => {
-    self.effects.add(
-        new Imperturbability(1),
-        new Invulnerability(1),
+    self.effects.push(
+        Imperturbability(1),
+        Invulnerability(1),
     )
     return self
 })
