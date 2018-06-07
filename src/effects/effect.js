@@ -58,7 +58,7 @@ function definitionOf<O:*>(effect: Effect<O>): EffectDefinition<O> {
 }
 
 export function appearanceOf<O:*>(effect: Effect<O>): Appearance | void | null {
-    return this.def.appearance
+    return definedEffects.get(effect.type).appearance
 }
 
 export function toListener<O:*>(owner: O, effect: Effect<O>): ListenerGroup {

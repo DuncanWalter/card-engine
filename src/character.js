@@ -1,7 +1,7 @@
 import type { Card } from "./cards/card"
+import type { Pragma } from "./pragmas/pragma";
 import { CardPool } from "./cards/cardPool"
 import { Sequence } from "./utils/random"
-import { Pragma } from "./pragmas/pragma";
 
 export opaque type CharacterName = string
 export opaque type Rarity = 'A' | 'B' | 'C' | 'D' | 'F'

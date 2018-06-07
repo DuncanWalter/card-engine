@@ -1,7 +1,7 @@
 import type { Event, Tag } from './../events/event'
 import type { ListenerGroup, ListenerType, Header } from './listener'
 import type { State } from '../state'
-import { type Game, withGame } from '../game/battle/battleState'
+import type { Game } from '../game/battle/battleState'
 import { Listener, ConsumerArgs, reject, EventContent } from './listener'
 import { LL } from '../utils/linkedList'
 import { topologicalSort } from '../utils/topologicalSort'
@@ -76,6 +76,11 @@ export class EventResolver {
         compare: any => 1 | 0 | -1,
         id: string,
     }>
+    
+    getGame: () => Game
+    get game(): Game {
+        return this.getGame()
+    }
 
     constructor(){
         this.processing = false
@@ -108,7 +113,7 @@ export class EventResolver {
 
     simulate<R>(use: (trap: EventResolver, game: Game) => R): R {
         this.simulating = true
-        const r: R = withGame(({ game }) => use(this, game))({})
+        const r: R = use(this, this.game)
         this.simulating = false
         return r
     }
@@ -135,7 +140,7 @@ export class EventResolver {
     }
 
     // TODO: take a state context from hell
-    initialize(){
+    initialize(getGame: () => Game){
         if(this.initialized){
             throw new Error('Event Resolver initialized twice. Event Resolvers may only be initialized once.')
         }
@@ -145,6 +150,7 @@ export class EventResolver {
         order.forEach((e, i) => {
             e.index = i
         })
+        this.getGame = getGame
         this.initialized = true
     }
 }
@@ -201,10 +207,9 @@ function aggregate(ls: ListenerGroup, event: Event<any>, simulating: boolean): L
     } 
 }
 
-// $FlowFixMe
 const processEvent = synchronize(function* processEvent(self: EventResolver, event: Event<any>): Generator<Promise<any>, Event<any>, any> {
-    let game = self.state.getGame()    
-    
+    const game = self.game
+
     let activeListeners: LL<Listener<any>> = aggregate([
         game.player,
         game.enemies,
@@ -266,10 +271,6 @@ const processEvent = synchronize(function* processEvent(self: EventResolver, eve
         }
     })
     yield next()
-    if(!self.simulating){
-        // TODO: figure out what to do here
-        self.state.setGame(game)
-    }
     return event
 })
 

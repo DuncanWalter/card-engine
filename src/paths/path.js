@@ -2,6 +2,7 @@ import type { State } from '../state'
 import type { Reducer } from '../utils/state'
 import type { MonsterState } from "../creatures/monster";
 import type { ID } from '../utils/entity'
+import type { Game } from "../game/battle/battleState";
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { getEncounter } from "./encounterLibrary"
@@ -9,13 +10,12 @@ import { getRewards, type Reward } from "./reward"
 import { reducer } from "vitrarius"
 import { Entity, toExtractor, toBundler } from "../utils/entity";
 import { Monster } from "../creatures/monster";
-import { Game, withGame } from "../game/battle/battleState";
 
 export interface PathState {
     level: number,
     enemies: ID<MonsterState>[],
     challengeRating: number, 
-    rewards: any[],
+    rewards: Reward<any>[],
     seed: number,
     children: PathState[] | void,
 }
@@ -65,7 +65,7 @@ export class Path extends Entity<PathState, PathInner> {
 
         return new Path({
             level,
-            rewards: getRewards(challengeRating - level - 5, game, seed).map(reward => bundle(reward)),
+            rewards: getRewards(challengeRating - level - 5, game, seed),
             enemies: enemies.map(enemy => bundle(enemy)),
             challengeRating,
             seed: seed.last(),
@@ -95,14 +95,12 @@ export class Path extends Entity<PathState, PathInner> {
         }
     }
 
-    generateChildren(): void {
-        withGame(({ game }) => {
-            this.inner.children = [
-                Path.generate(this.level + 1, game, this.seed),
-                Path.generate(this.level + 1, game, this.seed),
-                Path.generate(this.level + 1, game, this.seed),
-            ]
-        })({})
+    generateChildren(game: Game): void {
+        this.inner.children = [
+            Path.generate(this.level + 1, game, this.seed),
+            Path.generate(this.level + 1, game, this.seed),
+            Path.generate(this.level + 1, game, this.seed),
+        ]
     }
 
 }

@@ -1,7 +1,7 @@
 import type { State } from "../state"
+import type { Game } from "../game/battle/battleState";
 import { Sequence } from "../utils/random"
 import { synchronize } from "../utils/async";
-import { Game } from "../game/battle/battleState";
 import { EventResolver, resolver } from "../events/eventResolver";
 
 type Collect<D> = (self: Reward<D>, resolver: EventResolver, game: Game) => Promise<void>

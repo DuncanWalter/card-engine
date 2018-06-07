@@ -26,7 +26,7 @@ export const PathSelection = withGame(({ game }: Props) => {
                 { game.path.children.map(path => 
                     <Route render={({ history }) => 
                         <Button onClick={ click => {
-                            game.path.generateChildren()
+                            game.path.generateChildren(game)
                             history.push('/game/battle')
                             let player = game.player
                             resolver.enqueueEvents(new SetupCombat(player, player, {
@@ -45,6 +45,9 @@ export const PathSelection = withGame(({ game }: Props) => {
                 <Shim/>
             </Row>
         </Modal>
+    } else {
+        game.path.generateChildren(game)
+        return <PathSelection/>
     }
     
 })

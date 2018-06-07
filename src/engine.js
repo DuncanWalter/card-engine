@@ -23,7 +23,7 @@ import './cards/argus/argus'
 import './cards/anansi/anansi'
 import './cards/kubera/kubera'
 
-import { Game } from './game/battle/battleState';
+import { Game, withGame } from './game/battle/battleState';
 import { AcquirePragma } from './events/acquirePragma';
 import { registerOverlay } from './game/overlay';
 import { Col, Row, Shim, Button } from './utility';
@@ -87,7 +87,7 @@ export const engine = new Module('engine', ({ global, next }) => {
 
     next()
 
-    resolver.initialize()
+    resolver.initialize(() => withGame(({ game }) => game)({}))
     
 }, [], [])
 

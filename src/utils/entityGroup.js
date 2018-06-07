@@ -68,7 +68,7 @@ export class EntityGroup<T:Entity<Object>> implements Iterable<T> {
     // $FlowFixMe
     [Symbol.iterator](){
         return (function*(self: EntityGroup<T>): Generator<T, any, any> {
-            yield* self.ids.map(id => new self.Subset(id))
+            yield* self.entities
         })(this)
     } 
     

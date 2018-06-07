@@ -1,6 +1,6 @@
+import type { Game } from "../game/battle/battleState";
 import { Sequence } from "../utils/random"
 import { Monster } from "../creatures/monster"
-import { Game } from "../game/battle/battleState";
 
 interface Encounter {
     challengeRating: number,
@@ -20,6 +20,12 @@ export function getEncounter(level: number, game: Game, seed: Sequence<number>){
     let encounters = encounterLibrary.filter(encounter => 
         Math.abs(encounter.challengeRating - level - 10) < (1.95 + level / 7) 
     )
+    if(!encounters.length){
+        return {
+            challengeRating: 0,
+            enemies: [],
+        }
+    }
     let encounter = encounters[Math.floor(seed.next() * encounters.length)]
     return {
         challengeRating: encounter.challengeRating,

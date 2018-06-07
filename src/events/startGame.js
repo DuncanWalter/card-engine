@@ -73,6 +73,6 @@ export const StartGame = defineEvent('startGame', function*({ resolver, game, da
 
     game.deck.add(...cards.map(CC => new CC()))
 
-    game.root = game.path = new Path.generate(0, game, seed)
+    game.root = game.path = Path.generate(0, game, seed)
 
 })

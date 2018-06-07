@@ -50,8 +50,8 @@ const CardSlot = withGame(({ slot, game }: CardSlotProps) => {
     </Transform>
 })
 
-export const Hand: Component<> = withState(withAnimation(({ state, delta }) => {
-    dispatch(updateHand(/* TODO: delta */))
+export const Hand: Component<> = withGame(withState(withAnimation(({ game, state, delta }) => {
+    dispatch(updateHand(game))
     return <div style={sty.hand}>
         <Shim/>        
         <div style={{ width: 0, height: 0 }}>{[
@@ -61,7 +61,7 @@ export const Hand: Component<> = withState(withAnimation(({ state, delta }) => {
         ]}</div>
         <Shim/>
     </div>
-}))
+})))
 
 
 

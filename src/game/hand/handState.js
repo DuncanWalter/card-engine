@@ -238,8 +238,8 @@ export const handInitial: HandState = {
     focus: undefined,
 }
 
-export function updateHand(){
-    return { type: 'updateHand' }
+export function updateHand(game: Game){
+    return { type: 'updateHand', game }
 }
 
 export function setFocus(card: ID<CardState<>>){

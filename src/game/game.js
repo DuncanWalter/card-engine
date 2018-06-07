@@ -3,19 +3,19 @@ import { Switch, Route } from "react-router-dom"
 import { Battle } from "./battle/battle"
 import { Rewards } from "../paths/rewards"
 import { PathSelection } from "../paths/pathSelection"
-import { withState } from "../state"
+import { withGame } from "../game/battle/battleState"
 
-export const Game = withState(({ match, state }) => <Col shim>
+export const Game = withGame(({ match, game }) => <Col shim>
     <Material>
         <Row backgroundColor='#474441'>
-            <p><b>SL4M The Adventurer</b> level: { state.path.level }</p>
+            <p><b>SL4M The Adventurer</b> level: { game.path.level }</p>
             <div style={{ flex: 1 }}/>
-            <p>{ state.battle.deck.length } cards</p>
+            <p>{ game.deck.size } cards</p>
             <p>Settings and Crap</p>
         </Row>
     </Material>
     <Row>
-        { [...state.battle.pragmas].map(pragma => <Block style={{ width: '40px', height: '40px', borderRadius: '20px' }}>
+        { [...game.pragmas].map(pragma => <Block style={{ width: '40px', height: '40px', borderRadius: '20px' }}>
             1
         </Block>) }
     </Row>    
