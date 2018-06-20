@@ -9,57 +9,68 @@ import { BindEnergy } from './bindEnergy'
 import { AddToDiscardPile } from './addToDiscardPile'
 
 type Type = {
-    data: {
-        from?: CardStack,
-    },
-    subject: Card<>,
+  data: {
+    from?: CardStack,
+  },
+  subject: Card<>,
 }
 
-export const PlayCard = defineEvent('playCard', function*({ game, data, subject, actors, resolver, cancel }: ConsumerArgs<Type>){ 
-    let energy: number
-    if(subject.data.energy === undefined){
-        return cancel()
-    } else if(subject.data.energy === 'X'){
-        if(!game.player.energy){
-            return cancel()
-        } else {
-            energy = game.player.energy
-        }
+export const PlayCard = defineEvent('playCard', function*({
+  game,
+  data,
+  subject,
+  actors,
+  resolver,
+  cancel,
+}: ConsumerArgs<Type>) {
+  let energy: number
+  if (subject.data.energy === undefined) {
+    return cancel()
+  } else if (subject.data.energy === 'X') {
+    if (!game.player.energy) {
+      return cancel()
     } else {
-        if(game.player.energy < subject.data.energy){
-            return cancel()
-        } else {
-            energy = subject.data.energy
-        }
+      energy = game.player.energy
     }
-
-    if(data.from){
-        data.from.remove(subject)
-        game.activeCards.push(subject) // TODO: could be safer than push pop
+  } else {
+    if (game.player.energy < subject.data.energy) {
+      return cancel()
+    } else {
+      energy = subject.data.energy
     }
+  }
 
-    yield resolver.processEvent(new BindEnergy(actors, game.player, {
-        quantity: -energy
-    }, PlayCard))
-    
-    actors.add(subject)
+  if (data.from) {
+    data.from.remove(subject)
+    game.activeCards.push(subject) // TODO: could be safer than push pop
+  }
 
-    yield subject.play({ 
-        resolver,
-        actors,
-        game,
-        energy,
-    })
+  yield resolver.processEvent(
+    new BindEnergy(
+      actors,
+      game.player,
+      {
+        quantity: -energy,
+      },
+      PlayCard
+    )
+  )
 
-    let card: Card<> = subject
-    let event = yield resolver.processEvent(new AddToDiscardPile(actors, card, {}, PlayCard))
-    
-    if(data.from){
-        game.activeCards.remove(subject)
-    }
+  actors.add(subject)
+
+  yield subject.play({
+    resolver,
+    actors,
+    game,
+    energy,
+  })
+
+  let card: Card<> = subject
+  let event = yield resolver.processEvent(
+    new AddToDiscardPile(actors, card, {}, PlayCard)
+  )
+
+  if (data.from) {
+    game.activeCards.remove(subject)
+  }
 })
-
-
-
-
-

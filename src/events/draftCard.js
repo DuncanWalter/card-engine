@@ -6,16 +6,13 @@ import { ConsumerArgs } from './listener'
 import { CardStack } from '../cards/cardStack'
 
 type Type = {
-    data: {},
-    subject: Card<>,
+  data: {},
+  subject: Card<>,
 }
 
-export const DraftCard = defineEvent('draftCard', function*({ game, subject }: ConsumerArgs<Type>){ 
-
-    game.deck.add(subject)
-    
+export const DraftCard = defineEvent('draftCard', function*({
+  game,
+  subject,
+}: ConsumerArgs<Type>) {
+  game.deck.add(subject)
 })
-
-
-
-

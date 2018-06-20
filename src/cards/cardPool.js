@@ -1,97 +1,82 @@
-import type { Card } from "./card"
-import type { CardStack } from "./cardStack"
-import { Sequence } from "../utils/random"
+import type { Card } from './card'
+import type { CardStack } from './cardStack'
+import { Sequence } from '../utils/random'
 
-export function pickKey(distro: { [string]: number }, seed: Sequence<number>): string {
-    let keys = Object.keys(distro)
-    let val = keys.reduce((acc, key) => acc + distro[key], 0) * seed.next()
-    let sum = 0
-    for(let key of keys){
-        sum += distro[key] || 0
-        if(sum > val){
-            return key
-        }
+export function pickKey(
+  distro: { [string]: number },
+  seed: Sequence<number>
+): string {
+  let keys = Object.keys(distro)
+  let val = keys.reduce((acc, key) => acc + distro[key], 0) * seed.next()
+  let sum = 0
+  for (let key of keys) {
+    sum += distro[key] || 0
+    if (sum > val) {
+      return key
     }
-    console.log('Should NEVER happen...')
-    return keys[0]
+  }
+  console.log('Should NEVER happen...')
+  return keys[0]
 }
 
 export class CardPool {
-    
-    name: string
-    cards: Map<string, (() => Card<>)[]>
-    color: string
-    pairings: { [key: string]: string }
+  name: string
+  cards: Map<string, (() => Card<>)[]>
+  color: string
+  pairings: { [key: string]: string }
 
-    sample(count: number, distro: { [key: string]: number }, seed: Sequence<number>): (() => Card<>)[] {
-        let result = new Set()
-        while(result.size < count){
-            let stack = this.cards.get(pickKey(distro, seed))
-            if(stack){
-                let card = sampleArray(stack, seed)
-                if(card){
-                    result.add(card)
-                }
-            }
+  sample(
+    count: number,
+    distro: { [key: string]: number },
+    seed: Sequence<number>
+  ): (() => Card<>)[] {
+    let result = new Set()
+    while (result.size < count) {
+      let stack = this.cards.get(pickKey(distro, seed))
+      if (stack) {
+        let card = sampleArray(stack, seed)
+        if (card) {
+          result.add(card)
         }
-        return [...result]
+      }
     }
+    return [...result]
+  }
 
-    add(catagory: string, card: () => Card<>){
-        let cardCategory = this.cards.get(catagory)
-        if(cardCategory){
-            cardCategory.push(card)
-        } else {
-            throw new Error('Cannot register cards to unregistered catagories')
-        }
+  add(catagory: string, card: () => Card<>) {
+    let cardCategory = this.cards.get(catagory)
+    if (cardCategory) {
+      cardCategory.push(card)
+    } else {
+      throw new Error('Cannot register cards to unregistered catagories')
     }
+  }
 
-    members(): Iterable< () => Card<> >{
-        let cards = this.cards
-        return (function*(){
-            for(let cardList of cards.values()){
-                yield* cardList
-            }
-        })()
-    }
+  members(): Iterable<() => Card<>> {
+    let cards = this.cards
+    return (function*() {
+      for (let cardList of cards.values()) {
+        yield* cardList
+      }
+    })()
+  }
 
-    constructor(name: string, color: string, ...catagories: string[]){
-        this.name = name
-        this.color = color
-        this.cards = new Map()
-        catagories.forEach(catagory => this.cards.set(catagory, []))
-    }
-
+  constructor(name: string, color: string, ...catagories: string[]) {
+    this.name = name
+    this.color = color
+    this.cards = new Map()
+    catagories.forEach((catagory) => this.cards.set(catagory, []))
+  }
 }
 
 function sampleArray<T>(array: T[], seed: Sequence<number>): T | void {
-    return array[Math.floor(array.length * seed.next())]
+  return array[Math.floor(array.length * seed.next())]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // export class CardPool<Key=Class<Card<any>>, Child: CardPool<any, any>=CardPool<>> {
 
 //     name: string
-    
+
 //     children: Map<Key, Child>
 //     cards: Set<Class<Card<any>>>
 
@@ -125,7 +110,7 @@ function sampleArray<T>(array: T[], seed: Sequence<number>): T | void {
 //             cards.shuffle(seed)
 //             return cards.take(count).map(cc => cc.constructor)
 //         }
-        
+
 //         let dd = distribution || new Map()
 //         let scale: number
 //         let stack: CardStack
@@ -145,7 +130,7 @@ function sampleArray<T>(array: T[], seed: Sequence<number>): T | void {
 //             scale = Math.ceil(count / this.children.size)
 //         }
 
-//         cards = []   
+//         cards = []
 //         this.children.forEach((child, key) => {
 //             cards.push(...child.sample(scale * (dd.get(key) || 1), seed, dd))
 //         })
@@ -166,7 +151,6 @@ function sampleArray<T>(array: T[], seed: Sequence<number>): T | void {
 //     }
 
 // }
-
 
 // function sum(numbers: Iterable<[any, number]>){
 //     return [...numbers].reduce((a, b) => a + b[1], 0)

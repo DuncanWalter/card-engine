@@ -1,33 +1,47 @@
-import { defineCard, PlayArgs, Card } from "../card"
+import { defineCard, PlayArgs, Card } from '../card'
 import { defineEffect } from '../../effects/effect'
-import { ExhaustCard } from "../../events/exhaustCard";
+import { ExhaustCard } from '../../events/exhaustCard'
 
-const Indestructible: * = defineEffect('indestructible', {
+const Indestructible: * = defineEffect(
+  'indestructible',
+  {
     name: 'Indestructible',
     innerColor: '#ee8866',
     outerColor: '#bb3322',
     description: 'Cannot be #[Destroyed].',
     sides: 3,
     rotation: 0.5,
-}, {
-    stacked: false, 
-    delta: x => x,
+  },
+  {
+    stacked: false,
+    delta: (x) => x,
     min: 1,
     max: 1,
-}, owner => ({
+  },
+  (owner) => ({
     subjects: [owner],
     type: ExhaustCard,
-}), (owner, type) => function*({ cancel }){
-    return cancel()
-}, [], [ExhaustCard])
+  }),
+  (owner, type) =>
+    function*({ cancel }) {
+      return cancel()
+    },
+  [],
+  [ExhaustCard]
+)
 
-export const HardwareFailure = defineCard('hardwareFailure', function*(self: Card<>, { energy }: PlayArgs){ 
+export const HardwareFailure = defineCard(
+  'hardwareFailure',
+  function*(self: Card<>, { energy }: PlayArgs) {
     return { energy }
-}, {
+  },
+  {
     energy: undefined,
-}, {
+  },
+  {
     color: '#884422',
     text: '#[Unplayable]. #[Indestructible].',
     title: 'Hardware Failure',
-}, [Indestructible, 1])
-
+  },
+  [Indestructible, 1]
+)

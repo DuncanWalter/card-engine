@@ -1,7 +1,7 @@
-import { CardLibrary } from "../cardLibrary";
-import { Character } from "../../character";
+import { CardLibrary } from '../cardLibrary'
+import { Character } from '../../character'
 
-// block and ward effects. apply debuffs to self... or not. 
+// block and ward effects. apply debuffs to self... or not.
 
 // Blockade (only lose half of block on turn start) singleton
 // Slam- deal damage to a target equal to amount of block
@@ -19,7 +19,11 @@ import { Character } from "../../character";
 // gain latency. deal damage.
 // get rid of vulnerability and latency, gain 2 ward, singleton
 
-
-const argus = new Character('Argus', true, '#d87804', 'Government sponsored security software.')
+const argus = new Character(
+  'Argus',
+  true,
+  '#d87804',
+  'Government sponsored security software.'
+)
 
 CardLibrary.register(argus)

@@ -1,15 +1,16 @@
 // TODO: use styled component
 import React from 'react'
 
-const sty = { 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    padding: '-1500px',
-    width: 0,
-    height: 0,
-    position: 'relative',
+const sty = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '-1500px',
+  width: 0,
+  height: 0,
+  position: 'relative',
 }
 
-export const CenterPoint = ({ content }: any) => 
-    <div style={sty}>{ content }</div>
+export const CenterPoint = ({ content }: any) => (
+  <div style={sty}>{content}</div>
+)

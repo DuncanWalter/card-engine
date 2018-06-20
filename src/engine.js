@@ -23,15 +23,15 @@ import './cards/argus/argus'
 import './cards/anansi/anansi'
 import './cards/kubera/kubera'
 
-import { Game, withGame } from './game/battle/battleState';
-import { AcquirePragma } from './events/acquirePragma';
-import { registerOverlay } from './game/overlay';
-import { Col, Row, Shim, Button } from './utility';
-import { RemoveCard } from './events/removeCard';
-import { Player } from './creatures/player';
-import { CardPanel } from './game/cardPanel';
-import { CardFan } from './game/cardFan';
-import { ImproveCard } from './events/improveCard';
+import { Game, withGame } from './game/battle/battleState'
+import { AcquirePragma } from './events/acquirePragma'
+import { registerOverlay } from './game/overlay'
+import { Col, Row, Shim, Button } from './utility'
+import { RemoveCard } from './events/removeCard'
+import { Player } from './creatures/player'
+import { CardPanel } from './game/cardPanel'
+import { CardFan } from './game/cardFan'
+import { ImproveCard } from './events/improveCard'
 
 // how many creatures?
 
@@ -57,8 +57,9 @@ import { ImproveCard } from './events/improveCard';
 // exclusive tags
 // inclusive tags
 
-export const engine = new Module('engine', ({ global, next }) => {
-
+export const engine = new Module(
+  'engine',
+  ({ global, next }) => {
     registerEncounter(10, Turtle)
     registerEncounter(11, Toad, Toad)
     registerEncounter(13, Cobra)
@@ -69,32 +70,38 @@ export const engine = new Module('engine', ({ global, next }) => {
     registerEncounter(21, Cobra, Cobra, Toad)
     registerEncounter(22, Cobra, Cobra, Turtle)
 
-    registerReward('Heal', 'Heal 5 health points.', 1, function* heal(self, resolver, game){
-        self.collected = true
-        yield resolver.processEvent(new Heal(game.player, game.player, {
-            healing: 5,
-        }))
+    registerReward('Heal', 'Heal 5 health points.', 1, function* heal(
+      self,
+      resolver,
+      game
+    ) {
+      self.collected = true
+      yield resolver.processEvent(
+        new Heal(game.player, game.player, {
+          healing: 5,
+        })
+      )
     })
 
-    registerReward('Pragma', 'Acquire a Pragma.', 5, function* acquire(self, resolver: EventResolver, game: Game){
-        self.collected = true
-        yield resolver.processEvent(new AcquirePragma(
-            game.player, 
-            game.pragmaSequence.next(game.pragmaSeed), 
-            {},
-        ))
+    registerReward('Pragma', 'Acquire a Pragma.', 5, function* acquire(
+      self,
+      resolver: EventResolver,
+      game: Game
+    ) {
+      self.collected = true
+      yield resolver.processEvent(
+        new AcquirePragma(
+          game.player,
+          game.pragmaSequence.next(game.pragmaSeed),
+          {}
+        )
+      )
     })
 
     next()
 
     resolver.initialize(() => withGame(({ game }) => game)({}))
-    
-}, [], [])
-
-
-
-
-
-
-
-
+  },
+  [],
+  []
+)

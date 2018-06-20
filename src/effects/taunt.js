@@ -16,7 +16,7 @@
 //     description: '',
 //     sides: 5,
 // }, {
-//     stacked: true, 
+//     stacked: true,
 //     delta: x => x - 1,
 //     min: 1,
 //     max: 99,
