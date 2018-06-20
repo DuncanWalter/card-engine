@@ -4,6 +4,7 @@ import { Row, Block, Shim } from "../utility";
 import { Card } from "../cards/component";
 import { Card as CardO } from "../cards/card"
 import styled from "styled-components";
+import React from 'react'
 
 // TODO: clean up styles
 
@@ -43,7 +44,6 @@ const CardHolder = styled.div`
 `
 
 type CardPanelProps = { 
-    state: State, 
     cards: CardO<>[], 
     sets: string[], 
     onClick?: (card: Card) => void,
@@ -53,7 +53,7 @@ export const CardFan = ({ cards, sets, onClick }: CardPanelProps) => <Wrapper>
     <Canvas>
         <Fan>
             {cards.map(card => 
-                <CardHolder onClick={ click => onClick? onClick(card): null }>
+                <CardHolder onClick={ click => onClick ? onClick(card) : null }>
                     <Card card={ card } sets={ sets } glow={ false }/>
                 </CardHolder>
             )}

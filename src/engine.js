@@ -1,5 +1,5 @@
 import { Module } from './utils/module'
-import { resolver } from './events/eventResolver'
+import { resolver, EventResolver } from './events/eventResolver'
 import { StartGame } from './events/startGame'
 
 import { stream, state, dispatch } from './state'
@@ -76,7 +76,7 @@ export const engine = new Module('engine', ({ global, next }) => {
         }))
     })
 
-    registerReward('Pragma', 'Acquire a Pragma.', 5, function* acquire(self, resolver, game){
+    registerReward('Pragma', 'Acquire a Pragma.', 5, function* acquire(self, resolver: EventResolver, game: Game){
         self.collected = true
         yield resolver.processEvent(new AcquirePragma(
             game.player, 

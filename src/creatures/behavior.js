@@ -4,6 +4,7 @@ import { Event } from '../events/event'
 import { EventResolver } from '../events/eventResolver'
 import { synchronize } from "../utils/async"
 import { Entity } from "../utils/entity"
+import React from 'react'
 
 export interface Intent {
     damage?: number,

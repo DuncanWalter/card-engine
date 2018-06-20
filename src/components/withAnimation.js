@@ -1,4 +1,4 @@
-import { Component, VNode } from 'preact'
+import React from 'react'
 
 const updaters = new Set()
 
@@ -20,8 +20,8 @@ export function registerUpdate(callback: (hash: number) => any){
 }
 
 
-export function withAnimation<T>(component: (props: T) => VNode){
-    class Animated extends Component {
+export function withAnimation<T>(component: React.Component<T>){
+    class Animated extends React.Component<T> {
         shouldComponentUpdate(nextState){
             return this.state.hash != hash || nextState.hash == hash
         }
@@ -57,7 +57,7 @@ export const overStream = <P: Object, S: Object>(stream: any, propName: string, 
     let valueStream = stream.skipDuplicates()
     valueStream.onValue(v => value = v)
 
-    class Stream extends Component<P, S> {
+    class Stream extends React.Component<P, S> {
         componentDidMount(){
             this.forceUpdateHandler = v => frameEdits.add(hash => this.setState({ [propName]: v }))
             valueStream.onValue(this.forceUpdateHandler)

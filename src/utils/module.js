@@ -1,4 +1,5 @@
 import { topologicalSort } from './topologicalSort'
+import React from 'react'
 
 // TODO: clean this hideous file up
 const modules: Map<string, Module> = new Map();

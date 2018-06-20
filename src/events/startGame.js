@@ -46,7 +46,7 @@ export const StartGame = defineEvent('startGame', function*({ resolver, game, da
             character.pragmaPool.forEach(P => a.add(P))
         }
         return a
-    }, new Set())].map(P => new P().id))
+    }, new Set())].map(P => new P()))
     
 
     let cards = CardLibrary.sample(5, data.character.reduce((acc, set) => {

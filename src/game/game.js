@@ -4,6 +4,7 @@ import { Battle } from "./battle/battle"
 import { Rewards } from "../paths/rewards"
 import { PathSelection } from "../paths/pathSelection"
 import { withGame } from "../game/battle/battleState"
+import React from 'react'
 
 export const Game = withGame(({ match, game }) => <Col shim>
     <Material>

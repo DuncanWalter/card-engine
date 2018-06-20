@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { interpolate } from "../utils/textTemplate";
 import { Effect, appearanceOf } from "../effects/effect";
 import { Col, Block } from '../utility'
+import React from 'react'
 
 // TODO: if I make ToolTips an absolute postioned elem that takes up the space of the parent, it can automatically add the hover support and animate the tooltips
 

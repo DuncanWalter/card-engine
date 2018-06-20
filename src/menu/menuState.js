@@ -4,6 +4,7 @@ import type { CharacterName } from '../character'
 import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { reducer } from "vitrarius"
+import React from 'react'
 
 export interface MenuState {
     character: string[],

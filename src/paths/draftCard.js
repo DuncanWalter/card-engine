@@ -7,6 +7,7 @@ import { CardLibrary } from '../cards/cardLibrary'
 import { DraftCard } from '../events/draftCard'
 import { adventurer } from '../cards/adventurer/adventurer';
 import { CardFan } from '../game/cardFan';
+import React from 'react'
 
 const draftCard = registerOverlay(({ resolve, game, cards }) => <Col shim>
     <h1>Draft Card</h1>

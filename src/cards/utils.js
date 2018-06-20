@@ -19,19 +19,27 @@ export function queryEnemy<T>(game: $ReadOnly<Game>): Promise<Monster> {
         if(enemies.size == 1){
             resolve(enemies.entities[0]) 
         } else if(resolver.simulating){
-            if(state.combat.focus && enemies.includes(state.combat.focus)){ // TODO: wont work
-                resolve(state.combat.focus) // TODO: won't work
+            if(state.combat.focus && enemies.entities.map(enemy => enemy.id).includes(state.combat.focus)){ // TODO: wont work
+                game.enemies.entities.forEach(enemy => {
+                    if(enemy.id == state.combat.focus){
+                        resolve(enemy) // TODO: solve the case where this is just not found...
+                    }
+                })
             } else {
                 resolve(game.dummy)
             }
         } else {
-            query(val => {
-                if(val instanceof Monster){
-                    return enemies.includes(val)
-                } else {
-                    return false
-                }
-            }, resolve)
+            query(enemy => {
+                return console.log('checking')||game.enemies.entities.map(enemy => enemy.id).includes(enemy)
+                // return resolver.state.getGame().hand.includes(new Card(any(card)))
+            }, enemy => {
+                console.log('resolving')
+                game.enemies.entities.forEach(__enemy__ => {
+                    if(__enemy__.id == enemy){
+                        resolve(__enemy__) // TODO: solve the case where this is just not found...
+                    }
+                })
+            })
         }
     })
 }
@@ -65,13 +73,16 @@ export function queryHand(game: $ReadOnly<Game>, prompted?: boolean): Promise<Ca
             resolve(undefined)
         } else {
             query(card => {
-                if(card instanceof Card){
-                    return game.hand.includes(card)
-                } else {
-                    return false
-                }
+                return console.log('checking')||game.hand.entities.map(card => card.id).includes(card)
                 // return resolver.state.getGame().hand.includes(new Card(any(card)))
-            }, resolve)
+            }, card => {
+                console.log('resolving')
+                game.hand.entities.forEach(__card__ => {
+                    if(__card__.id == card){
+                        resolve(__card__) // TODO: solve the case where this is just not found...
+                    }
+                })
+            })
         }
     })
 }
@@ -94,26 +105,6 @@ export function upgrade<D:BasicCardData>(to: 'L' | 'R', CC: () => Card<D>, dataM
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

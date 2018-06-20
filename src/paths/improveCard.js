@@ -5,13 +5,13 @@ import { CardPanel } from "../game/cardPanel";
 import { ImproveCard } from "../events/improveCard";
 import { registerReward } from "./reward";
 import { dispatch } from "../state";
-
+import React from 'react'
 
 const selectUpgrade = registerOverlay(({ resolve, game, card }) => {
     return <Col shim>
         <h1>Select Upgrade</h1>
         <p>Select an upgrade.</p>
-        <CardFan cards={ card.upgrades(game.player.sets) } onClick={ card => {
+        <CardFan sets={ game.player.sets } cards={ card.upgrades(game.player.sets) } onClick={ card => {
             resolve(card)
         }}/>
         <Button onClick={() => {

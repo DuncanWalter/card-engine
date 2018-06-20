@@ -31,8 +31,7 @@ function testListener(event: Event<EventContent>, listener: Listener<any>): stri
         }
     }
     if(h.subjects){
-        // $FlowFixMe
-        if(event.subject.indexIn(h.subjects) >= 0){
+        if(h.subjects.includes(event.subject)){
             matched = true
         } else {
             return 'Wrong Subject'

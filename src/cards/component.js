@@ -10,6 +10,7 @@ import { CardLibrary } from './cardLibrary';
 import styled from 'styled-components';
 import { ToolTips } from '../components/toolTips';
 import { Effect } from '../effects/effect'
+import React from 'react'
 
 import mask from '../../static/images/316151-200.png'
 import { Material, Col } from '../utility';

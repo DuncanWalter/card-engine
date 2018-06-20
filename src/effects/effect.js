@@ -58,12 +58,17 @@ function definitionOf<O:*>(effect: Effect<O>): EffectDefinition<O> {
 }
 
 export function appearanceOf<O:*>(effect: Effect<O>): Appearance | void | null {
-    return definedEffects.get(effect.type).appearance
+    const def = definedEffects.get(effect.type)
+    if(def){
+        return def.appearance
+    } else {
+        return null
+    }
 }
 
 export function toListener<O:*>(owner: O, effect: Effect<O>): ListenerGroup {
-    const def = definedEffects.get(this.type)
-    let self = this
+    let self = effect
+    const def = definedEffects.get(self.type)
     if(def){
         return [
             new Listener(
@@ -86,7 +91,7 @@ export function toListener<O:*>(owner: O, effect: Effect<O>): ListenerGroup {
             def.listenerFactory(owner),
         ]
     } else {
-        throw new Error(`Unrecognized Effect type ${this.type}`)
+        throw new Error(`Unrecognized Effect type ${self.type}`)
     } 
 }
 

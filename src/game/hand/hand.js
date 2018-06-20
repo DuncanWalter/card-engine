@@ -1,6 +1,6 @@
 import { Card } from '../../cards/component'
 import { Card as CardObject } from './../../cards/card'
-import { updateHand, setFocus, unsetFocus, CardSlot as CardSlotT } from './handState'
+import { updateHand, setFocus, unsetFocus, CardSlot as CardSlotT, findCardById } from './handState'
 import { withAnimation } from '../../components/withAnimation'
 import { CenterPoint } from '../../components/centerPoint'
 import { Transform } from '../../components/transform'
@@ -10,6 +10,8 @@ import { PlayCard } from '../../events/playCard';
 import { Shim } from '../../utility';
 import { submitTarget } from '../combatState';
 import { Game, withGame } from '../battle/battleState';
+import React from 'react'
+
 
 const sty = {
     hand: {
@@ -25,7 +27,11 @@ const CardSlot = withGame(({ slot, game }: CardSlotProps) => {
     
     // TODO: snag the legitimate Card
     const isFocus = slot.isFocus
-    const card = slot.card
+    const card = findCardById(game, slot.card)
+
+    if(!card){
+        return
+    }
 
     return <Transform 
         x={ slot.pos.x } 
@@ -35,9 +41,9 @@ const CardSlot = withGame(({ slot, game }: CardSlotProps) => {
     >
         <CenterPoint content={
             <div
-                onClick={ click => dispatch(submitTarget(card)) }
-                onMouseEnter={ click => dispatch(setFocus(card)) }
-                onMouseLeave={ click => dispatch(unsetFocus(card)) }
+                onClick={ click => dispatch(submitTarget(card.id)) }
+                onMouseEnter={ click => dispatch(setFocus(card.id)) }
+                onMouseLeave={ click => dispatch(unsetFocus(card.id)) }
             >
                 <Card 
                     glow={ isFocus } 
@@ -50,8 +56,9 @@ const CardSlot = withGame(({ slot, game }: CardSlotProps) => {
     </Transform>
 })
 
-export const Hand: Component<> = withGame(withState(withAnimation(({ game, state, delta }) => {
-    dispatch(updateHand(game))
+export const Hand = withGame(withState(withAnimation(({ game, state, delta }) => {
+    // TODO: move on animation frame crap into the with animation hoc props
+    dispatch(updateHand(game, 0.0166))
     return <div style={sty.hand}>
         <Shim/>        
         <div style={{ width: 0, height: 0 }}>{[

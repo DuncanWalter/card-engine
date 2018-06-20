@@ -1,4 +1,5 @@
-import { render, Component } from 'preact'
+import React from 'react'
+import ReactDOM from 'react-dom'
 import { Game } from './game/game'
 import { loadModules } from './utils/module'
 import { engine } from './engine'
@@ -45,15 +46,18 @@ const Root = props => <Anchor>
     </Router>
 </Anchor>
 
-// HMR friendly bootstrapping
-;(function bootstrap(anchorElement){
-    render(<Root/>, anchorElement)
+;(function bootstrap(anchorElement: HTMLElement | null){
+    if(anchorElement){
+        ReactDOM.render(<Root/>, anchorElement)
+    } else {
+        // noop
+    }
 })(document.getElementById('anchor'))
 
-function any(any: any): any { return any }
-
-// enables HMR at this root
-// $FlowFixMe
-if( module.hot ){ 
-    any(module).hot.accept()
-}
+// function any(any: any): any { return any }
+//
+// // enables HMR at this root
+// // $FlowFixMe
+// if( module.hot ){ 
+//     any(module).hot.accept()
+// }

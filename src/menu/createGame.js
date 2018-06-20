@@ -9,6 +9,8 @@ import { CardPanel } from '../game/cardPanel'
 import { Entity, toExtractor } from '../utils/entity'
 import { registerOverlay, OverlayContext } from '../game/overlay';
 import styled from 'styled-components'
+import React from 'react'
+
 
 const Display = Material.extend`
     min-width: 240px;
@@ -105,6 +107,7 @@ const CharacterSlot = ({ index, character }) => {
 
 // TODO: modals should only display top child
 export const CreateGame = withState(({ state, match, history }) => {
+    console.log('stuff', match, history)
     const menu = state.menu
     return <Modal>
         <OverlayContext match={ match }>

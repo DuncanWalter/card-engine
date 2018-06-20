@@ -57,7 +57,7 @@ export class EntityGroup<T:Entity<Object>> implements Iterable<T> {
     }
 
     includes(entity: Entity<any>): boolean {
-        return this.entities.includes(entity.id)
+        return this.entities.includes(entity)
     }
 
     // TODO: make a boolean for safety...

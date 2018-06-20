@@ -1,7 +1,6 @@
 import type { State } from '../state'
-import { Link } from 'react-router-dom'
+import { Link, Route } from 'react-router-dom'
 import { Modal, Row, Button, Col, Block, Shim } from '../utility'
-import { Route } from 'react-router-dom'
 import { StartGame } from '../events/startGame'
 import { SetupCombat } from '../events/setupCombat'
 import { StartCombat } from '../events/startCombat'
@@ -14,6 +13,8 @@ import { Monster } from '../creatures/monster';
 import { Entity } from '../utils/entity';
 import { Player } from '../creatures/player';
 import { Game, withGame } from '../game/battle/battleState';
+import React from 'react'
+
 
 type Props = { game: Game }
 export const PathSelection = withGame(({ game }: Props) => {
@@ -26,7 +27,7 @@ export const PathSelection = withGame(({ game }: Props) => {
                 { game.path.children.map(path => 
                     <Route render={({ history }) => 
                         <Button onClick={ click => {
-                            game.path.generateChildren(game)
+                            game.path = path
                             history.push('/game/battle')
                             let player = game.player
                             resolver.enqueueEvents(new SetupCombat(player, player, {
@@ -51,3 +52,4 @@ export const PathSelection = withGame(({ game }: Props) => {
     }
     
 })
+

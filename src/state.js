@@ -42,6 +42,10 @@ export const { dispatch, stream }: Store<State> = createStore(globalReducer, glo
 export const state = toAccessor(stream)
 
 // TODO: add selector crap?
-export function withState<Props: Object>(component: Component<any>): Component<any> { 
-    return overStream(stream, 'state', state)(component)
+export function withState<Props: Object>(component: (props: Props) => *): (props: $Diff<Props, { state: State }>) => * { 
+
+    return props => component({ ...props, state })
+
+
+    // return overStream(stream, 'state', state)(component)
 }

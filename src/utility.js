@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import * as React from 'react'
 
 export const Col = styled.div`
     display: flex;
@@ -91,7 +92,7 @@ const ModalBlock = Material.extend`
     padding: 16px;
 `
 
-export const Modal: Component<> = props => <ModalWrapper>
+export const Modal = (props: any) => <ModalWrapper>
     <ModalBlock {...props}>
         { props.children }
     </ModalBlock>    

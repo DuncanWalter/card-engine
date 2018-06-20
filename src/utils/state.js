@@ -9,9 +9,9 @@ export interface Store<S> {
     dispatch: Dispatch,
 }
 
-let lastTime = Date.now()
-let dispatches = []
-function runStats(type){
+let lastTime: number = Date.now()
+let dispatches: string[] = []
+function runStats(type: string){
     dispatches.push(type)
     if(Date.now() - lastTime > 15000){
         console.log('Dispatch Stats', dispatches.length, dispatches.reduce((acc, type) => {

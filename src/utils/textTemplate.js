@@ -1,3 +1,4 @@
+import * as React from 'react'
 
 let syntaxes = [
     [/([^#]+)/, (data, text) => text],

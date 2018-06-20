@@ -3,6 +3,7 @@ import { interpolate } from '../utils/textTemplate'
 import { ToolTips } from '../components/toolTips';
 import { appearanceOf } from '../effects/effect'
 import styled from 'styled-components'
+import React from 'react'
 
 const Wrapper = styled.div`
     position: relative;

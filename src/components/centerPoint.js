@@ -1,4 +1,5 @@
 // TODO: use styled component
+import React from 'react'
 
 const sty = { 
     display: 'flex', 

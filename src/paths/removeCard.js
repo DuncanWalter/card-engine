@@ -4,6 +4,7 @@ import { CardPanel } from "../game/cardPanel";
 import { RemoveCard } from "../events/removeCard";
 import { registerReward } from "./reward";
 import { dispatch } from "../state";
+import React from 'react'
 
 const removeCard = registerOverlay(({ resolve, game, resolver }) => <Col shim>
     <h1>Remove Card</h1>

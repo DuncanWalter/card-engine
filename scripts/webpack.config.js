@@ -39,7 +39,7 @@ const baseConfig = options => ({
                         'babel-plugin-syntax-class-properties',
                         'babel-plugin-transform-class-properties',
                         'babel-plugin-transform-object-rest-spread',
-                        ['transform-react-jsx', { pragma: 'h' }],
+                        'transform-react-jsx',
                     ],
                     presets: ['flow', [
                         require('babel-preset-env'), {
@@ -74,14 +74,12 @@ const baseConfig = options => ({
     resolve: {
         alias: {
             '~': path.join(__dirname, './../'),
-            'react': 'preact-compat',
-            'react-dom': 'preact-compat',
         },
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            h: ['preact', 'h'],
-        }),
+        // new webpack.ProvidePlugin({
+        //     h: ['react', 'h'],
+        // }),
         (C => new C({
             filename: 'index.bundle.html',
             template: './src/index.html',

@@ -12,9 +12,12 @@ import { queryHand } from '../../cards/utils'
 import { PlayCard } from '../../events/playCard'
 import { Game, withGame } from './battleState'
 import { lifecycle } from 'recompose'
+import React from 'react'
 
 const playLoop = withGame(({ game }) => {
+    console.log('looping?')
     queryHand(game, true).then(card => {
+        console.log(card)
         if(!resolver.processing && card){
             resolver.enqueueEvents(new PlayCard(game.player, card, {
                 from: game.hand,
@@ -23,6 +26,7 @@ const playLoop = withGame(({ game }) => {
         playLoop({})
     })
 })
+playLoop({})
 
 export const Battle = withGame(withState(
     ({ state, game }) => {

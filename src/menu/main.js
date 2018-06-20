@@ -5,6 +5,7 @@ import { StartGame } from '../events/startGame'
 import { reset } from './menuState';
 import { dispatch } from '../state';
 import styled from 'styled-components';
+import React from 'react'
 
 export const Main = (props: any) => <Col shim>
     <Shim/>

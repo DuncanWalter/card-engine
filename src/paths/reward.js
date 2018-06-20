@@ -60,3 +60,12 @@ export function getRewards(rewardFunds: number, game: Game, seed: Sequence<numbe
     }
     return rewards
 }
+
+export function collect(reward: Reward<any>, resolver: EventResolver, game: Game): Promise<void> {
+    const def = rewardLibrary.get(reward.type)
+    if(def){
+        return def.collect(reward, resolver, game)
+    } else {
+        return new Promise(resolve => undefined)
+    }
+}

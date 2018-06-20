@@ -7,9 +7,9 @@ import { Sequence, randomSequence } from "../utils/random"
 import { createReducer } from "../utils/state"
 import { getEncounter } from "./encounterLibrary"
 import { getRewards, type Reward } from "./reward"
-import { reducer } from "vitrarius"
 import { Entity, toExtractor, toBundler } from "../utils/entity";
 import { Monster } from "../creatures/monster";
+import React from 'react'
 
 export interface PathState {
     level: number,

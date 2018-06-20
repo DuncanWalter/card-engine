@@ -6,8 +6,6 @@
 [libs]
 ./flowtyped/external
 ./flowtyped
-./node_modules/kefir/kefire.js.flow
-./node_modules/preact/src/preact.js.flow
 
 [options]
 experimental.const_params=true
@@ -16,7 +14,6 @@ emoji=true
 all=true
 module.name_mapper='.*\.\(svg\|png\|styl\|css\)$' -> 'external'
 module.name_mapper='.*/node_modules/.*' -> 'external'
-module.name_mapper='^[^/]*$' -> 'external'
 module.name_mapper='^~\(.*\)$' -> '<PROJECT_ROOT>\1'
 suppress_type=any
 module.system=haste

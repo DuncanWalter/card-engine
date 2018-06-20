@@ -4,6 +4,7 @@ import { Row, Block, Shim } from "../utility";
 import { Card } from "../cards/component";
 import { Card as CardO } from "../cards/card"
 import styled from "styled-components";
+import React from 'react'
 
 // TODO: clean up styles
 
